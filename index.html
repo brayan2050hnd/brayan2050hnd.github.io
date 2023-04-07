@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Transmisiones en vivo</title>
+	<link rel="stylesheet" href="Estilos.css">
+	
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+
+<body>
+
+
+
+
+    <header>
+        <img class="logo" src="./img/logo.png" alt="Logo">
+        <button id="abrir" class="abrir-menu"><i class="bi bi-list"></i></button>
+        <nav class="nav" id="nav">
+            <button class="cerrar-menu" id="cerrar"><i class="bi bi-x"></i></button>
+            <ul class="nav-list">
+                <li><a href="#">Inicio</a></li>
+                <li><a href="https://www.facebook.com/">facebook</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Qué hacemos</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
+        
+        
+        
+    </header>
+
+  
+  
+
+
+<h1 class="imghonduras">Honduras</h1>
+
+
+
+
+	
+	
+	<div class="numeros">
+	  <h1 class="uno">1</h1>
+	 
+	</div>
+	
+	<div class="botones">
+		<button id="canal5" onclick="reproducirContenido('iframe', 'https://www.dailymotion.com/embed/video/k67GtFNKbgiUuwyaxSV?autoplay=1')">CANAL 5 EL LIDER</button>
+		
+
+		
+	</div>
+	
+	
+	<div class="embed-container">
+	<iframe  frameBorder="0"></iframe>
+</div>
+
+<div id="contenedor"></div>
+
+<!-Honduras->
+
+
+<img class="imgcanal5ellider" src="https://s3.amazonaws.com/prod-wp-tvc/wp-content/uploads/2020/05/Generica-Canal-5-2.jpg" height="10%" width="20%">
+
+
+
+
+
+
+
+
+<input type="text" id="buscador" onkeyup="buscar()" placeholder="Buscar...">
+<button id="encontrar" onclick="buscar()">Buscar</button>
+
+
+
+	<script src="Menu.js"></script>
+</body>
+</html>
