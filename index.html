@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tarjetas con HTML y CSS</title>
+    <link rel="stylesheet" href="main.css">
+    	<link rel="stylesheet" href="Estilos.css">
+	
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  </head>
+  
+  
+  <body>
+     
+     
+	
+	<div class="loader">
+		<h1>
+			<span>W</span>
+			<span>E</span>
+			<span>B</span>
+			<span> </span>
+			<span>V</span>
+			<span>I</span>
+			<span>S</span>
+			<span>I</span>
+			<span>Ó</span>
+			<span>N</span>
+		</h1>
+		<img src="https://i.gifer.com/M9St.gif" alt="Loader Gif">
+	</div>
+	<!-- Contenido de tu página web -->
+
+
+
+
+      
+  <label for="search">BUSCAR CANAL</label>
+<input type="text" id="search" onkeyup="searchCards()">
+    
+
+<header>
+        <img class="logo" src="logo.png" alt="Logo">
+        <button id="abrir" class="abrir-menu"><i class="bi bi-list"></i></button>
+        <nav class="nav" id="nav">
+            <button class="cerrar-menu" id="cerrar"><i class="bi bi-x"></i></button>
+            <ul class="nav-list">
+                
+                
+                
+                <button onclick="location.reload()">Reiniciar página</button>
+
+                <li><a href="#">Inicio</a></li>
+                <li><a href="https://www.facebook.com/">facebook</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Qué hacemos</a></li>
+                <li><a href="#">Contacto</a></li>
+                
+                
+                
+            </ul>
+        </nav>
+        
+        
+        
+    </header>
+
+
+   <div class="titulo">
+      <h1>Honduras</h1>
+      <div class="bandera"></div>
+    </div>
+
+
+        <div class="card-container">
+      <div class="card" data-name="canal5">
+        <img class="card-img" src="https://pbs.twimg.com/media/CYxQaNiWYAA1ARx.jpg" alt="canal5">
+        <h2 class="card-title animated-title">Canal 5 el líder</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.dailymotion.com/embed/video/k67GtFNKbgiUuwyaxSV?autoplay=1')"> CLICK</button>
+		
+        
+        
+      </div>
+      <div class="card">
+          
+        <img class="card-img" src="https://i0.wp.com/directostv.teleame.com/wp-content/uploads/2017/10/TSI-Telesistema-en-vivo-Online.png?resize=696%2C392&ssl=1" alt="TSI">
+        
+        <h2 class="card-title">TSI</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.dailymotion.com/embed/video/k57KtT6Nla67qnxHQOB')"> CLICK</button>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      <div class="card">
+        <img class="card-img" src="        https://i.ytimg.com/vi/VGzzm8JpUQA/hqdefault.jpg" alt="TELECADENA">
+        <h2 class="card-title">TELECADENA</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.dailymotion.com/embed/video/k101LzeW3LTSErxHRoW')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://i1.sndcdn.com/avatars-000328137293-obg7u2-t500x500.jpg" alt="Imagen de muestra">
+        
+        <h2 class="card-title">HCH</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.dailymotion.com/embed/video/x81za5c?pubtool=oembed')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://www.dmidgroup.com/wp-content/uploads/2019/04/metro-tv-1.png" alt="Imagen de muestra">
+        <h2 class="card-title">METRO TV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html')"> CLICK</button>
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://yt3.googleusercontent.com/ytc/AL5GRJVwe8iPUUUwXJ_Dt8tmydl80YBL5iqlEDk3kCDfog=s900-c-k-c0x00ffffff-no-rj" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL 11</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', '//mdstrm.com/live-stream/603d4e1fb042ce07c5c8f911?autoplay=false&player=603d50916a45d707d3889300')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+<div class="embed-container">
+	<iframe src=""  frameBorder="0"></iframe>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+ <div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc6Y5h5Eq5t8q5hhHDtPipl46wvwOdMCo50A&usqp=CAU" alt="Imagen de muestra">
+        
+        <h2 class="card-title">TDTV+</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://5fe2654d6127d.streamlock.net:443/tododeportesplus/smil:tododeportesplus.smil/chunklist_w1645169955_b3428000_sleng.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8xNC8yMDIzIDM6NTQ6MDQgQU0maGFzaF92YWx1ZT1LUi8xQWdLOWo4eG93MTNnSXR1K0FRPT0mdmFsaWRtaW51dGVzPTM2MDAmaWQ9')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyy4eHK-_rRep3v5QO6vk-IcGt0fD7eJMGcA&usqp=CAU" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL TEN</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://62418d5684c12.streamlock.net/TENHD/TENLive.smil/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://file.canal6.com.hn/2022/03/unnamed-1.webp" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL 6</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://inliveserver.com:2000/VideoPlayer/17502')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://play-lh.googleusercontent.com/juCzr3mDPumJWgWhxy-6FzllbYeYrelJTtwS-CPWSChtxRhch_-sMJCLxZrRNhswnJw" alt="Imagen de muestra">
+        
+        <h2 class="card-title">SI TV</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://worldkast.com/newplayer/sitv.html')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://s3-mspro.nyc3.digitaloceanspaces.com/tenant/5f45357a0ac66b5dfa35c144/settings/logos/07f8c177-5790-4edd-948d-3088afa5c6c8.png" alt="Imagen de muestra">
+        <h2 class="card-title">VTV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://dw6a9whylepvl.cloudfront.net/hls/vtv.m3u8')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsvJTK0KMhMG_dSTMbzZmMmnaZrGbMfvOJQ&usqp=CAU" alt="Imagen de muestra">
+        <h2 class="card-title">CHOLUSATSUR</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'http://play.online-television.net/1977.html')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://i0.wp.com/chtv.hn/wp-content/uploads/2021/06/Untitled-design.jpg?fit=1920%2C1080&ssl=1" alt="Imagen de muestra">
+        
+        <h2 class="card-title">CHTV</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://media.streambrothers.com:1936/8054/8054/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://tvonlinegratis.com/wp-content/uploads/2014/07/Teleceiba-Logo.jpg" alt="Imagen de muestra">
+        <h2 class="card-title">TELECEIBA</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://lvpr.tv/?v=6615h3786bpo5umh')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4lNr9qHC2DIG0ftEf7Ztl5f22w9wnS0njzw&usqp=CAU" alt="Imagen de muestra">
+        <h2 class="card-title">TELEPROGRESO</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://playervideo.zcasthn.com.br/video/teleprogreso/1/false/false/VTNSdGRqRXVlbU5oYzNSb2JpNWpiMjB1WW5JPSta/16:9//sim')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://pbs.twimg.com/media/E4vpLwuWUAY6vsP.jpg" alt="Imagen de muestra">
+        
+        <h2 class="card-title">UNETV</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://avstrean.live:3395/live/unetvlive.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://tvonlinegratis.com/wp-content/uploads/2014/08/TNH-Logo.jpg" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL 8 (TNH)</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://player.twitch.tv/?channel=canal8hn&parent=brayan2050hnd.github.io')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://1.bp.blogspot.com/-AEAmO1Np2Fg/YTsqwexoVcI/AAAAAAAAQkU/OW1A2f_f5WgJBUYhVLdOt6VJeTv1kn8egCLcBGAsYHQ/s159/Canal%2BAlsacias%2BTv%2Ben%2Bvivo%2B%25281%2529.png" alt="Imagen de muestra">
+        <h2 class="card-title">ALSACIAS TV</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://s.emisoras.tv:8081/atv/index.m3u8')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="lhttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9CzeuD5bvZIwrp1h3KL-y0IvKQvkz_TrwCw&usqp=CAU" alt="Imagen de muestra">
+        
+        <h2 class="card-title">GLOBO TV</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://panel.dattalive.com:443/8122/8122/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2undiCdzuBIHZXDKU6WyAiWLR7V9SkoH95w&usqp=CAU" alt="Imagen de muestra">
+        <h2 class="card-title">CHOLUTECA TV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://emisoras.hn:8081/cholutecatv/tracks-v1a1/mono.m3u8')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://directostv.teleame.com/wp-content/uploads/2017/10/Campus-TV-en-vivo-Online.png" alt="Imagen de muestra">
+        <h2 class="card-title">CAMPUS TV</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://panel.fiberstreams.com:8080/VideoPlayer/6052')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="embed-container">
+	<iframe src=""  frameBorder="0"></iframe>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<div id="contenedor"></div>
+
+
+
+
+<script>
+function searchCards() {
+  var input = document.getElementById("search");
+  var filter = input.value.toUpperCase();
+  var cards = document.getElementsByClassName("card");
+  for (var i = 0; i < cards.length; i++) {
+    var title = cards[i].getElementsByClassName("card-title")[0].textContent.toUpperCase();
+    if (title.indexOf(filter) > -1) {
+      cards[i].style.display = "";
+    } else {
+      cards[i].style.display = "none";
+    }
+  }
+}
+</script>
+
+    
+  
+
+<script src="main.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+<script src="carga-progresiva.js"></script>
+  </body>
+</html>
