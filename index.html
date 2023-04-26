@@ -1,0 +1,229 @@
+
+
+
+
+<div class="slider">
+  <div class="slider-container">
+    <div class="slider-item">
+      <a href="Honduras.html">
+        <img src="https://i.makeagif.com/media/6-10-2018/0cWmsj.gif">
+      </a>
+    </div>
+    <div class="slider-item">
+      <a href="mexico.html">
+        <img src="https://3.bp.blogspot.com/-RHsdTTqYK3s/WzT1u4iWpkI/AAAAAAAAooc/AqEUAMQxNPsxBDs8OEsHaEwCqOtILpyogCLcBGAs/s1600/Flag_of_Mexico.gif">
+      </a>
+    </div>
+    <div class="slider-item">
+      <a href="https://www.link3.com">
+        <img src="imagen3.jpg">
+      </a>
+    </div>
+    
+     <div class="slider-item">
+      <a href="https://www.link3.com">
+        <img src="imagen3.jpg">
+      </a>
+    </div>
+    <!-- Continúa con las 8 imágenes restantes -->
+    
+    
+    
+    
+    
+    
+    
+    
+  </div>
+</div>
+
+
+
+
+
+<style>
+    
+    
+    
+        
+    
+    
+    
+    .slider {
+  width: 90%;
+  overflow: hidden;
+  position: relative;
+  left: 5%;
+  margin-top: 50%;
+  box-shadow: 5px 5px 4px 2px grey;
+}
+
+.slider-container {
+  display: flex;
+  transition: transform 0.5s ease;
+  
+}
+
+.slider-item {
+  flex: 0 0 100%;
+}
+
+.slider-item img {
+  width: 100%;
+}
+
+@media (min-width: 576px) {
+  .slider-item {
+    flex: 0 0 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .slider-item {
+    flex: 0 0 33.33%;
+  }
+}
+
+@media (min-width: 992px) {
+  .slider-item {
+    flex: 0 0 25%;
+  }
+}
+
+.slider-nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.slider-nav button {
+  margin: 0 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background-color: #1a9aff;
+  cursor: pointer;
+}
+
+.slider-nav button.active {
+  background-color: red;
+}
+</style>
+
+<script>
+    
+    
+    
+   
+
+    
+    
+    
+  const sliderContainer = document.querySelector(".slider-container");
+const sliderItems = document.querySelectorAll(".slider-item");
+const sliderNav = document.createElement("div");
+sliderNav.classList.add("slider-nav");
+
+let index = 0;
+let isDragging = false;
+let startPos = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let animationID = 0;
+let timerID = 0;
+
+function showSlide() {
+  sliderContainer.style.transform = `translateX(-${index * 100}%)`;
+
+  // Actualiza el botón activo del slider-nav
+  const activeButton = document.querySelector(".slider-nav button.active");
+  if (activeButton) {
+    activeButton.classList.remove("active");
+  }
+  sliderNav.children[index].classList.add("active");
+}
+
+function dragStart(event) {
+  if (event.type === "touchstart") {
+    startPos = event.touches[0].clientX;
+  } else {
+    startPos = event.clientX;
+  }
+  isDragging = true;
+  animationID && cancelAnimationFrame(animationID);
+  clearInterval(timerID);
+}
+
+function dragMove(event) {
+  if (isDragging) {
+    let currentPosition;
+    if (event.type === "touchmove") {
+      currentPosition = event.touches[0].clientX;
+    } else {
+      currentPosition = event.clientX;
+    }
+    currentTranslate = prevTranslate + currentPosition - startPos;
+    sliderContainer.style.transform = `translateX(${currentTranslate}px)`;
+  }
+}
+
+function dragEnd() {
+  isDragging = false;
+  const movedBy = currentTranslate - prevTranslate;
+
+  if (movedBy < -100 && index < sliderItems.length - 1) {
+    index++;
+  }
+
+  if (movedBy > 100 && index > 0) {
+    index--;
+  }
+
+  showSlide();
+  animationID = requestAnimationFrame(autoSlide);
+}
+
+function autoSlide() {
+  timerID = setInterval(() => {
+    if (index === sliderItems.length - 1) {
+      index = 0;
+    } else {
+      index++;
+    }
+    showSlide();
+  }, 5000);
+}
+
+function createSliderNav() {
+  sliderItems.forEach((_, i) => {
+    const button = document.createElement("button");
+    button.addEventListener("click", () => {
+      index = i;
+      showSlide();
+      clearInterval(timerID);
+      animationID = requestAnimationFrame(autoSlide);
+    });
+    sliderNav.appendChild(button);
+  });
+  sliderNav.children[0].classList.add("active");
+  document.querySelector(".slider").appendChild(sliderNav);
+}
+
+createSliderNav();
+autoSlide();
+
+sliderContainer.addEventListener("mousedown", dragStart);
+sliderContainer.addEventListener("touchstart", dragStart);
+
+sliderContainer.addEventListener("mousemove", dragMove);
+sliderContainer.addEventListener("touchmove", dragMove);
+
+sliderContainer.addEventListener("mouseup", dragEnd);
+sliderContainer.addEventListener("touchend", dragEnd);
+sliderContainer.addEventListener("mouseleave", dragEnd);
+
+</script>
