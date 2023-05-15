@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tarjetas con HTML y CSS</title>
+    <link rel="stylesheet" href="mexico.css">
+    	<link rel="stylesheet" href="mexico.css">
+	
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  </head>
+  
+  
+  <body>
+     
+     
+	
+
+  <label for="search">BUSCAR CANAL</label>
+<input type="text" id="search" onkeyup="searchCards()">
+    
+
+<header>
+        <img class="logo" src="logo.png" alt="Logo">
+        <button id="abrir" class="abrir-menu"><i class="bi bi-list"></i></button>
+        <nav class="nav" id="nav">
+            <button class="cerrar-menu" id="cerrar"><i class="bi bi-x"></i></button>
+            <ul class="nav-list">
+                
+                
+                
+                <button onclick="location.reload()">Reiniciar página</button>
+
+                <li><a href="#">Inicio</a></li>
+                <li><a href="https://www.facebook.com/">facebook</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Qué hacemos</a></li>
+                <li><a href="#">Contacto</a></li>
+                
+                
+                
+            </ul>
+        </nav>
+        
+        
+        
+    </header>
+
+
+   <div class="titulo">
+      <h1>MEXICO</h1>
+      <div class="bandera"></div>
+    </div>
+
+
+
+
+
+
+
+        <div class="card-container">
+      <div class="card" data-name="canal5">
+        <img class="card-img" src="https://cdn.mitvstatic.com/channels/mx_xh-gc-canal-5-hd_m.png" alt="canal5">
+        <h2 class="card-title animated-title">CANAL 5 MX</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://player.twitch.tv/?channel=31rmkl3&parent=brayan2050hnd.github.io')"> CLICK</button>
+		
+        
+        
+      </div>
+      <div class="card">
+          
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Las_Estrellas.svg/1200px-Las_Estrellas.svg.png" alt="TSI">
+        
+        <h2 class="card-title">LAS ESTRELLAS</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://player.twitch.tv/?channel=2wm19q&parent=brayan2050hnd.github.io')"> CLICK</button>
+        
+        
+
+        
+      </div>
+      
+      
+      
+      
+      <div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="distritocomedia"></div>
+  </div>
+</div>
+
+      
+      
+      
+      
+      
+      
+      <div class="card">
+        <img class="card-img" src="https://3dwarehouse.sketchup.com/warehouse/v1.0/content/public/e1f44d0c-0ee7-495f-93aa-5ba48014f90e" alt="TELECADENA">
+        <h2 class="card-title">DISTRITO COMEDIA</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/Usa.html')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/0/01/Logo_tlnovelas_feb2019.png" alt="Imagen de muestra">
+        
+        <h2 class="card-title">TLNOVELA</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://player.twitch.tv/?channel=tn_5110&parent=brayan2050hnd.github.io')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Adn40_2022.png" alt="Imagen de muestra">
+        <h2 class="card-title">ADN 40</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://live.adn40.mx')"> CLICK</button>
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://i.pinimg.com/originals/07/e3/57/07e3570049e922062d704fc8ba25088b.png" alt="Imagen de muestra">
+        <h2 class="card-title">INGENIO TV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/aprendetv.html')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+<div class="embed-container">
+	<iframe src=""  frameBorder="0"></iframe>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+ <div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Azteca_Uno_%282020%29.svg/2560px-Azteca_Uno_%282020%29.svg.png" alt="Imagen de muestra">
+        
+        <h2 class="card-title">AZTECA UNO</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://player.twitch.tv/?channel=azt_119vx&parent=brayan2050hnd.github.io')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Multimedios_Canal_Seis_Logo.svg/1461px-Multimedios_Canal_Seis_Logo.svg.png" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL 6 (CDMX)</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://mdstrm.com/live-stream/5f2d9d6ff17144074bd8a284')"> CLICK</button>
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI1ttpsOqmLFZSNIMYDSLgbkH40RUft5Vgxg&usqp=CAU" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL 7 (S.L.P)</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.mvtvstream.com/plugin/Live/?c=5dd8e1cbe8184&embed=1')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://1000marcas.net/wp-content/uploads/2021/04/Canal-13-Logo-1961.jpg" alt="Imagen de muestra">
+        
+        <h2 class="card-title">CANAL 13</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https:\/\/c13mx.mediatiquestream.com\/canal13puebla\/d0dbe915091d400bd8ee7f27f0791303.sdp\/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-eQDBOlp2zMU0UFA7-NXxyisVrsXug1R1GA&usqp=CAU" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL 28(CHIHUAHUA)</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://livestream.com/accounts/3789491/events/8003011/player?width=')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://www.tvn14.com/wp-content/uploads/2021/02/TVN-HD_LOGO_COLOR-SIN-FONDO.png" alt="Imagen de muestra">
+        <h2 class="card-title">CANAL CATORCE</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://cdn3.wowza.com/1/T1lvY282a3M5ZUxz/WWRRbVdF/hls/live/playlist.m3u8')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/7/73/Logo_CC_Texto_Negro.png" alt="Imagen de muestra">
+        
+        <h2 class="card-title">CANAL DEL CONGRESO</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://edgeplay.canaldelcongreso.gob.mx/live_sd1/smil:canal-sd1.smil/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/a/af/Excelsior_tv-mediano.png" alt="Imagen de muestra">
+        <h2 class="card-title">EXCÉLSIOR TV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.youtube.com/embed/H8Q9faXMyDs')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://expresatv.com.mx/wp-content/uploads/2023/04/DISENO-banner-bere.jpg" alt="Imagen de muestra">
+        <h2 class="card-title">EXPRESA TV</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://conceptoweb-studio.com/radio/video/teleradio/')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Logo-ForoTV-2016.png" alt="Imagen de muestra">
+        
+        <h2 class="card-title">FORO TV</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://channel02-notusa.akamaized.net:443/hls/live/2023914/event01/index_6.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/1/1d/Logo_Imagen_Televisi%C3%B3n_2016.png" alt="Imagen de muestra">
+        <h2 class="card-title">IMAGEN TELEVISIÓN</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.dailymotion.com/embed/video/x82z4if?autoplay=1')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/6/67/Jalisco-TV_logotype.png" alt="Imagen de muestra">
+        <h2 class="card-title">JALISCO TV</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://jaliscotv.com/en-vivo-17-1')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Maria-vision.jpg" alt="Imagen de muestra">
+        
+        <h2 class="card-title">MARIA VISIÓN</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://1601580044.rsc.cdn77.org/live/_jcn_/Mariavision/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Televisi%C3%B3n_Mexiquense_%28c._2020%29.png" alt="Imagen de muestra">
+        <h2 class="card-title">MEXIQUENSE TV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://conceptoweb-studio.com/radio/video/mexiquense/')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Milenio_Television.png/496px-Milenio_Television.png" alt="Imagen de muestra">
+        <h2 class="card-title">MILENIO TV</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://us-b5-p-e-wo1.cdn.mdstrm.com/live-stream/610178c7db32a4112d994650/publish/media_2500.m3u8?aid=60e33365f98bf10830efcb7d&uid=I5GOINJo96TbAKlw5Mq5GQYDPBpZV5wo&sid=HT4UHjgsDGlOT5heP0TMUgKKPabJfOzW&pid=T998gsgEuY01DHeKDhnfJxy333QMPP5L&ref=https%3A%2F%2Fwww.milenio.com%2F&without_cookies=false&listenerid=&dnt=true&es=us-b5-p-e-wo1.cdn.mdstrm.com&ote=1684018490076&ot=ai4fRjbFxtE87wCwCIhAxA&proto=https&pz=us')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://pbs.twimg.com/media/CVZ2-F2VAAAVM_U.jpg" alt="Imagen de muestra">
+        
+        <h2 class="card-title">CANAL 28(RTV)</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://60ed5b6d0df78.streamlock.net:1936/canal28/canal28/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://sistemamichoacano.tv/wp-content/uploads/2022/04/cropped-logo-smrtv-web-1.jpg" alt="Imagen de muestra">
+        <h2 class="card-title">SM TV</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://s5.mexside.net:2000/VideoPlayer/enlinea')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Telemax.png" alt="Imagen de muestra">
+        <h2 class="card-title">TELEMAX</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://live-edge01.telecentro.net.ar/live/smil:tlx.smil/playlist.m3u8')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://pbs.twimg.com/profile_images/378800000636492114/8d3e0c97104c58d32019743cf68f00ff_400x400.jpeg" alt="Imagen de muestra">
+        
+        <h2 class="card-title">TELEVISA (JUAREZ)</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.youtube.com/embed/Ncjec8wVIUE')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/TV_MAR_LOGO.jpg/991px-TV_MAR_LOGO.jpg" alt="Imagen de muestra">
+        <h2 class="card-title">TV MAR</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://conceptoweb-studio.com/radio/video/tvmarvallarta/')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Logo_Tv_UNAM.png" alt="Imagen de muestra">
+        <h2 class="card-title">TV UNAM</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://conceptoweb-studio.com/radio/video/tvunam/')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://unlp.edu.ar/wp-content/uploads/26/2526/49762dda2908c609b2ed4d5eec38b6c4.png" alt="Imagen de muestra">
+        
+        <h2 class="card-title">TV UNIVERSIDAD</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.youtube.com/embed/AIoSF11qHM4')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://www.tvcuatro.com/images/noticias-01.png" alt="Imagen de muestra">
+        <h2 class="card-title">TV CUATRO</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://www.conceptoweb-studio.com/radio/video/tv4/')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+   
+   
+   
+   
+   
+   <div class="card">
+        <img class="card-img" src="https://www.tvplusgratis.com/img/foxsportsmexico.png" alt="Imagen de muestra">
+        <h2 class="card-title">FOX SPORTS MEXICO</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/foxsportmexico.html')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+   
+   
+   
+   
+   
+   
+   
+   
+    </div>
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://megadeportestv.com/img/fox-sports-2-mx.webp" alt="Imagen de muestra">
+        
+        <h2 class="card-title">FOX SPORTS 2 MX</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://vtvcable.com/web/vtvhls/?id=0019')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://www.tvplusgratis.com/img/foxsports3mexico.png" alt="Imagen de muestra">
+        <h2 class="card-title">FOX SPORTS 3 MX</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/foxsportmexicotres.html')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://espnpressroom.com/mexico/files/2009/11/ESPN_Mexico_BW_Neg.jpg" alt="Imagen de muestra">
+        <h2 class="card-title">SPN MEXICO</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/spnmx.html')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://img.sport-tv-guide.live/images/stations/a938.png" alt="Imagen de muestra">
+        
+        <h2 class="card-title">SPN 2 MX</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/spnmx2.html')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://img.sport-tv-guide.live/images/stations/a939.png" alt="Imagen de muestra">
+        <h2 class="card-title">SPN 3 MX</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/spnmx3.html')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://seeklogo.com/images/T/tudn-negativo-logo-C092B48E7F-seeklogo.com.png" alt="Imagen de muestra">
+        <h2 class="card-title">TUDN</h2>
+        
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('iframe', 'https://brayan2050hnd.github.io/tudn.html')"> CLICK</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="embed-container">
+	<iframe src=""  frameBorder="0"></iframe>
+</div>
+
+
+
+
+
+
+
+<div id="contenedor"></div>
+
+
+
+
+<script>
+function searchCards() {
+  var input = document.getElementById("search");
+  var filter = input.value.toUpperCase();
+  var cards = document.getElementsByClassName("card");
+  for (var i = 0; i < cards.length; i++) {
+    var title = cards[i].getElementsByClassName("card-title")[0].textContent.toUpperCase();
+    if (title.indexOf(filter) > -1) {
+      cards[i].style.display = "";
+    } else {
+      cards[i].style.display = "none";
+    }
+  }
+}
+</script>
+
+    
+  
+
+<script src="mexico.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+<script src="carga-progresiva.js"></script>
+  </body>
+</html>
