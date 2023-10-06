@@ -1,0 +1,87 @@
+
+
+<div class="card-containerdos">
+        
+        
+      <div class="card">
+        <img class="card-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq6YwGxKKfXr5cfpAJqU6T_LWAvR1jF_zkLQ&usqp=CAU" alt="Imagen de muestra">
+        
+        <h2 class="card-title">TELEDANLI</h2>
+        
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://cloud2.streaminglivehd.com:1936/8224/8224/playlist.m3u8')"> CLICK</button>
+        
+      </div>
+      
+      <div class="card">
+        <img class="card-img" src="https://www.logolynx.com/images/logolynx/22/22786b02404272e04fd2dc13d7aeccd8.jpeg" alt="Imagen de muestra">
+        <h2 class="card-title">JBN</h2>
+        <button id="canal5" class="card-button" onclick="reproducirContenido('m3u8', 'https://emisoras.hn:8081/jbn/index.m3u8')"> CLICK</button>
+        
+        
+        
+        
+      </div>
+   
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="embed-container">
+	<iframe src=""  frameBorder="0"></iframe>
+</div>
+
+
+
+
+
+
+
+<div id="contenedor"></div>
+
+
+
+
+<script>
+function searchCards() {
+  var input = document.getElementById("search");
+  var filter = input.value.toUpperCase();
+  var cards = document.getElementsByClassName("card");
+  for (var i = 0; i < cards.length; i++) {
+    var title = cards[i].getElementsByClassName("card-title")[0].textContent.toUpperCase();
+    if (title.indexOf(filter) > -1) {
+      cards[i].style.display = "";
+    } else {
+      cards[i].style.display = "none";
+    }
+  }
+}
+</script>
+
+    
+  
+
+<script src="honduras.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+<script src="carga-progresiva.js"></script>
+  </body>
+</html>
