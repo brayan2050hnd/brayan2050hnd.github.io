@@ -1,0 +1,228 @@
+
+
+
+body{
+	background:#000000;
+}
+
+
+#contenedor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+h1{
+	color: grey;
+	
+}
+
+#titulo{
+	position: absolute;
+	left: 15%;
+	top: -40vh;
+	
+	}
+
+#boton1 {
+  width: 200px;
+  height: 50px;
+  background-color: #ccc;
+  border-radius: 50px;
+  box-shadow: rgba(240, 46, 170, 0.4) -5px 5px, rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px, rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;
+  color: #fff;
+  font-size: 20px;
+  z-index: 2;
+	top:50%;
+	
+}
+
+
+
+
+
+
+
+
+
+#contenido1 {
+  display: none;
+  z-index: 1;
+}
+
+#boton2 {
+  width: 200px;
+  height: 50px;
+  background-color: #ccc;
+  border-radius: 50px;
+ box-shadow: rgba(240, 46, 170, 0.4) -5px 5px, rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px, rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;
+  font-size: 20px;
+  z-index: 2;
+}
+
+#contenido2 {
+  display: none;
+  z-index: 1;
+}
+
+#boton-retroceso1 {
+ box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+
+	position:absolute;
+	left:80%;
+}
+
+#boton-retroceso2 {
+box-shadow: rgb(0, 0, 0) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+background:#222020;
+	position:absolute;
+	left:80%;
+	color: white;
+  padding: 10px 20px;
+  border-radius:50px;
+  cursor: pointer;
+	border:none;
+	font-weight: bolder;
+	
+}
+
+
+
+
+
+
+#bot{
+ 
+  width: 200px;
+  height: 50px;
+  border-radius: 50px;
+  
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+}
+
+
+
+
+
+
+#boton1, #boton2 {
+  width: 80%;
+  height: 50px;
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+
+#boton1 {
+  background-color: #000;
+}
+
+#boton2 {
+  background-color: #000000;
+}
+
+
+
+
+
+
+
+#boton1 {
+  background-color: #000;
+}
+
+#boton2 {
+  background-color: #000000;
+}
+
+@keyframes boton-animacion {
+  0% {
+    transform: scale(0.15);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+#boton1, #boton2 {
+  animation: boton-animacion 0.8s ease-in-out;
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+  #bot {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+  #bot {
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  #bot{
+    width: 33.33%;
+  }
+}
+
+
+
+
+#menuuno{
+box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+
+	position:absolute;
+	left:3%;
+}
+
+
+
+.opciones {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 10;
+	left:3%;
+	top:10%;
+box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+	
+}
+
+.opciones li {
+  list-style: none;
+  cursor: pointer;
+}
+
+.opciones li.activa {
+  background-color: #ccc;
+}
+
+
+
+
+
+
+#canal5{
+	position: absolute;
+	width: 5%;
+	height: 5%;
+	left: 3%;
+	
+	}
+	
+	
