@@ -1,76 +1,135 @@
-function playStream(streamId) {
-  var streamUrl = "https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html";
-  switch (streamId) {
-    case 1:
-      streamUrl = "https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html";
-      break;
-    case 2:
-      streamUrl = "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed";
-      break;
-    case 3:
-      streamUrl = "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed";
-      break;
-  }
+const boton1 = document.getElementById("boton1");
+const contenido1 = document.getElementById("contenido1");
+const boton2 = document.getElementById("boton2");
+const contenido2 = document.getElementById("contenido2");
+const titulo = document.getElementById("titulo");
 
-  // Ocultar imágenes
-  document.querySelectorAll("img").forEach(function(img) {
+boton1.addEventListener("click", function() {
+  contenido1.style.display = "block";
+  contenido2.style.display = "none";
+  boton1.style.display = "none";
+  boton2.style.display = "none";
+	titulo.style.display = "none";
+});
+
+boton2.addEventListener("click", function() {
+  contenido2.style.display = "block";
+  contenido1.style.display = "none";
+  boton1.style.display = "none";
+  boton2.style.display = "none";
+	titulo.style.display = "none";
+});
+
+const botonRetroceso1 = document.getElementById("boton-retroceso1");
+botonRetroceso1.addEventListener("click", function() {
+  contenido1.style.display = "none";
+  boton1.style.display = "block";
+  boton2.style.display = "block";
+	titulo.style.display = "block";
+});
+
+const botonRetroceso2 = document.getElementById("boton-retroceso2");
+botonRetroceso2.addEventListener("click", function() {
+  contenido2.style.display = "none";
+  boton1.style.display = "block";
+  boton2.style.display = "block";
+	titulo.style.display = "block";
+});
+
+
+
+const botonCancelar = document.createElement("button");
+botonCancelar.textContent = "Cancelar";
+botonCancelar.addEventListener("click", function() {
+  if (contenido1.style.display === "block") {
+    contenido1.querySelector(".opciones").style.display = "none";
+  }
+});
+
+opciones.appendChild(botonCancelar);
+
+
+
+function mostraropciones() {
+  const opciones = document.querySelector("#opciones");
+  opciones.style.display = "block";
+  boton1.style.display = "none";
+  boton2.style.display = "none";
+}
+
+
+
+
+opciones.appendChild(botonCancelar);
+
+
+// Variables
+var images = document.querySelectorAll("img");
+var transmisiones = [
+  {
+    id: 1,
+    url: "https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html",
+    type: "iframe",
+  },
+  {
+    id: 2,
+    url: "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed",
+    type: "m3u8",
+  },
+  {
+    id: 3,
+    url: "https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html",
+    type: "iframe",
+  },
+  {
+    id: 4,
+    url: "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed",
+    type: "m3u8",
+  },
+];
+
+// Función para ocultar las imágenes
+function ocultarImagenes() {
+  images.forEach(function(img) {
     img.style.display = "none";
   });
+}
 
-  // Verificar tipo de transmisión
-  var isIframe = streamUrl.match(/iframe/i);
+// Función para reproducir la transmisión
+function reproducirTransmision(id) {
+  // Ocultar las imágenes
+  ocultarImagenes();
 
-  // Agregar transmisión al DOM
-  if (isIframe) {
-    // Crear iframe
+  // Obtener la transmisión
+  var transmision = transmisiones[id - 1];
+
+  // Reproducir la transmisión
+  if (transmision.type === "iframe") {
     var iframe = document.createElement("iframe");
-    iframe.src = streamUrl.replace("http://", "https://");
+    iframe.src = transmision.url;
     iframe.controls = true;
     iframe.style.width = "100%";
     iframe.style.height = "100%";
-
-    // Esperar a que se cargue el iframe
-    iframe.addEventListener("load", function() {
-      // Agregar iframe al DOM
-      document.querySelector("body").appendChild(iframe);
-      iframe.play();
-    });
-  } else {
+    document.querySelector("body").appendChild(iframe);
+    'iframe.play()';
+  } else if (transmision.type === "m3u8") {
     var video = document.createElement("video");
-    video.src = streamUrl;
+    video.src = transmision.url;
     video.controls = true;
     video.style.width = "100%";
     video.style.height = "100%";
     document.querySelector("body").appendChild(video);
-
-    animarDesplazamiento(video);
+    video.play();
   }
-
-  // Agregar evento de deslizamiento
-  var startX;
-  var startY;
-
-  video.addEventListener("touchstart", function(event) {
-    // Guardar la posición inicial del dedo
-    startX = event.touches[0].clientX;
-    startY = event.touches[0].clientY;
-  });
-
-  video.addEventListener("touchmove", function(event) {
-    // Obtener la posición actual del dedo
-    var endX = event.touches[0].clientX;
-    var endY = event.touches[0].clientY;
-
-    // Calcular la distancia recorrida
-    var deltaX = endX - startX;
-    var deltaY = endY - startY;
-
-    // Si la distancia recorrida es mayor a un umbral, quitar la transmisión
-    if (Math.abs(deltaY) > 100) {
-      quitar();
-    }
-
-    // Desplazar la transmisión
-    video.style.transform = "translateX(" + deltaX + "px)";
-  });
 }
+
+// Eventos click
+images.forEach(function(img, index) {
+  img.addEventListener("click", function() {
+    reproducirTransmision(index + 1);
+  });
+});
+
+
+
+
