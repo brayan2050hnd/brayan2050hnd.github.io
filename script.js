@@ -83,21 +83,26 @@ function playStream(streamId) {
   });
 
   // Verificar tipo de transmisión
-  var isIframe = streamUrl.match(/^https?:\/\/.*?\.iframe\.html/);
+  var isIframe = streamUrl.match(/iframe/i);
 
   // Agregar transmisión al DOM
   if (isIframe) {
+    // Crear iframe
     var iframe = document.createElement("iframe");
     iframe.src = streamUrl;
-    iframe.autoplay = true; // Esta es la línea que falta en tu código
     iframe.controls = true;
     iframe.style.width = "100%";
     iframe.style.height = "100%";
-    document.querySelector("body").appendChild(iframe);
+
+    // Esperar a que se cargue el iframe
+    iframe.addEventListener("load", function() {
+      // Agregar iframe al DOM
+      document.querySelector("body").appendChild(iframe);
+      iframe.play();
+    });
   } else {
     var video = document.createElement("video");
     video.src = streamUrl;
-    video.autoplay = true;
     video.controls = true;
     video.style.width = "100%";
     video.style.height = "100%";
@@ -136,7 +141,6 @@ function playStream(streamId) {
 }
 
 
-
 function quitar() {
   // Eliminar transmisiones
   var videos = document.querySelectorAll("video, iframe");
@@ -170,6 +174,10 @@ function animarDesplazamiento(video) {
     video.style.transform = "translateX(" + deltaX + "px) translateZ(-10px)";
   });
 }
+
+
+
+
 
 
 
