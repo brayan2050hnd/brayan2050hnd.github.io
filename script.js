@@ -64,10 +64,10 @@ opciones.appendChild(botonCancelar);
 
 
 function playStream(streamId) {
-  var streamUrl = "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed";
+  var streamUrl = "https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html";
   switch (streamId) {
     case 1:
-      streamUrl = "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed";
+      streamUrl = "https://cdn.jwplayer.com/players/OIytnimW-9lfZClGD.html";
       break;
     case 2:
       streamUrl = "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed";
