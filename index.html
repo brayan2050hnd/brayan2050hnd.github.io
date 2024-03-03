@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entretenimiento a tu alcance</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Entretenimiento a tu alcance</h1>
+  </header>
+  <main>
+    <section class="opciones">
+      <h2>Elige tu entretenimiento:</h2>
+      <button class="boton2" id="peliculas" onclick="mostrarVentana2()">Películas</button>
+      <button class="boton" id="television" onclick="mostrarVentana()">Televisión en vivo</button>
+      <button class="boton1" id="musica" onclick="mostrarVentana1()">Música</button>
+    </section>
+  </main>
+  <div class="modal" id="modal-paises">
+    <h2>Países de América</h2>
+    <ul>
+      <li><button class="pais">Antigua y Barbuda</button></li>
+      <li><button class="pais">Argentina</button></li>
+      <li><button class="pais">Bahamas</button></li>
+      <li><button class="pais">Barbados</button></li>
+      <li><button class="pais">Belice</button></li>
+      <li><button class="pais">Bolivia</button></li>
+      <li><button class="pais">Brasil</button></li>
+      <li><button class="pais">Canadá</button></li>
+      <li><button class="pais">Chile</button></li>
+      <li><button class="pais">Colombia</button></li>
+      <li><button class="pais">Costa Rica</button></li>
+      <li><button class="pais">Cuba</button></li>
+      <li><button class="pais">Dominica</button></li>
+      <li><button class="pais">Ecuador</button></li>
+      <li><button class="pais">El Salvador</button></li>
+      <li><button class="pais">Estados Unidos</button></li>
+      <li><button class="pais">Granada</button></li>
+      <li><button class="pais">Guatemala</button></li>
+      <li><button class="pais">Guyana</button></li>
+      <li><button class="pais">Haití</button></li>
+      <li><button class="pais">Honduras</button></li>
+      <li><button class="pais">Jamaica</button></li>
+      <li><button class="pais">México</button></li>
+      <li><button class="pais">Nicaragua</button></li>
+      <li><button class="pais">Panamá</button></li>
+      <li><button class="pais">Paraguay</button></li>
+      <li><button class="pais">Perú</button></li>
+      <li><button class="pais">República Dominicana</button></li>
+      <li><button class="pais">San Cristóbal y Nieves</button></li>
+      <li><button class="pais">San Kitts y Nevis</button></li>
+      <li><button class="pais">San Vicente y las Granadinas</button></li>
+      <li><button class="pais">Santa Lucía</button></li>
+      <li><button class="pais">Surinam</button></li>
+      <li><button class="pais">Trinidad y Tobago</button></li>
+      <li><button class="pais">Uruguay</button></li>
+      <li><button class="pais">Venezuela</button></li>
+    </ul>
+    <button id="boton-cerrar" class="boton">Cerrar</button>
+  </div>
+
+
+
+
+
+
+  <div id="modal-musica" class="modal">
+    <h2>Tipos de música</h2>
+    <ul>
+      <li><button class="tipo-musica">Pop</button></li>
+      <li><button class="tipo-musica">Rock</button></li>
+      <li><button class="tipo-musica">Electrónica</button></li>
+      <li><button class="tipo-musica">Clásica</button></li>
+      <li><button class="tipo-musica">Jazz</button></li>
+      <li><button class="tipo-musica">Reggaeton</button></li>
+      <li><button class="tipo-musica">Salsa</button></li>
+      <li><button class="tipo-musica">Tango</button></li>
+      <li><button class="tipo-musica">Hip-hop</button></li>
+    </ul>
+    <button id="boton-cerrar-musica" class="boton1">Cerrar</button>
+  </div>
+  
+  
+
+
+
+
+
+  <div id="modal-peliculas" class="modal">
+    <h2>Categorías de películas</h2>
+    <ul>
+      <li><button class="categoria-pelicula">Acción</button></li>
+      <li><button class="categoria-pelicula">Aventura</button></li>
+      <li><button class="categoria-pelicula">Comedia</button></li>
+      <li><button class="categoria-pelicula">Drama</button></li>
+      <li><button class="categoria-pelicula">Fantasía</button></li>
+      <li><button class="categoria-pelicula">Terror</button></li>
+      <li><button class="categoria-pelicula">Romance</button></li>
+      <li><button class="categoria-pelicula">Ciencia ficción</button></li>
+      <li><button class="categoria-pelicula">Documental</button></li>
+      <li><button class="categoria-pelicula">Animación</button></li>
+    </ul>
+    <button id="boton-cerrar-peliculas" class="boton2">Cerrar</button>
+  </div>
+  
+
+
+
+
+
+
+
+  <script src="script.js"></script>
+</body>
+</html>
