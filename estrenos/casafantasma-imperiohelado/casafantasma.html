@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproductor en pantalla completa</title>
+  <style>
+    .contenedor-iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      display: none;
+    }
+
+    .contenedor-iframe iframe {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Bloquear anuncios en el iframe
+      $(".contenedor-iframe iframe").contents().find(".adsbygoogle").remove();
+
+      // Bloquear anuncios en el reproductor del iframe
+      $(".contenedor-iframe iframe").contents().find(".video-ad").remove();
+
+      // Abrir pantalla completa automáticamente
+      function abrirPantallaCompleta() {
+        var iframe = document.getElementById("miIframe");
+        var contenedorIframe = document.querySelector(".contenedor-iframe");
+
+        iframe.requestFullscreen();
+        contenedorIframe.style.display = "block";
+      }
+
+      window.onload = abrirPantallaCompleta;
+    });
+  </script>
+</head>
+<body>
+  <div class="contenedor-iframe">
+    <iframe id="miIframe" src="https://asnwish.com/e/ned7sknyq0dk" allowfullscreen></iframe>
+  </div>
+</body>
+</html>
