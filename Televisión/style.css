@@ -1,0 +1,189 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    margin: 5px 0;
+    cursor: pointer;
+    text-align: center;
+}
+
+li:hover {
+    background-color: #0056b3;
+}
+
+.hidden {
+    display: none;
+}
+
+.country-content {
+    display: none;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    position: relative; /* Para posicionar el botón de volver */
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    flex: 1; 
+    padding: 12px 15px; 
+    margin-right: 10px; 
+    border-radius: 25px; 
+    border: 1px solid #ccc; 
+    font-size: 16px; 
+    transition: border-color 0.3s; 
+    outline: none; 
+}
+
+input[type="text"]:focus {
+    border-color: #007bff; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+.back-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px; 
+    cursor: pointer;
+    font-size: 16px; 
+    transition: background-color 0.3s; 
+}
+
+.back-button:hover {
+    background-color: #0056b3; 
+}
+
+.media {
+    margin-bottom: 200px; 
+    position: sticky; 
+    top: 0; 
+    background-color: #fff; 
+    z-index: 10; 
+    padding-top: 10px;
+    
+}
+
+.media iframe {
+    width: 100%;
+    height: 170pt;
+     box-shadow: 20px 20px 50px grey
+    
+}
+
+.cards {
+    display: grid; /* Usar grid para disposición */
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas */
+    gap: 30px; /* Espacio entre tarjetas */
+    font-size: 1vh;
+    
+    
+    
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Asegurarse de que los elementos no se salgan */
+    text-align: center;
+    padding: 7%;
+    transition: transform 0.3s; /* Efecto de transición */
+    display: flex; /* Usar flexbox para centrar contenido */
+    flex-direction: column; /* Alinear contenido en columna */
+    justify-content: space-between; /* Espacio entre los elementos */
+    height: 90%; /* Altura fija para mantener la forma rectangular */  width:90%;
+    
+}
+
+.card:hover {
+    transform: scale(1.05); /* Aumentar el tamaño al pasar el mouse */
+    
+}
+
+.card img {
+    width: 100%; /* Hacer que la imagen ocupe todo el ancho de la tarjeta */
+    height: 40%; /* Altura fija para la imagen */
+    object-fit: cover; /* Cubrir el área de la tarjeta sin distorsionar */
+    border-radius: 15px 15px 0 0; /* Bordes redondeados en la parte superior */
+}
+
+.card h3 {
+    margin: 1% 0 1%; /* Margen superior e inferior */
+    font-size: 2vh;
+    
+}
+
+
+
+.card button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 8px;
+    border-radius: 25px; /* Bordes redondeados */
+    cursor: pointer;
+    font-size: 2vh; 
+    transition: background-color 0.3s; /* Transición suave para el fondo */
+    font-weight: bolder;
+}
+
+.card button:hover {
+    background-color: #0056b3; /* Cambiar color al pasar el mouse */
+}
+
+
+
+
+
+/* Estilos para la lista de países */
+#country-list {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los elementos se ajusten a múltiples filas */
+    justify-content: center; /* Centrar los elementos */
+    margin: 20px 0; /* Espacio superior e inferior */
+}
+
+#country-list li {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    margin: 10px; /* Espacio entre los elementos */
+    border-radius: 10px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Efecto de transición */
+    text-align: center; /* Centrar texto */
+    flex: 1 1 150px; /* Flexibilidad para ajustar el tamaño */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+}
+
+#country-list li:hover {
+    background-color: #0056b3; /* Cambiar el color al pasar el mouse */
+    transform: translateY(-3px); /* Efecto de elevación al pasar el mouse */
+}
