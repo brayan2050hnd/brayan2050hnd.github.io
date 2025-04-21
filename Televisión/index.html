@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV en Vivo - Diseño Dinámico</title>
+    <style>
+        :root {
+            /* Sistema de tamaño dinámico */
+            --tamano-cuadro: clamp(90px, 12vw, 180px);
+            --gap-cuadros: clamp(10px, 2vw, 20px);
+            
+            /* Ajustes de diseño */
+            --fuente-titulo: clamp(22px, 3vw, 36px);
+            --fuente-subtitulo: clamp(18px, 2.2vw, 28px);
+            --fuente-cuadro: clamp(12px, 1.5vw, 16px);
+            --max-ancho-contenido: min(95vw, 2000px);
+            --columnas-movil: 3;
+            --columnas-tablet: 4;
+            --columnas-escritorio: 6;
+            --columnas-grande: 8;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #121212;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .contenedor-principal {
+            width: 100%;
+            max-width: var(--max-ancho-contenido);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .titulo-principal {
+            font-size: var(--fuente-titulo);
+            font-weight: bold;
+            margin: 0 0 25px 0;
+            text-align: center;
+            color: #88d3ce;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+        
+        .seccion {
+            margin-bottom: 40px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .titulo-seccion {
+            font-size: var(--fuente-subtitulo);
+            font-weight: bold;
+            margin: 0 0 20px 0;
+            text-align: center;
+            color: #6e45e2;
+            width: 100%;
+        }
+        
+        .contenedor-cuadros {
+            display: grid;
+            grid-template-columns: repeat(var(--columnas-movil), 1fr);
+            gap: var(--gap-cuadros);
+            width: 100%;
+            justify-items: center;
+        }
+        
+        .cuadro {
+            width: var(--tamano-cuadro);
+            height: var(--tamano-cuadro);
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #6e45e2, #88d3ce);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+        
+        .cuadro:hover {
+            transform: scale(1.05);
+        }
+        
+        .titulo-cuadro {
+            font-size: var(--fuente-cuadro);
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            z-index: 2;
+            transition: opacity 0.2s;
+        }
+        
+        .stream {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+        
+        iframe, video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: black;
+        }
+
+        /* Tablet */
+        @media (min-width: 600px) {
+            .contenedor-cuadros {
+                grid-template-columns: repeat(var(--columnas-tablet), 1fr);
+            }
+        }
+
+        /* Escritorio */
+        @media (min-width: 900px) {
+            .contenedor-cuadros {
+                grid-template-columns: repeat(var(--columnas-escritorio), 1fr);
+            }
+        }
+
+        /* Pantallas grandes */
+        @media (min-width: 1200px) {
+            .contenedor-cuadros {
+                grid-template-columns: repeat(var(--columnas-grande), 1fr);
+            }
+            
+            :root {
+                --tamano-cuadro: clamp(100px, 10vw, 160px);
+            }
+        }
+
+        /* Pantallas muy grandes */
+        @media (min-width: 1600px) {
+            :root {
+                --tamano-cuadro: clamp(120px, 8vw, 180px);
+                --gap-cuadros: clamp(15px, 1.5vw, 25px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor-principal">
+        <h1 class="titulo-principal">Canales de TV en Vivo</h1>
+        
+        <!-- Primera Sección -->
+        <div class="seccion">
+            <h2 class="titulo-seccion">Deportes</h2>
+            <div class="contenedor-cuadros">
+                <!-- 8 cuadros de deportes -->
+                <div class="cuadro" onpointerdown="mostrarStream(1)" onpointerup="ocultarStream(1)" onpointerleave="ocultarStream(1)">
+                    <div class="titulo-cuadro">Fútbol</div>
+                    <div class="stream" id="stream1">
+                        <video id="video1" muted>
+                            <source src="https://example.com/futbol.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(2)" onpointerup="ocultarStream(2)" onpointerleave="ocultarStream(2)">
+                    <div class="titulo-cuadro">Béisbol</div>
+                    <div class="stream" id="stream2">
+                        <iframe src="https://www.youtube.com/embed/BEISBOL_ID?autoplay=1&mute=1" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(3)" onpointerup="ocultarStream(3)" onpointerleave="ocultarStream(3)">
+                    <div class="titulo-cuadro">Baloncesto</div>
+                    <div class="stream" id="stream3">
+                        <video id="video3" muted>
+                            <source src="https://example.com/basket.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(4)" onpointerup="ocultarStream(4)" onpointerleave="ocultarStream(4)">
+                    <div class="titulo-cuadro">Tenis</div>
+                    <div class="stream" id="stream4">
+                        <video id="video4" muted>
+                            <source src="https://example.com/tenis.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(5)" onpointerup="ocultarStream(5)" onpointerleave="ocultarStream(5)">
+                    <div class="titulo-cuadro">Fútbol Americano</div>
+                    <div class="stream" id="stream5">
+                        <video id="video5" muted>
+                            <source src="https://example.com/nfl.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(6)" onpointerup="ocultarStream(6)" onpointerleave="ocultarStream(6)">
+                    <div class="titulo-cuadro">Boxeo</div>
+                    <div class="stream" id="stream6">
+                        <video id="video6" muted>
+                            <source src="https://example.com/boxeo.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(7)" onpointerup="ocultarStream(7)" onpointerleave="ocultarStream(7)">
+                    <div class="titulo-cuadro">Golf</div>
+                    <div class="stream" id="stream7">
+                        <video id="video7" muted>
+                            <source src="https://example.com/golf.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(8)" onpointerup="ocultarStream(8)" onpointerleave="ocultarStream(8)">
+                    <div class="titulo-cuadro">Automovilismo</div>
+                    <div class="stream" id="stream8">
+                        <video id="video8" muted>
+                            <source src="https://example.com/f1.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Segunda Sección -->
+        <div class="seccion">
+            <h2 class="titulo-seccion">Noticias</h2>
+            <div class="contenedor-cuadros">
+                <!-- 8 cuadros de noticias -->
+                <div class="cuadro" onpointerdown="mostrarStream(9)" onpointerup="ocultarStream(9)" onpointerleave="ocultarStream(9)">
+                    <div class="titulo-cuadro">Nacionales</div>
+                    <div class="stream" id="stream9">
+                        <video id="video9" muted>
+                            <source src="https://example.com/noticias1.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(10)" onpointerup="ocultarStream(10)" onpointerleave="ocultarStream(10)">
+                    <div class="titulo-cuadro">Internacionales</div>
+                    <div class="stream" id="stream10">
+                        <iframe src="https://www.youtube.com/embed/NOTICIAS_ID?autoplay=1&mute=1" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(11)" onpointerup="ocultarStream(11)" onpointerleave="ocultarStream(11)">
+                    <div class="titulo-cuadro">Finanzas</div>
+                    <div class="stream" id="stream11">
+                        <video id="video11" muted>
+                            <source src="https://example.com/finanzas.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(12)" onpointerup="ocultarStream(12)" onpointerleave="ocultarStream(12)">
+                    <div class="titulo-cuadro">Tecnología</div>
+                    <div class="stream" id="stream12">
+                        <video id="video12" muted>
+                            <source src="https://example.com/tech.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(13)" onpointerup="ocultarStream(13)" onpointerleave="ocultarStream(13)">
+                    <div class="titulo-cuadro">Clima</div>
+                    <div class="stream" id="stream13">
+                        <video id="video13" muted>
+                            <source src="https://example.com/clima.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(14)" onpointerup="ocultarStream(14)" onpointerleave="ocultarStream(14)">
+                    <div class="titulo-cuadro">Salud</div>
+                    <div class="stream" id="stream14">
+                        <video id="video14" muted>
+                            <source src="https://example.com/salud.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(15)" onpointerup="ocultarStream(15)" onpointerleave="ocultarStream(15)">
+                    <div class="titulo-cuadro">Política</div>
+                    <div class="stream" id="stream15">
+                        <video id="video15" muted>
+                            <source src="https://example.com/politica.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(16)" onpointerup="ocultarStream(16)" onpointerleave="ocultarStream(16)">
+                    <div class="titulo-cuadro">Deportes</div>
+                    <div class="stream" id="stream16">
+                        <video id="video16" muted>
+                            <source src="https://example.com/deportes.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tercera Sección -->
+        <div class="seccion">
+            <h2 class="titulo-seccion">Entretenimiento</h2>
+            <div class="contenedor-cuadros">
+                <!-- 8 cuadros de entretenimiento -->
+                <div class="cuadro" onpointerdown="mostrarStream(17)" onpointerup="ocultarStream(17)" onpointerleave="ocultarStream(17)">
+                    <div class="titulo-cuadro">Películas</div>
+                    <div class="stream" id="stream17">
+                        <video id="video17" muted>
+                            <source src="https://example.com/peliculas.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(18)" onpointerup="ocultarStream(18)" onpointerleave="ocultarStream(18)">
+                    <div class="titulo-cuadro">Series</div>
+                    <div class="stream" id="stream18">
+                        <iframe src="https://www.youtube.com/embed/SERIES_ID?autoplay=1&mute=1" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(19)" onpointerup="ocultarStream(19)" onpointerleave="ocultarStream(19)">
+                    <div class="titulo-cuadro">Música</div>
+                    <div class="stream" id="stream19">
+                        <video id="video19" muted>
+                            <source src="https://example.com/musica.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(20)" onpointerup="ocultarStream(20)" onpointerleave="ocultarStream(20)">
+                    <div class="titulo-cuadro">Documentales</div>
+                    <div class="stream" id="stream20">
+                        <video id="video20" muted>
+                            <source src="https://example.com/docu.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(21)" onpointerup="ocultarStream(21)" onpointerleave="ocultarStream(21)">
+                    <div class="titulo-cuadro">Infantiles</div>
+                    <div class="stream" id="stream21">
+                        <video id="video21" muted>
+                            <source src="https://example.com/kids.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(22)" onpointerup="ocultarStream(22)" onpointerleave="ocultarStream(22)">
+                    <div class="titulo-cuadro">Cultura</div>
+                    <div class="stream" id="stream22">
+                        <video id="video22" muted>
+                            <source src="https://example.com/cultura.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(23)" onpointerup="ocultarStream(23)" onpointerleave="ocultarStream(23)">
+                    <div class="titulo-cuadro">Reality</div>
+                    <div class="stream" id="stream23">
+                        <video id="video23" muted>
+                            <source src="https://example.com/reality.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+                <div class="cuadro" onpointerdown="mostrarStream(24)" onpointerup="ocultarStream(24)" onpointerleave="ocultarStream(24)">
+                    <div class="titulo-cuadro">Cocina</div>
+                    <div class="stream" id="stream24">
+                        <video id="video24" muted>
+                            <source src="https://example.com/cocina.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isPressing = false;
+        
+        function mostrarStream(numero) {
+            isPressing = true;
+            const titulo = document.querySelector(`#stream${numero}`).previousElementSibling;
+            const stream = document.getElementById(`stream${numero}`);
+            
+            titulo.style.opacity = '0';
+            stream.style.display = 'block';
+            
+            const video = stream.querySelector('video');
+            if (video) {
+                video.play().catch(e => console.log("Auto-play bloqueado:", e));
+            }
+        }
+        
+        function ocultarStream(numero) {
+            if (!isPressing) return;
+            
+            isPressing = false;
+            const titulo = document.querySelector(`#stream${numero}`).previousElementSibling;
+            const stream = document.getElementById(`stream${numero}`);
+            
+            titulo.style.opacity = '1';
+            stream.style.display = 'none';
+            
+            const video = stream.querySelector('video');
+            if (video) {
+                video.pause();
+            }
+        }
+    </script>
+</body>
+</html>
