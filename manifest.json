@@ -1,0 +1,17 @@
+{
+  "background_color": "#050510",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Nexus",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Nexus",
+  "start_url": "/",
+  "theme_color": "#050510",
+  "id": "com.nombre.app",
+  "description": "DisfrutadelamejortransmisióndecanalesdetodaAméricaenunsololugar.",
+  "categories": [
+    "entertainment",
+    "music"
+  ]
+}
