@@ -9,9 +9,23 @@
   "start_url": "/",
   "theme_color": "#050510",
   "id": "com.nombre.app",
-  "description": "DisfrutadelamejortransmisióndecanalesdetodaAméricaenunsololugar.",
+  "description": "Disfruta de la mejor transmisión de canales de toda América en un solo lugar.",
   "categories": [
     "entertainment",
     "music"
+  ],
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
