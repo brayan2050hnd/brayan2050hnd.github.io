@@ -5,12 +5,57 @@
     "url": "https://live.streamhch.com/live/streams/hch1.m3u8",
     "pais": "HONDURAS"
   },
+  
+  
   {
-    "nombre": "Canal 5",
+    "nombre": "CANAL 5",
     "imagen": "https://i.ytimg.com/vi/gWyadd7duF0/maxresdefault.jpg",
     "url": "https://mdstrm.com/live-stream/6287fdc9303e3008289ab711",
     "pais": "HONDURAS"
   },
+  
+  
+  {
+    "nombre": "CANAL 11",
+    "imagen": "https://images.seeklogo.com/logo-png/33/1/canal-11-honduras-logo-png_seeklogo-332813.png",
+    "url": "https://rudo.video/live/canal11hn",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  {
+    "nombre": "CANAL 10",
+    "imagen": "https://directostv.teleame.com/wp-content/uploads/2016/05/Ten-Canal-10-Honduras-en-vivo-Online.png",
+    "url": "https://geo.dailymotion.com/player/xoc5u.html?video=x8uk5ou",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  {
+    "nombre": "CANAL 6",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Canal6.jpg/250px-Canal6.jpg",
+    "url": "https://envivo.canal6.com.hn/memfs/5a536b3e-954a-4124-a17a-d94bbd0968a2.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
+  {
+    "nombre": "METRO TV",
+    "imagen": "https://i.ytimg.com/vi/lW2BMCRchLs/maxresdefault.jpg",
+    "url": "https://s.emisoras.tv:8081/metrotv/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
   {
     "nombre": "Telefe ",
     "imagen": "https://i.ytimg.com/vi/8eye1VNX1-8/sddefault.jpg",
