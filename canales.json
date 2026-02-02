@@ -1,9 +1,8 @@
 
 
-
 [
   {
-    "nombre": "HCH (Honduras)",
+    "nombre": "HCH",
     "imagen": "https://i.ytimg.com/vi/AX-WjgvKdRA/maxresdefault.jpg",
     "url": "https://live.streamhch.com/live/streams/hch1.m3u8",
     "pais": "HONDURAS"
@@ -86,7 +85,7 @@
   
     {
     "nombre": "CANAL 8",
-    "imagen": "https://i.ytimg.com/vi/lW2BMCRchLs/maxresdefault.jpg",
+    "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMBWPw5iLzw64LNlRmXS6opiClpjaZBzZaK5R3dVdHZLgLs4XKCSKya47V&s=10",
     "url": "https://player.twitch.tv/?channel=canal8streaming&parent=brayan2050hnd.github.io",
     "pais": "HONDURAS"
   },
@@ -97,9 +96,18 @@
   
   
     {
-    "nombre": "METRO TV",
-    "imagen": "https://i.ytimg.com/vi/lW2BMCRchLs/maxresdefault.jpg",
-    "url": "https://s.emisoras.tv:8081/metrotv/index.m3u8",
+    "nombre": "LTV",
+    "imagen": "https://d3ld16hid784z2.cloudfront.net/media/2020/03/cacncan.png",
+    "url": "https://amixtv.com:8081/ltvhn/embed.html",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+   {
+    "nombre": "LA TOP 107.7",
+    "imagen": "https://cdn-profiles.tunein.com/s155986/images/logog.png?t=1",
+    "url": "https://59d39900ebfb8.streamlock.net:443/top107/top107/playlist.m3u8",
     "pais": "HONDURAS"
   },
   
@@ -107,6 +115,52 @@
   
   
   
+   {
+    "nombre": "LA TOP 102.9",
+    "imagen": "https://d32139y4w3ahij.cloudfront.net/wp-content/uploads/2021/02/LA-TOP-102.9.png",
+    "url": "https://59d39900ebfb8.streamlock.net:443/top102/top102/playlist.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+   {
+    "nombre": "AZTECA HONDURAS",
+    "imagen": "https://i.ytimg.com/vi/os-RtVFHffk/maxresdefault.jpg",
+    "url": "https://dvrfl03.bozztv.com/hondu-azteca/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+   {
+    "nombre": "W TV",
+    "imagen": "https://static.vecteezy.com/system/resources/previews/009/019/719/non_2x/wtv-logo-wtv-letter-wtv-letter-logo-design-initials-wtv-logo-linked-with-circle-and-uppercase-monogram-logo-wtv-typography-for-technology-business-and-real-estate-brand-vector.jpg",
+    "url": "https://webmedialive.com/WTV/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
+   {
+    "nombre": "ALSACIAS TV",
+    "imagen": "https://vegatelevision.com/wp-content/uploads/2020/11/22d03db1-f775-4c22-974b-6b87ca71d265.jpg",
+    "url": "https://s.emisoras.tv:8081/atv/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+   {
+    "nombre": "VALLEVISION",
+    "imagen": "https://d3ld16hid784z2.cloudfront.net/media/2020/03/cacncan.png",
+    "url": "https://kick.com/televisiondelvallehn",
+    "pais": "HONDURAS"
+  },
   
   
   
