@@ -57,6 +57,70 @@
   
   
   
+    {
+    "nombre": "DEPORTES TVC",
+    "imagen": "https://s3.amazonaws.com/prod-wp-tvc/wp-content/uploads/2021/05/FONDO-DEPORTES-TVC.jpg",
+    "url": "http://79.143.17.114:25461/get/jJ42wQQwCm7Rq2JD7OPHemhmbER2SVRBVmpPUmNrd0NuNW9Gb1Zxa0YrTld3ZE5qaE9LbVIyVnpad3Vydm9melNSY253YmdITDJyRWxVdjZpaGt2LzRpMGhLR09xRmZJMEV1YkxBPT0.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+    {
+    "nombre": "CCI TV",
+    "imagen": "https://cdn.aptoide.com/imgs/5/9/4/5944bcea1c2f8f558c126405e0903bce_fgraphic.png",
+    "url": "https://livestream.mediacci.com/ccitv/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "TELEPAIS",
+    "imagen": "https://linktr.ee/og/image/telepaishonduras.jpg",
+    "url": "https://tv.webmedialive.com/teleprogreso/live/playlist.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+    {
+    "nombre": "CANAL 8",
+    "imagen": "https://i.ytimg.com/vi/lW2BMCRchLs/maxresdefault.jpg",
+    "url": "https://player.twitch.tv/?channel=canal8streaming&parent=brayan2050hnd.github.io",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
+  
+    {
+    "nombre": "METRO TV",
+    "imagen": "https://i.ytimg.com/vi/lW2BMCRchLs/maxresdefault.jpg",
+    "url": "https://s.emisoras.tv:8081/metrotv/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    {
+    "nombre": "METRO TV",
+    "imagen": "https://i.ytimg.com/vi/lW2BMCRchLs/maxresdefault.jpg",
+    "url": "https://s.emisoras.tv:8081/metrotv/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
   
   
   {
