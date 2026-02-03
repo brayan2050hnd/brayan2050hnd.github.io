@@ -1,6 +1,5 @@
 
 
-
 [
   {
     "nombre": "HCH",
@@ -169,7 +168,7 @@
     {
     "nombre": "LENCA TV",
     "imagen": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2dhgx6vNjkid98Xy2LBioK4YN6jYXFVT88NwFQcxdvt-4eCmVQ1JUqn6pM9F9b0nLgSk2r1cgDXrjyEsnrTlaBTFdaXIUPDmPU1LiCPT9utPXUnmbB4Vhyqug111_vcnv-e7MhR5pMUg/s1600-rw/Lenca+Canal+40.png",
-    "url": "https://globoview.cam/directorio/HN/LencaTV.hn",
+    "url": "https://www.lencatelevision.com/hls/stream.m3u8",
     "pais": "HONDURAS"
   },
   
@@ -240,6 +239,51 @@
   },
   
   
+  
+   {
+    "nombre": "SULA TV",
+    "imagen": "https://m.media-amazon.com/images/I/71FOdsCN2qL.png",
+    "url": "https://webmedialive.com/SULATV/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+   {
+    "nombre": "EBENEZER TV",
+    "imagen": "https://i.ytimg.com/vi/zx_bBiiYvBk/maxresdefault.jpg",
+    "url": "https://5e85d90130e77.streamlock.net:443/6010/ngrp:6010_all/playlist.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+   {
+    "nombre": "TELEDANLI",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/0/0e/TeleDanli_Canal_9_HD.jpg",
+    "url": "https://live20.bozztv.com/giatv/giatv-canal9/canal9/chunks.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+   {
+    "nombre": "RHC",
+    "imagen": "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/46/a8/d3/46a8d34f-d0c3-dd5f-e95f-470ed2fca7cd/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/1200x630wa.png",
+    "url": "https://my.viewhn.com:2443/client/embed.php?user=rhctv",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+   {
+    "nombre": "MN TV",
+    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
+    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "pais": "HONDURAS"
+  },
   
   
   
