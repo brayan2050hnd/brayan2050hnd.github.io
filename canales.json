@@ -287,6 +287,146 @@
   
   
   
+    {
+    "nombre": "SAN MARCOS TV",
+    "imagen": "https://i.ytimg.com/vi/0X2uGe4szO8/hqdefault.jpg",
+    "url": "https://video.bdnethn.com:19360/tvsanmarcos/tvsanmarcos.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "ACTIVA TV",
+    "imagen": "https://i1.sndcdn.com/artworks-000022775185-uw4y2s-t500x500.jpg",
+    "url": "",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "KERUSSO TV",
+    "imagen": "https://image.roku.com/developer_channels/prod/a60acef61e8076cef720f9ede9a6c059840df02146e8a10e9b8af784968f49e6.png",
+    "url": "https://s.emisoras.tv:8081/kerussotv/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "TELERAYO",
+    "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeNAZyfnx6ZA8r5WmtX3jsc9HLRFqbSklcgqSfXe12j5Wk1ztoPmpc_FWa&s=10",
+    "url": "https://s.emisoras.tv:8081/telerayo/index.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+    {
+    "nombre": "CANAL 30 OLANCHO",
+    "imagen": "https://televisionolanchana.com/wp-content/uploads/2024/02/logo_tvo2_462.png",
+    "url": "https://my.viewhn.com:2443/client/embed.php?user=canal30catacamas",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "LITORAL ATLANTICO",
+    "imagen": "https://pbs.twimg.com/profile_images/867747338261069824/ZDd9A-rG_400x400.jpg",
+    "url": "https://cdn4.streamgato.us/live-stream-video-widget/litoralhd",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "AZA TV",
+    "imagen": "https://cigars.roku.com/v1/contain/800x454/https%3A%2F%2Fimage.roku.com%2Fdeveloper_channels%2Fprod%2F11f872d6b0ede2aa4383b04284f8720669c7c95604ec6624dd217793ee515ae8.jpg",
+    "url": "https://azatvhdhn.com/tv/?autoplay=1",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "RCV TV",
+    "imagen": "https://cdn-profiles.tunein.com/s143479/images/logog.jpg?t=1702657763000",
+    "url": "https://59d39900ebfb8.streamlock.net/rcv/rcv/playlist.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+    {
+    "nombre": "CANAL 51",
+    "imagen": "https://mir-s3-cdn-cf.behance.net/projects/404/a0f5ef78362621.Y3JvcCw5ODEsNzY4LDE5Miww.png",
+    "url": "https://live.cn51hn.com/live/cn51.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+    {
+    "nombre": "TELECEIBA",
+    "imagen": "https://www.empleandomentes.org/wp-content/uploads/2024/05/LOGOS-PATROCINADORES-TELECEIBA.png",
+    "url": "https://teleceiba.com/stream/tlcb720.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "TSI",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/f/ff/TSi_logo.png",
+    "url": "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "MN TV",
+    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
+    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+    {
+    "nombre": "MN TV",
+    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
+    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
+    {
+    "nombre": "MN TV",
+    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
+    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+    {
+    "nombre": "MN TV",
+    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
+    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  
+  
   
   
   {
