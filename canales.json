@@ -1,5 +1,4 @@
 
-
 [
   {
     "nombre": "HCH",
@@ -386,18 +385,18 @@
   
   
     {
-    "nombre": "MN TV",
-    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
-    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "nombre": "TV CENTRO",
+    "imagen": "https://yt3.googleusercontent.com/YywZ7uEdq2_LqNg5zUJcKFzqPiSKGOJV9jf9Mb8d8w3SHXBhezGm_UqawyVtTR94eUUG5aLyAA=s900-c-k-c0x00ffffff-no-rj",
+    "url": "https://cloud2.streaminglivehd.com:1936/8032/8032/playlist.m3u8",
     "pais": "HONDURAS"
   },
   
   
   
     {
-    "nombre": "MN TV",
-    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
-    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "nombre": "PURINGLA TV",
+    "imagen": "https://dvw7f7sqjk3ag.cloudfront.net/images/radio/61615.png",
+    "url": "https://stmv2.srvif.com/puringla/puringla/playlist.m3u8",
     "pais": "HONDURAS"
   },
   
@@ -406,9 +405,9 @@
   
   
     {
-    "nombre": "MN TV",
-    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
-    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "nombre": "GLOBO TV",
+    "imagen": "https://globotvhonduras.com/assets/images/index-meta.png",
+    "url": "https://radiosmundiales.com/globotv",
     "pais": "HONDURAS"
   },
   
@@ -416,9 +415,9 @@
   
   
     {
-    "nombre": "MN TV",
-    "imagen": "https://i.ytimg.com/vi/O7TY_DjmTXw/hqdefault_live.jpg",
-    "url": "https://amixtv.com:8081/plus39/embed.html",
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
     "pais": "HONDURAS"
   },
   
@@ -436,3 +435,4 @@
     "pais": "ARGENTINA"
   }
 ]
+
