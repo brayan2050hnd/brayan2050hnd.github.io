@@ -422,6 +422,105 @@
   },
   
   
+  {
+    "nombre": "MAYA TV",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/7/77/Maya_TV_logo.png",
+    "url": "https://media.streambrothers.com:2000/VideoPlayer/8036?autoplay=1",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "RSV TV",
+    "imagen": "https://rsvhonduras.com/favImage.png",
+    "url": "https://stmv2.srvif.com/rsvhonduras/rsvhonduras/playlist.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "VENUS TV",
+    "imagen": "https://pbs.twimg.com/profile_images/2320377887/LOGO_VENUS_TV_400x400.png",
+    "url": "https://player.twitch.tv/?channel=venushd2025&parent=brayan2050hnd.github.io",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "TELEMAS",
+    "imagen": "https://m.media-amazon.com/images/I/61j9+h41MQL.jpg",
+    "url": "https://my.viewhn.com:2443/client/embed.php?user=telemas",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "RTV ",
+    "imagen": "https://cigars.roku.com/v1/contain/800x454/https%3A%2F%2Fimage.roku.com%2Fdeveloper_channels%2Fprod%2Fb0f0f64ec812909c3914d49c7ac1286f2b6ba24078143faeb125577ea62563d5.jpg",
+    "url": "https://amixtv.com:8081/rtvhn/index.fmp4.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "JBN",
+    "imagen": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBpWe5eJRT-5hvX9vjjq0honAO9zBHvx0DtyJ9reZ5xVLHQbGBV85zLktaBS7JEmC6QovPhg-t1dvpuWBQAoKiFjt6QUEMxCxRod2iRuW_yNhIMHa_l-Hr2SlGLp6zpmx08BKHE9GirQA/s1600-rw/Canal+JBN.png",
+    "url": "https://tv.webmedialive.com/jbn_live/enlace/playlist.m3u8",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  {
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  {
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  {
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  
+  {
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+    "pais": "HONDURAS"
+  },
+  
+  
+  
+  {
+    "nombre": "STVE TELEBASICA",
+    "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
+    "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+    "pais": "HONDURAS"
+  },
   
   
   
