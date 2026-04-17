@@ -12,15 +12,75 @@
     "pais": "USA"
   },
   {
+    "nombre": "AMC",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amc_logo_2013.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://teleon.tv/embed/NGYzYzJhNTQ3OTk0ZjNjMmEAOF/",
+    "pais": "USA"
+  },
+  {
     "nombre": "ANIMAL PLANET",
     "imagen": "https://1000marcas.net/wp-content/uploads/2020/11/Animal-Planet-Logo.jpg",
     "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/46_.m3u8",
     "pais": "USA"
   },
   {
+    "nombre": "CBS",
+    "imagen": "https://wwwimage-tve.cbsstatic.com/base/files/seo/cbs_seo_1200x627_1.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://www.cbsnews.com/common/video/cbsn-ny-prod.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "ABC",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/American_Broadcasting_Company_Logo.svg/960px-American_Broadcasting_Company_Logo.svg.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=http://41.205.93.154/ABC/index.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "NBC NEW NOW",
+    "imagen": "https://m.media-amazon.com/images/I/41PtwoTtFSL.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://aegis-cloudfront-1.tubi.video/605fb6ea-f89c-451a-873c-030cb726b493/master.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "PBS",
+    "imagen": "https://s3.amazonaws.com/media.mediapost.com/dam/cropped/2019/11/05/01_pbs_logo_BEODoWF.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://ustream.to/embed?olweb&id=pbs-usa",
+    "pais": "USA"
+  },
+  {
+    "nombre": "COZI TV",
+    "imagen": "https://cdn.mos.cms.futurecdn.net/A2nAS4YiEfQAmjp87PbJ78-1200-80.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=http://173.225.32.123/Cozi-2358/index.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "LOCALISH",
+    "imagen": "https://cdn1.edgedatg.com/aws/v2/abc/Localish/showimages/471adb0d6f19bba6f0392a17b21370c9/1200x627-Q80_471adb0d6f19bba6f0392a17b21370c9.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://aegis-cloudfront-1.tubi.video/0ecc85a2-5e1b-482a-9c69-3eaaee160f2e/index.m3u8",
+    "pais": "USA"
+  },
+  {
     "nombre": "TELEMUNDO",
     "imagen": "https://www.brandemia.org/wp-content/uploads/2013/02/logo_telemundo_principal.jpg",
     "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/6_.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "HSN TV",
+    "imagen": "https://download.logo.wine/logo/Home_Shopping_Network/Home_Shopping_Network-Logo.wine.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://qvc-amd-live.akamaized.net/hls/live/2034113/lshsn1us/master.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "QVC",
+    "imagen": "https://1000logos.net/wp-content/uploads/2017/12/QVC-emblem.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://qrg.akamaized.net/hls/live/2017383/lsqvc1it/master.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "USA NETWORK",
+    "imagen": "https://i.pinimg.com/736x/c8/e6/a1/c8e6a119bf88e774ccc0b3e0a324f76b.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/57_.m3u8",
     "pais": "USA"
   },
   {
@@ -42,6 +102,36 @@
     "pais": "USA"
   },
   {
+    "nombre": "BBC AMERICA",
+    "imagen": "https://i.ytimg.com/vi/7K2KyxMS-DY/maxresdefault.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://bcovlive-a.akamaihd.net/7f5ec16d102f4b5d92e8e27bc95ff424/us-east-1/6240731308001/playlist.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "COMEDY CENTRAL",
+    "imagen": "https://www.paramountshop.com/cdn/shop/files/comedy-central-logo-die-cut-sticker-552629.png?v=1718289087",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://viamotionhsi.netplus.ch/live/eds/comedycentral/browser-HLS8/comedycentral.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "PARAMOUNT CHANNEL",
+    "imagen": "https://www.newslinereport.com/online/nota_paramount-channel-expande-su-distribucin-a-travs-de-claro.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/62_.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "NATIONAL GEOGRAPHIC",
+    "imagen": "https://1000marcas.net/wp-content/uploads/2020/03/National-Geographic-Color.jpg",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/47_.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "CNN",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/CNN_International_logo.svg/960px-CNN_International_logo.svg.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://ds2c506obo7m8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-7zjq3tdqasbg8/index.m3u8",
+    "pais": "USA"
+  },
+  {
     "nombre": "DISNEY CHANNEL",
     "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/2014_Disney_Channel_logo.svg/1280px-2014_Disney_Channel_logo.svg.png",
     "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/28_.m3u8",
@@ -52,6 +142,17 @@
     "imagen": "https://brandemia.org/contenido/subidas/2022/04/brandemia-cartoon-network-esteban-zamora-rediseno-2022-1-1200x670.jpg",
     "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/31_.m3u8",
     "pais": "USA"
+  },
+  {
+    "nombre": "GOLDEN",
+    "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_logo.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/69_.m3u8",
+    "pais": "USA"
+  },
+  {
+    "nombre": "EXPRESA TV",
+    "imagen": "https://expresatv.com.mx/wp-content/uploads/2023/04/expresa-600x200-1.png",
+    "url": "http://nexusipv.rf.gd/get.php?url=https://conceptoweb-studio.com/radio/video/teleradio",
+    "pais": "USA"
   }
 ]
-
