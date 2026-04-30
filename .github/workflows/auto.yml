@@ -2,18 +2,17 @@ name: Actualizador de Canales
 
 on:
   schedule:
-    # Se ejecuta cada 3 horas
     - cron: '0 */3 * * *'
-  # Permite ejecutarlo manualmente
   workflow_dispatch:
 
-# Damos permisos explícitos para que el bot pueda escribir en el repositorio
 permissions:
   contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
@@ -23,17 +22,16 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Instalar librerías necesarias
+      - name: Instalar librerías
         run: pip install cloudscraper
 
-      - name: Ejecutar el script cazador
+      - name: Ejecutar script
         run: python cazador.py
 
-      - name: Guardar cambios en GitHub
+      - name: Subir cambios
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mexico.json
-          # Solo hace el commit si hubo cambios reales
-          git commit -m "Bot: Link de Distrito Comedia actualizado" || exit 0
-          git push
+          git commit -m "Actualización automática de link" || exit 0
+          git push origin main
