@@ -1,78 +1,82 @@
 import cloudscraper
 import re
 import json
+import base64
+
+def decodificar_base64(texto):
+    try:
+        # Intenta traducir textos ocultos que podrían ser el link
+        if len(texto) > 20:
+            decode = base64.b64decode(texto).decode('utf-8')
+            if ".m3u8" in decode:
+                return decode
+    except:
+        return None
+    return None
 
 def actualizar_json():
-    # Usamos un scraper que simula un navegador real para evitar bloqueos
     scraper = cloudscraper.create_scraper(
         browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
     )
     
     fuente = "https://deporflix.net/canales/distrito-comedia/"
-    print(f"Iniciando búsqueda profunda en: {fuente}")
+    print(f"Iniciando búsqueda de links ocultos en: {fuente}")
 
     try:
-        # 1. Obtener la página principal
         headers = {'Referer': 'https://deporflix.net/'}
-        response = scraper.get(fuente, headers=headers, timeout=15).text
+        html = scraper.get(fuente, headers=headers, timeout=15).text
         
-        # 2. Buscar todos los links posibles (m3u8, directos o en variables JS)
-        # Este patrón atrapa links incluso si están dentro de código JavaScript
-        patrones = [
-            r'["\'](https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*?)["\']',
-            r'source\s*:\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
-            r'file\s*:\s*["\']([^"\']+\.m3u8[^"\']*)["\']'
-        ]
+        # 1. Buscar links normales
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', html)
         
-        links_encontrados = []
-        for p in patrones:
-            links_encontrados.extend(re.findall(p, response))
+        # 2. Buscar dentro de textos sospechosos (Base64)
+        if not links:
+            print("Buscando links encriptados...")
+            sospechosos = re.findall(r'["\']([A-Za-z0-9+/]{40,})={0,2}["\']', html)
+            for texto in sospechosos:
+                descifrado = decodificar_base64(texto)
+                if descifrado:
+                    links.append(descifrado)
+                    break
 
-        # 3. Si no hay links, buscar dentro de los IFRAMES de video
-        if not links_encontrados:
-            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+        # 3. Revisar reproductores internos (iframes)
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', html)
             for f_url in iframes:
-                if any(x in f_url.lower() for x in ['.jpg', '.png', '.js', '.css', 'google', 'analytics', 'facebook']):
-                    continue
-                
-                print(f"Explorando reproductor interno: {f_url}")
+                if any(x in f_url.lower() for x in ['.jpg', '.js', 'google', 'analytics']): continue
                 try:
-                    f_res = scraper.get(f_url, headers={'Referer': fuente}, timeout=10).text
-                    for p in patrones:
-                        links_encontrados.extend(re.findall(p, f_res))
-                    if links_encontrados: break
-                except:
-                    continue
+                    f_html = scraper.get(f_url, headers={'Referer': fuente}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_html))
+                    if links: break
+                except: continue
 
-        if not links_encontrados:
-            print("AVISO: El video está protegido o encriptado. No se detectó URL pública.")
+        if not links:
+            print("LA WEB ES IMPENETRABLE: El link está protegido por tokens dinámicos.")
             return
 
-        # Limpiar el link (quitar barras inclinadas de escape si existen)
-        nuevo_link = links_encontrados[0].replace('\\/', '/')
-        print(f"¡LOGRADO!: {nuevo_link}")
+        nuevo_link = links[0].replace('\\/', '/').split('"')[0]
+        print(f"¡LO TENGO!: {nuevo_link}")
 
-        # 4. Actualizar mexico.json
+        # 4. Guardar en mexico.json
         with open('mexico.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        cambio = False
+        actualizado = False
         for canal in data:
             if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
                 if canal['url'] != nuevo_link:
                     canal['url'] = nuevo_link
-                    cambio = True
-                    print(f"Actualizando {canal['nombre']}...")
+                    actualizado = True
 
-        if cambio:
+        if actualizado:
             with open('mexico.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            print("Cambios guardados en mexico.json.")
+            print("Archivo mexico.json actualizado correctamente.")
         else:
-            print("El link ya es el más reciente.")
+            print("No hubo cambios, el link ya es el correcto.")
 
     except Exception as e:
-        print(f"Error durante la ejecución: {e}")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     actualizar_json()
