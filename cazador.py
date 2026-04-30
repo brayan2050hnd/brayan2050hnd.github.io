@@ -1,91 +1,61 @@
 import cloudscraper
 import re
 import json
-import base64
-
-def decodificar_base64(texto):
-    try:
-        if len(texto) > 20:
-            decode = base64.b64decode(texto).decode('utf-8')
-            if ".m3u8" in decode:
-                return decode
-    except:
-        pass
-    return None
 
 def actualizar_json():
     scraper = cloudscraper.create_scraper(
-        browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True}
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
     )
     
-    fuente = "https://elnovelerovariadito.com/2024/07/distrito-comedia-en-vivo/"
-    print(f"Rastreando nueva página: {fuente}")
+    # URL de la página y el iframe que detectamos en el log anterior
+    url_web = "https://elnovelerovariadito.com/2024/07/distrito-comedia-en-vivo/"
+    url_iframe = "https://embed.ksdjugfsddeports.com/embed2/distritocomedia.html"
+
+    print(f"Atacando fuente: {url_web}")
 
     try:
+        # 1. Engañamos al servidor diciendo que venimos de la web oficial
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-            'Referer': 'https://www.google.com/'
+            'Referer': url_web,
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36'
         }
         
-        response = scraper.get(fuente, headers=headers, timeout=15).text
+        # 2. Entramos directo al reproductor
+        response = scraper.get(url_iframe, headers=headers, timeout=15).text
         
-        # 1. Buscar de forma normal
-        links = re.findall(r'(https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*)', response)
-        
-        # 2. Si no está a simple vista, buscar en reproductores (iframes)
-        if not links:
-            print("Buscando en reproductores internos (iframes)...")
-            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
-            
-            for f_url in iframes:
-                if any(x in f_url.lower() for x in ['.jpg', '.png', '.js', '.css', 'google', 'facebook', 'twitter', 'youtube']):
-                    continue
-                
-                print(f"Revisando iframe: {f_url}")
-                try:
-                    f_res = scraper.get(f_url, headers={'Referer': fuente}, timeout=10).text
-                    # Buscar m3u8 directo
-                    links.extend(re.findall(r'(https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*)', f_res))
-                    
-                    # Buscar en base64 por si está encriptado
-                    sospechosos = re.findall(r'["\']([A-Za-z0-9+/]{40,})={0,2}["\']', f_res)
-                    for texto in sospechosos:
-                        descifrado = decodificar_base64(texto)
-                        if descifrado:
-                            links.append(descifrado)
-                            
-                    if links: break
-                except:
-                    continue
+        # 3. Buscamos el patrón del link que viste en Web Video Caster
+        # Buscamos cualquier cosa que empiece por http y termine en .m3u8
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
 
         if not links:
-            print("ERROR: No encontré el .m3u8. El código fuente oculta el link en peticiones de red.")
-            return
+            # Intento 2: Buscar links que estén "escapados" con barras (/)
+            links = re.findall(r'https?:\\/\\/[^\s<>"\']+?\.m3u8', response)
 
-        # Limpiar el link
-        nuevo_link = links[0].replace('\\/', '/').replace('\\', '')
-        print(f"¡BINGO, LO ENCONTRÉ!: {nuevo_link}")
+        if not links:
+            print("Página muy protegida. Intentando método de emergencia...")
+            # Si no hay m3u8, buscamos el servidor 'saohgdasregions' que viste en tu captura
+            links = re.findall(r'https?://[^\s<>"\']+?saohgdasregions[^\s<>"\']*', response)
 
-        # Guardar en mexico.json
-        with open('mexico.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        if links:
+            nuevo_link = links[0].replace('\\/', '/').split('"')[0].split("'")[0]
+            print(f"¡LO CAPTURÉ!: {nuevo_link}")
 
-        cambio = False
-        for canal in data:
-            if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
-                if canal['url'] != nuevo_link:
+            # Actualizar el JSON
+            with open('mexico.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            for canal in data:
+                if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
                     canal['url'] = nuevo_link
-                    cambio = True
 
-        if cambio:
             with open('mexico.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            print("¡Éxito! Archivo mexico.json actualizado.")
+            print("mexico.json actualizado con éxito.")
         else:
-            print("El link ya está actualizado en tu JSON.")
+            print("No se pudo extraer el link automáticamente. El servidor requiere una sesión activa.")
 
     except Exception as e:
-        print(f"Error durante el rastreo: {e}")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     actualizar_json()
