@@ -5,42 +5,37 @@ import json
 def actualizar_json():
     scraper = cloudscraper.create_scraper()
     url_fuente = "https://deporflix.net/canales/distrito-comedia/"
-    
     try:
-        # 1. Capturamos el link m3u8
         response = scraper.get(url_fuente).text
         links = re.findall(r'https?://[^\s<>"]+?\.m3u8[^\s<>"]*', response)
-        
         if not links:
-            print("No se encontró el link en la web")
+            print("No se encontró link m3u8 en la web")
             return
-
         nuevo_link = links[0]
-        print(f"Link nuevo hallado: {nuevo_link}")
-
-        # 2. Leemos el archivo mexico.json
+        
         with open('mexico.json', 'r', encoding='utf-8') as f:
-            canales = json.load(f)
+            data = json.load(f)
 
-        # 3. Buscamos y actualizamos
-        actualizado = False
-        for canal in canales:
-            # Esto busca "DISTRITO COMEDIA" sin importar si hay espacios extra
-            if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
+        encontrado = False
+        for canal in data:
+            # Buscamos 'DISTRITO COMEDIA' exactamente como está en tu foto
+            if "DISTRITO COMEDIA" in canal.get('nombre', ''):
                 canal['url'] = nuevo_link
-                actualizado = True
-                print("¡Se encontró el canal y se cambió la URL!")
+                encontrado = True
+                print(f"¡Canal encontrado! Nueva URL: {nuevo_link}")
 
-        # 4. Solo guardamos si realmente hubo un cambio
-        if actualizado:
+        if encontrado:
             with open('mexico.json', 'w', encoding='utf-8') as f:
-                json.dump(canales, f, indent=4, ensure_ascii=False)
-            print("Cambios guardados en mexico.json")
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            print("Archivo mexico.json guardado con éxito localmente")
         else:
-            print("OJO: No se encontró ningún canal con el nombre DISTRITO COMEDIA")
+            print("ERROR: No se encontró el nombre 'DISTRITO COMEDIA' en el JSON")
+            # Imprime los nombres que sí encuentra para ver el error
+            nombres = [c.get('nombre') for c in data[:3]]
+            print(f"Nombres encontrados en el archivo: {nombres}")
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error crítico: {e}")
 
 if __name__ == "__main__":
     actualizar_json()
