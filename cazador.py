@@ -2,60 +2,67 @@ import cloudscraper
 import re
 import json
 
-def buscar_m3u8(url, scraper):
-    try:
-        html = scraper.get(url).text
-        # Busca el link .m3u8
-        links = re.findall(r'https?://[^\s<>"]+?\.m3u8[^\s<>"]*', html)
-        if links:
-            return links[0]
-        
-        # Si no hay link, busca si hay una ventana interna (iframe)
-        iframes = re.findall(r'<iframe.*?src=["\'](.*?)["\']', html)
-        for frame_url in iframes:
-            if "http" not in frame_url: continue # Saltar links relativos
-            print(f"Probando ventana interna: {frame_url}")
-            link_interno = buscar_m3u8(frame_url, scraper)
-            if link_interno:
-                return link_interno
-        return None
-    except:
-        return None
-
 def actualizar_json():
-    scraper = cloudscraper.create_scraper()
-    fuente = "https://deporflix.net/canales/distrito-comedia/"
+    # Simulamos ser un celular Android para que no nos bloqueen
+    scraper = cloudscraper.create_scraper(
+        browser={
+            'browser': 'chrome',
+            'platform': 'android',
+            'desktop': False
+        }
+    )
     
-    print(f"Buscando en: {fuente}")
-    nuevo_link = buscar_m3u8(fuente, scraper)
-    
-    if not nuevo_link:
-        print("ERROR: Sigo sin encontrar el link. Puede que la web use protección avanzada.")
-        return
-
-    print(f"¡Link encontrado!: {nuevo_link}")
+    url_fuente = "https://deporflix.net/canales/distrito-comedia/"
+    print(f"Intentando entrar a: {url_fuente}")
 
     try:
+        # 1. Obtenemos el contenido de la web
+        response = scraper.get(url_fuente, timeout=15)
+        html = response.text
+
+        # 2. Buscador ultra-sensible de links .m3u8
+        # Busca links directos, entre comillas, o en código oculto
+        patron = r'(https?://[\w\.\/\-\%\?\&\=\#\:]+\.m3u8[\w\.\/\-\%\?\&\=\#\:]*)'
+        links = re.findall(patron, html)
+
+        if not links:
+            # Si falla, intentamos buscar dentro de los "iframes" (ventanas internas)
+            frames = re.findall(r'src=["\'](https?://.*?)["\']', html)
+            for f_url in frames:
+                if "m3u8" not in f_url: 
+                    print(f"Buscando dentro de ventana: {f_url}")
+                    html_f = scraper.get(f_url).text
+                    links = re.findall(patron, html_f)
+                    if links: break
+
+        if not links:
+            print("ERROR: La web bloqueó al bot o cambió su estructura.")
+            return
+
+        nuevo_link = links[0].split('\\')[0].replace('"', '').replace("'", "")
+        print(f"¡LO ENCONTRÉ!: {nuevo_link}")
+
+        # 3. Actualizar el archivo JSON
         with open('mexico.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        actualizado = False
+        modificado = False
         for canal in data:
             if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
                 if canal['url'] != nuevo_link:
+                    print(f"Cambiando link viejo por el nuevo...")
                     canal['url'] = nuevo_link
-                    actualizado = True
-                    print("URL actualizada en el archivo.")
-                else:
-                    print("El link ya estaba actualizado.")
+                    modificado = True
 
-        if actualizado:
+        if modificado:
             with open('mexico.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            print("Cambios guardados con éxito.")
-            
+            print("ARCHIVO ACTUALIZADO CON ÉXITO.")
+        else:
+            print("El link ya es el más reciente, no hubo cambios.")
+
     except Exception as e:
-        print(f"Error procesando el JSON: {e}")
+        print(f"FALLO CRÍTICO: {e}")
 
 if __name__ == "__main__":
     actualizar_json()
