@@ -2,40 +2,60 @@ import cloudscraper
 import re
 import json
 
+def buscar_m3u8(url, scraper):
+    try:
+        html = scraper.get(url).text
+        # Busca el link .m3u8
+        links = re.findall(r'https?://[^\s<>"]+?\.m3u8[^\s<>"]*', html)
+        if links:
+            return links[0]
+        
+        # Si no hay link, busca si hay una ventana interna (iframe)
+        iframes = re.findall(r'<iframe.*?src=["\'](.*?)["\']', html)
+        for frame_url in iframes:
+            if "http" not in frame_url: continue # Saltar links relativos
+            print(f"Probando ventana interna: {frame_url}")
+            link_interno = buscar_m3u8(frame_url, scraper)
+            if link_interno:
+                return link_interno
+        return None
+    except:
+        return None
+
 def actualizar_json():
     scraper = cloudscraper.create_scraper()
-    url_fuente = "https://deporflix.net/canales/distrito-comedia/"
+    fuente = "https://deporflix.net/canales/distrito-comedia/"
+    
+    print(f"Buscando en: {fuente}")
+    nuevo_link = buscar_m3u8(fuente, scraper)
+    
+    if not nuevo_link:
+        print("ERROR: Sigo sin encontrar el link. Puede que la web use protección avanzada.")
+        return
+
+    print(f"¡Link encontrado!: {nuevo_link}")
+
     try:
-        response = scraper.get(url_fuente).text
-        links = re.findall(r'https?://[^\s<>"]+?\.m3u8[^\s<>"]*', response)
-        if not links:
-            print("No se encontró link m3u8 en la web")
-            return
-        nuevo_link = links[0]
-        
         with open('mexico.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        encontrado = False
+        actualizado = False
         for canal in data:
-            # Buscamos 'DISTRITO COMEDIA' exactamente como está en tu foto
-            if "DISTRITO COMEDIA" in canal.get('nombre', ''):
-                canal['url'] = nuevo_link
-                encontrado = True
-                print(f"¡Canal encontrado! Nueva URL: {nuevo_link}")
+            if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
+                if canal['url'] != nuevo_link:
+                    canal['url'] = nuevo_link
+                    actualizado = True
+                    print("URL actualizada en el archivo.")
+                else:
+                    print("El link ya estaba actualizado.")
 
-        if encontrado:
+        if actualizado:
             with open('mexico.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            print("Archivo mexico.json guardado con éxito localmente")
-        else:
-            print("ERROR: No se encontró el nombre 'DISTRITO COMEDIA' en el JSON")
-            # Imprime los nombres que sí encuentra para ver el error
-            nombres = [c.get('nombre') for c in data[:3]]
-            print(f"Nombres encontrados en el archivo: {nombres}")
-
+            print("Cambios guardados con éxito.")
+            
     except Exception as e:
-        print(f"Error crítico: {e}")
+        print(f"Error procesando el JSON: {e}")
 
 if __name__ == "__main__":
     actualizar_json()
