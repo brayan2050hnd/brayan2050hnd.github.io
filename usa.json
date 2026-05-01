@@ -1,455 +1,302 @@
-
 [
-  
-  
-  
-  {
-    "nombre": "A&E",
-    "imagen": "https://1000marcas.net/wp-content/uploads/2021/04/AE-logo.jpg",
-    "url": "http://201.217.246.42:44310/Live/3fcb6e26785fd8d415571b26dc3cf5d3/local-71_480.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-  
-  {
-    "nombre": "Al JAZEERA ENGLISH",
-    "imagen": "https://emergencyuk.org/wp-content/uploads/2017/03/Aljazeera-logo-English-1024x768-1024x768.png",
-    "url": "https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-  {
-    "nombre": "AMC",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amc_logo_2013.png",
-    "url": "https://teleon.tv/embed/NGYzYzJhNTQ3OTk0ZjNjMmEAOF/",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-  {
-    "nombre": "ANIMAL PLANET",
-    "imagen": "https://1000marcas.net/wp-content/uploads/2020/11/Animal-Planet-Logo.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/46_.m3u8?token=UXkb-XqOaHDjqSmIkhxfHA&expires=1772737154",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-  
-  
-  {
-    "nombre": "CBS",
-    "imagen": "https://wwwimage-tve.cbsstatic.com/base/files/seo/cbs_seo_1200x627_1.jpg",
-    "url": "https://www.cbsnews.com/common/video/cbsn-ny-prod.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-  {
-    "nombre": "ABC",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/American_Broadcasting_Company_Logo.svg/960px-American_Broadcasting_Company_Logo.svg.png",
-    "url": "http://41.205.93.154/ABC/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "NBC NEW NOW",
-    "imagen": "https://m.media-amazon.com/images/I/41PtwoTtFSL.png",
-    "url": "https://aegis-cloudfront-1.tubi.video/605fb6ea-f89c-451a-873c-030cb726b493/master.m3u8",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "PBS",
-    "imagen": "https://s3.amazonaws.com/media.mediapost.com/dam/cropped/2019/11/05/01_pbs_logo_BEODoWF.png",
-    "url": "https://ustream.to/embed?olweb&id=pbs-usa",
-    "pais": "USA"
-  },
-  
-  
-  
-   {
-    "nombre": "COZI TV",
-    "imagen": "https://cdn.mos.cms.futurecdn.net/A2nAS4YiEfQAmjp87PbJ78-1200-80.jpg",
-    "url": "http://173.225.32.123/Cozi-2358/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "LOCALISH",
-    "imagen": "https://cdn1.edgedatg.com/aws/v2/abc/Localish/showimages/471adb0d6f19bba6f0392a17b21370c9/1200x627-Q80_471adb0d6f19bba6f0392a17b21370c9.jpg",
-    "url": "https://aegis-cloudfront-1.tubi.video/0ecc85a2-5e1b-482a-9c69-3eaaee160f2e/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-   {
-    "nombre": "TELEMUNDO",
-    "imagen": "https://www.brandemia.org/wp-content/uploads/2013/02/logo_telemundo_principal.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/6_.m3u8?token=J3f5XH6NzqedvZA6C1sjfA&expires=1772825184",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "HSN TV",
-    "imagen": "https://download.logo.wine/logo/Home_Shopping_Network/Home_Shopping_Network-Logo.wine.png",
-    "url": "https://qvc-amd-live.akamaized.net/hls/live/2034113/lshsn1us/master.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-   {
-    "nombre": "QVC",
-    "imagen": "https://1000logos.net/wp-content/uploads/2017/12/QVC-emblem.jpg",
-    "url": "https://qrg.akamaized.net/hls/live/2017383/lsqvc1it/master.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-   {
-    "nombre": "USA",
-    "imagen": "https://i.pinimg.com/736x/c8/e6/a1/c8e6a119bf88e774ccc0b3e0a324f76b.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/57_.m3u8?token=g-AF6AdMv813XjUsBXYhng&expires=1772907550",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-   {
-    "nombre": "DISCOVERY CHANNEL",
-    "imagen": "https://brandemia.org/sites/default/files/inline/images/discovery_logo_antes.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/37_.m3u8?token=MpXP89vN0QVcPl2SVPknyA&expires=1772907992",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "HISTORY",
-    "imagen": "https://1000logos.net/wp-content/uploads/2023/01/History-Channel-logo.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/44_.m3u8?token=U03pFhYOcxxOOO06sL5fDg&expires=1772908143",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "FX",
-    "imagen": "https://images.seeklogo.com/logo-png/47/2/fx-logo-png_seeklogo-477744.png",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/60_.m3u8?token=rC1rwC_Fc0qVRqXc5VVB_Q&expires=1772994918",
-    "pais": "USA"
-  },
-  
-   {
-    "nombre": "BBC AMERICA",
-    "imagen": "https://i.ytimg.com/vi/7K2KyxMS-DY/maxresdefault.jpg",
-    "url": "https://bcovlive-a.akamaihd.net/7f5ec16d102f4b5d92e8e27bc95ff424/us-east-1/6240731308001/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-   {
-    "nombre": "COMEDY CENTRAL",
-    "imagen": "https://www.paramountshop.com/cdn/shop/files/comedy-central-logo-die-cut-sticker-552629.png?v=1718289087",
-    "url": "https://viamotionhsi.netplus.ch/live/eds/comedycentral/browser-HLS8/comedycentral.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-  
-   {
-    "nombre": "PARAMOUNT CHANNEL",
-    "imagen": "https://www.newslinereport.com/online/nota_paramount-channel-expande-su-distribucin-a-travs-de-claro.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/62_.m3u8?token=oBKIrhr3pIRISFU30cp4LQ&expires=1772996778",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "HALLMARK CHANNEL",
-    "imagen": "https://logowik.com/content/uploads/images/hallmark-channel8001.jpg",
-    "url": "https://ustream.to/embed?olweb&id=hallmark",
-    "pais": "USA"
-  },
-  
-  
-  
-   {
-    "nombre": "NATIONAL GEOGRAPHIC",
-    "imagen": "https://1000marcas.net/wp-content/uploads/2020/03/National-Geographic-Color.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/47_.m3u8?token=S6dU8xjMMbzsegdfqAG6sQ&expires=1773001613",
-    "pais": "USA"
-  },
-  
-  
-   {
-    "nombre": "TRAVEL CHANNEL",
-    "imagen": "https://e7.pngegg.com/pngimages/208/305/png-clipart-travel-channel-international-television-channel-television-show-travel-television-blue.png",
-    "url": "https://ustream.to/stream?olweb=true&id=travel-channel",
-    "pais": "USA"
-  },
-  
-  
-  
-  {
-    "nombre": "CNN",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/CNN_International_logo.svg/960px-CNN_International_logo.svg.png",
-    "url": "https://ds2c506obo7m8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-7zjq3tdqasbg8/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "MS NOW",
-    "imagen": "https://kfoxtv.com/resources/media2/1x1/600/1440/100x0/90/4c6de71e-aac2-4271-95d4-150a5057d352-AP25230528082823.jpg",
-    "url": "https://cdn.livenewsplayer.com/hls/msnbcsd/msnbcsd/playlist.m3u8?newzstarttime=1775628296&newzendtime=1775635496&newzhash=ujeIN3jkjD7c0il0FQzlyllj6ho_pHppPHnLEZizWnFeAxbBh1NN6EohdyijzT_imX3I_qtiqPXd-uJkdPYJew==",
-    "pais": "USA"
-  },
-  
-  
-  
-  {
-    "nombre": "CNBC",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/3840px-CNBC_logo.svg.png",
-    "url": "https://www.livehdtv.com/yayin/?kanal=93&yayin=&guvenlik=$2y$10$azHt68w91NttYmWo07dY4unHLP/6qvb2019xRAtdjN6sqqkc15oDe",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "BLOOMBERG",
-    "imagen": "https://1000marcas.net/wp-content/uploads/2021/04/Bloomberg-symbol.jpg",
-    "url": "https://dai.google.com/linear/hls/pa/event/k-VHR5unRdusBDqoXAuB0Q/stream/80cb508f-e85a-4058-9854-a912cb8ea0d9:TUL/master.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "THE WEATHER CHANNEL",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/The_Weather_Channel_logo_2005-present.svg/3840px-The_Weather_Channel_logo_2005-present.svg.png",
-    "url": "https://db691j6te7mt4.cloudfront.net/out/v1/f65bdb9d5ac1498ba700027b5ca8a383/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  {
-    "nombre": "DISNEY CHANNEL",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/2014_Disney_Channel_logo.svg/1280px-2014_Disney_Channel_logo.svg.png",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/28_.m3u8?token=MZimXA_Bf6dtCwUh3h_7-w&expires=1776100094",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "BOOMERANG",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Boomerang_HD_Logo_2015.svg/3840px-Boomerang_HD_Logo_2015.svg.png",
-    "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776080625/ei/kYLcadfnFbzFy_sP0tukwAw/ip/181.115.119.86/id/rEKifG2XUZg.2/itag/95/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hls_chunk_host/rr2---sn-uxab05-ub0e.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/gcr/hn/bui/AUUZDGJzjZs4Iuu4MW2TU-_lBD7gb9d5_WTMot0Uf-z-OG6hA2JyQuDgQHn9lNWqQ9eJpSaFCdTbKQSt/spc/jlWavZJT-l3M3szwHKiZiBmml5DFWuRBfvCAUpOKMdaV1kWzrweyTtzADTs3MJtwScDnHQ/vprv/1/ns/isYU4vQ9om_QH5p6pVlg4m0U/reg/0/playlist_type/DVR/initcwndbps/1646250/met/1776059031,/mh/6S/mm/44/mn/sn-uxab05-ub0e/ms/lva/mv/m/mvi/2/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565116,51565681,51869322/n/zeOMvLgSWvXnuA/mt/1776058608/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,gcr,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAOrGEjXXWy7bkfJ3SKIAWYzn83lcZW94xRae4Js8v7m4AiBJvgXCGnX8i_1pTJeD5MIifmxAb5rRrbbihvjnI0MQrQ%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRQIhAKWKXb49iAuQFB6lRdX4gBaz9Z8gcX23mx-6R_X2_ZZPAiB-26hb_5GlpnWcXundq4CUMnoIhzT1Xvh9DUeFymRM5g%3D%3D/playlist/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "DISNEY YUNIOR",
-    "imagen": "https://1000marcas.net/wp-content/uploads/2022/01/Disney-Junior-Logo.png",
-    "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776082095/ei/T4jcaYHqDI7yy_sP3_au4Ag/ip/181.115.119.86/id/w2sB87jLE1I.2/itag/95/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hls_chunk_host/rr2---sn-uxab05-ub0l.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/gcr/hn/bui/AUUZDGI0HBlW2rc1gTG_MbH1hX-9haAqaYQ8kRHCszXBvNkCfSdT_dZ4ldD0bsDzIl8K-FMBnLL0jXRj/spc/jlWavZ9iahdpX40D4vXBCQk7eeDKH4k-YzYP-X7O5xMyCxzjhMBtEHJOJ0a0BoTcvXIsXw/vprv/1/ns/7DqIUGt41s2og2nK0vsrTWIU/reg/0/playlist_type/DVR/initcwndbps/1792500/met/1776060501,/mh/IV/mm/44/mn/sn-uxab05-ub0l/ms/lva/mv/m/mvi/2/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565115,51565682,51869322/n/0V45pMWKfUVovg/mt/1776060275/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,gcr,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAPJAH1YXTlx7SkKtcLg46_j6ueDohabYyX2pV3Qpd1zLAiBJUVf5OTjkj_G_d_mDAuGL5e4aJuCiyC2RCNWqULAvzA%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRgIhAMqkW1Oslo8A1BaAyUJgykGcDmvzHdyPy-TjC_Li9HEpAiEAh3qZARK6SydkTmLAigwcdGg8t-RG3wkoZGY6Pxo2mfI%3D/playlist/index.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "NICK JUNIOR",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nick_Jr._logo_2023_%28outline%29.svg/3840px-Nick_Jr._logo_2023_%28outline%29.svg.png",
-    "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776082744/ei/2Ircacj4EJGDy_sPyaGkoAI/ip/181.115.119.86/id/M3QCpMx2jLw.2/itag/300/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D298/rqh/1/hls_chunk_host/rr1---sn-uxab05-ub0e.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/bui/AUUZDGLmqg-dBaqCXlcljG5Ot1PbokMM9hqqlEOQlRvM2uKi4S4No-fYSkjM9_E7BZvaY4aXagEJWvEX/spc/jlWavTMTlLamhsh9O4tv4kVdKcQT27bSE-_n4R9sk7scL8hYjsnhaTv9iP23arlJoS55PA/vprv/1/ns/q5J1B2-tIv6wFvlxRI47RtMU/reg/0/playlist_type/DVR/initcwndbps/1753750/met/1776061150,/mh/S8/mm/44/mn/sn-uxab05-ub0e/ms/lva/mv/m/mvi/1/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565116,51565681,51869322/n/MCS5rtgLNb3mug/mt/1776060765/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAKajR6DWRDudQsNA8USNpmO4hq5mZcnir8aAI4Fyr-VQAiAwPPnBkhHgBmJGHxSSHykQGOwUDwji8WbxjSwdPhq36Q%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRgIhALCgguE3E3RJYpr6dxd-xh0LY3c4eywjRi8FN0GpaYatAiEAk4Ss8sFLKNIdgUl8Mjl4URmkiqhikSuHYLgpjmAvozE%3D/playlist/index.m3u8",
-    "pais": "USA"
-  },
-  
-  {
-    "nombre": "CARTOON NETWORK",
-    "imagen": "https://brandemia.org/contenido/subidas/2022/04/brandemia-cartoon-network-esteban-zamora-rediseno-2022-1-1200x670.jpg",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/31_.m3u8?token=Hn6_R2XekcQvDwFZXrYp3g&expires=1776107700",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "SUPER CHANNEL 12",
-    "imagen": "https://yt3.googleusercontent.com/zG7qEPbOfKZXK5fM4U4kgKYQaJ-7Wjul-pMWt9ZUI6zJmsr7NJsNdURx2AHm3lWC5YLOlMqU=s900-c-k-c0x00ffffff-no-rj",
-    "url": "https://servilive.com/live-stream-video-widget/channel12",
-    "pais": "USA"
-  },
-  
-  
-  
-  {
-    "nombre": "TV CUATRO 4.1",
-    "imagen": "https://tvcuatro.tv/wp-content/uploads/2025/04/logo-tv42025.png",
-    "url": "https://5fc584f3f19c9.streamlock.net:443/tv4/_definst_/smil:tv4.smil/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "TV CUATRO 4.2",
-    "imagen": "https://tvcuatro.tv/wp-content/uploads/2025/04/adist.jpg",
-    "url": "https://5f1af61612fb5.streamlock.net/tv42/tv42.smil/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "TV MAR",
-    "imagen": "https://directostv.teleame.com/wp-content/uploads/2020/10/TV-Mar-La-Paz-en-VIVO-Online-.png",
-    "url": "https://conceptoweb-studio.com/radio/video/tvmarlapaz//",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "TVMAS VERACRUZ",
-    "imagen": "https://elementosmx.com/wp-content/uploads/2022/02/834AC08B-020E-4C61-A520-D024A8896D85.jpeg",
-    "url": "https://5f1af61612fb5.streamlock.net/rtv/videortv/chunklist_w1660372894.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "TVP CULIACAN",
-    "imagen": "https://dev.tvpacifico.mx/images/_tvp/tvp/logo_tvp_footer.png",
-    "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico1/smil:gpculiacan.smil/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "TVP MAZATLAN ",
-    "imagen": "https://tvpacifico.mx/admin/images/noticias/237895-131991.png",
-    "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico4/smil:mazatlan.smil/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  {
-    "nombre": "TVP MOCHIS",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
-    "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico2/smil:mochis.smil/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  {
-    "nombre": "TVP OBREGON",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
-    "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico3/smil:obregon.smil/playlist.m3u8?DVR",
-    "pais": "USA"
-  },
-  
-  
-  
-  {
-    "nombre": "TLAXCALA",
-    "imagen": "https://www.tlaxcalatelevision.tv/images/2022/Logo-Tlaxcala-Television.png",
-    "url": "https://vid26.mega00.com:5443/live/streams/qNmc7nulmq8zPYZE1582752735050.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  {
-    "nombre": "UMTV",
-    "imagen": "https://umtv.mx/uploads/images/channel_75_1762899316_poster.png",
-    "url": "https://60417ddeaf0d9.streamlock.net/montemorelos/videomontemorelos/chunklist_w1895581626.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
     {
-    "nombre": "ULTRA TV PUEBLA",
-    "imagen": "https://www.newslinereport.com/online/nota_ultravision-entra-al-mercado-everywhere-con-su-app.jpg",
-    "url": "https://5e50264bd6766.streamlock.net/telemetrika2/smil:telemetrika2.smil/chunklist_w1517329670_b1428000_sleng.m3u8",
-    "pais": "USA"
-  },
-  
+        "nombre": "A&E",
+        "imagen": "https://1000marcas.net/wp-content/uploads/2021/04/AE-logo.jpg",
+        "url": "http://201.217.246.42:44310/Live/3fcb6e26785fd8d415571b26dc3cf5d3/local-71_480.m3u8",
+        "pais": "USA"
+    },
     {
-    "nombre": "GOLDEN",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_logo.png",
-    "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/69_.m3u8?token=zkAC-7qvsrahpCZ4psuzzg&expires=1772647498",
-    "pais": "USA"
-  },
-  
-  
-  
+        "nombre": "Al JAZEERA ENGLISH",
+        "imagen": "https://emergencyuk.org/wp-content/uploads/2017/03/Aljazeera-logo-English-1024x768-1024x768.png",
+        "url": "https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8",
+        "pais": "USA"
+    },
     {
-    "nombre": "MYTIME MOVIE NETWORK ",
-    "imagen": "https://pbs.twimg.com/profile_images/1522616715187732480/sxy9nTrJ_400x400.jpg",
-    "url": "https://teleon.tv/embed/NGYzYzJhNTY0NjA0ZjNjMmEAOF/",
-    "pais": "USA"
-  },
-  
-  
+        "nombre": "AMC",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amc_logo_2013.png",
+        "url": "https://teleon.tv/embed/NGYzYzJhNTQ3OTk0ZjNjMmEAOF/",
+        "pais": "USA"
+    },
     {
-    "nombre": "TELEPLAY ",
-    "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
-    "url": "https://player.tvstream.mx/livestream/teleplay/livesd/playlist.m3u8",
-    "pais": "USA"
-  },
-  
-  
-  
-  
-     {
-    "nombre": "ALCANCE TV ",
-    "imagen": "https://lifestreammedia.net/wp-content/uploads/2020/06/alcancetv_logo-3d.png",
-    "url": "https://lifestreammedia.net/embed/player/player.html?c=alcance_tv&v=1708206757",
-    "pais": "USA"
-  },
-  
-  
-     {
-    "nombre": "EXPRESA TV ",
-    "imagen": "https://expresatv.com.mx/wp-content/uploads/2023/04/expresa-600x200-1.png",
-    "url": "https://conceptoweb-studio.com/radio/video/teleradio",
-    "pais": "USA"
-  }
-  
-  
-   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+        "nombre": "ANIMAL PLANET",
+        "imagen": "https://1000marcas.net/wp-content/uploads/2020/11/Animal-Planet-Logo.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/NTIuMTYxLjgyLjg1/46_.m3u8?token=GoEgwFKksa0AEWf_RT-5-g&expires=1777721330",
+        "pais": "USA"
+    },
+    {
+        "nombre": "CBS",
+        "imagen": "https://wwwimage-tve.cbsstatic.com/base/files/seo/cbs_seo_1200x627_1.jpg",
+        "url": "https://www.cbsnews.com/common/video/cbsn-ny-prod.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "ABC",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/American_Broadcasting_Company_Logo.svg/960px-American_Broadcasting_Company_Logo.svg.png",
+        "url": "http://41.205.93.154/ABC/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "NBC NEW NOW",
+        "imagen": "https://m.media-amazon.com/images/I/41PtwoTtFSL.png",
+        "url": "https://aegis-cloudfront-1.tubi.video/605fb6ea-f89c-451a-873c-030cb726b493/master.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "PBS",
+        "imagen": "https://s3.amazonaws.com/media.mediapost.com/dam/cropped/2019/11/05/01_pbs_logo_BEODoWF.png",
+        "url": "https://ustream.to/embed?olweb&id=pbs-usa",
+        "pais": "USA"
+    },
+    {
+        "nombre": "COZI TV",
+        "imagen": "https://cdn.mos.cms.futurecdn.net/A2nAS4YiEfQAmjp87PbJ78-1200-80.jpg",
+        "url": "http://173.225.32.123/Cozi-2358/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "LOCALISH",
+        "imagen": "https://cdn1.edgedatg.com/aws/v2/abc/Localish/showimages/471adb0d6f19bba6f0392a17b21370c9/1200x627-Q80_471adb0d6f19bba6f0392a17b21370c9.jpg",
+        "url": "https://aegis-cloudfront-1.tubi.video/0ecc85a2-5e1b-482a-9c69-3eaaee160f2e/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TELEMUNDO",
+        "imagen": "https://www.brandemia.org/wp-content/uploads/2013/02/logo_telemundo_principal.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/6_.m3u8?token=J3f5XH6NzqedvZA6C1sjfA&expires=1772825184",
+        "pais": "USA"
+    },
+    {
+        "nombre": "HSN TV",
+        "imagen": "https://download.logo.wine/logo/Home_Shopping_Network/Home_Shopping_Network-Logo.wine.png",
+        "url": "https://qvc-amd-live.akamaized.net/hls/live/2034113/lshsn1us/master.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "QVC",
+        "imagen": "https://1000logos.net/wp-content/uploads/2017/12/QVC-emblem.jpg",
+        "url": "https://qrg.akamaized.net/hls/live/2017383/lsqvc1it/master.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "USA",
+        "imagen": "https://i.pinimg.com/736x/c8/e6/a1/c8e6a119bf88e774ccc0b3e0a324f76b.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/57_.m3u8?token=g-AF6AdMv813XjUsBXYhng&expires=1772907550",
+        "pais": "USA"
+    },
+    {
+        "nombre": "DISCOVERY CHANNEL",
+        "imagen": "https://brandemia.org/sites/default/files/inline/images/discovery_logo_antes.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/37_.m3u8?token=MpXP89vN0QVcPl2SVPknyA&expires=1772907992",
+        "pais": "USA"
+    },
+    {
+        "nombre": "HISTORY",
+        "imagen": "https://1000logos.net/wp-content/uploads/2023/01/History-Channel-logo.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/44_.m3u8?token=U03pFhYOcxxOOO06sL5fDg&expires=1772908143",
+        "pais": "USA"
+    },
+    {
+        "nombre": "FX",
+        "imagen": "https://images.seeklogo.com/logo-png/47/2/fx-logo-png_seeklogo-477744.png",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/60_.m3u8?token=rC1rwC_Fc0qVRqXc5VVB_Q&expires=1772994918",
+        "pais": "USA"
+    },
+    {
+        "nombre": "BBC AMERICA",
+        "imagen": "https://i.ytimg.com/vi/7K2KyxMS-DY/maxresdefault.jpg",
+        "url": "https://bcovlive-a.akamaihd.net/7f5ec16d102f4b5d92e8e27bc95ff424/us-east-1/6240731308001/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "COMEDY CENTRAL",
+        "imagen": "https://www.paramountshop.com/cdn/shop/files/comedy-central-logo-die-cut-sticker-552629.png?v=1718289087",
+        "url": "https://viamotionhsi.netplus.ch/live/eds/comedycentral/browser-HLS8/comedycentral.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "PARAMOUNT CHANNEL",
+        "imagen": "https://www.newslinereport.com/online/nota_paramount-channel-expande-su-distribucin-a-travs-de-claro.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/62_.m3u8?token=oBKIrhr3pIRISFU30cp4LQ&expires=1772996778",
+        "pais": "USA"
+    },
+    {
+        "nombre": "HALLMARK CHANNEL",
+        "imagen": "https://logowik.com/content/uploads/images/hallmark-channel8001.jpg",
+        "url": "https://ustream.to/embed?olweb&id=hallmark",
+        "pais": "USA"
+    },
+    {
+        "nombre": "NATIONAL GEOGRAPHIC",
+        "imagen": "https://1000marcas.net/wp-content/uploads/2020/03/National-Geographic-Color.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/47_.m3u8?token=S6dU8xjMMbzsegdfqAG6sQ&expires=1773001613",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TRAVEL CHANNEL",
+        "imagen": "https://e7.pngegg.com/pngimages/208/305/png-clipart-travel-channel-international-television-channel-television-show-travel-television-blue.png",
+        "url": "https://ustream.to/stream?olweb=true&id=travel-channel",
+        "pais": "USA"
+    },
+    {
+        "nombre": "CNN",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/CNN_International_logo.svg/960px-CNN_International_logo.svg.png",
+        "url": "https://ds2c506obo7m8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-7zjq3tdqasbg8/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "MS NOW",
+        "imagen": "https://kfoxtv.com/resources/media2/1x1/600/1440/100x0/90/4c6de71e-aac2-4271-95d4-150a5057d352-AP25230528082823.jpg",
+        "url": "https://cdn.livenewsplayer.com/hls/msnbcsd/msnbcsd/playlist.m3u8?newzstarttime=1775628296&newzendtime=1775635496&newzhash=ujeIN3jkjD7c0il0FQzlyllj6ho_pHppPHnLEZizWnFeAxbBh1NN6EohdyijzT_imX3I_qtiqPXd-uJkdPYJew==",
+        "pais": "USA"
+    },
+    {
+        "nombre": "CNBC",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/3840px-CNBC_logo.svg.png",
+        "url": "https://www.livehdtv.com/yayin/?kanal=93&yayin=&guvenlik=$2y$10$azHt68w91NttYmWo07dY4unHLP/6qvb2019xRAtdjN6sqqkc15oDe",
+        "pais": "USA"
+    },
+    {
+        "nombre": "BLOOMBERG",
+        "imagen": "https://1000marcas.net/wp-content/uploads/2021/04/Bloomberg-symbol.jpg",
+        "url": "https://dai.google.com/linear/hls/pa/event/k-VHR5unRdusBDqoXAuB0Q/stream/80cb508f-e85a-4058-9854-a912cb8ea0d9:TUL/master.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "THE WEATHER CHANNEL",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/The_Weather_Channel_logo_2005-present.svg/3840px-The_Weather_Channel_logo_2005-present.svg.png",
+        "url": "https://db691j6te7mt4.cloudfront.net/out/v1/f65bdb9d5ac1498ba700027b5ca8a383/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "DISNEY CHANNEL",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/2014_Disney_Channel_logo.svg/1280px-2014_Disney_Channel_logo.svg.png",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/28_.m3u8?token=MZimXA_Bf6dtCwUh3h_7-w&expires=1776100094",
+        "pais": "USA"
+    },
+    {
+        "nombre": "BOOMERANG",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Boomerang_HD_Logo_2015.svg/3840px-Boomerang_HD_Logo_2015.svg.png",
+        "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776080625/ei/kYLcadfnFbzFy_sP0tukwAw/ip/181.115.119.86/id/rEKifG2XUZg.2/itag/95/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hls_chunk_host/rr2---sn-uxab05-ub0e.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/gcr/hn/bui/AUUZDGJzjZs4Iuu4MW2TU-_lBD7gb9d5_WTMot0Uf-z-OG6hA2JyQuDgQHn9lNWqQ9eJpSaFCdTbKQSt/spc/jlWavZJT-l3M3szwHKiZiBmml5DFWuRBfvCAUpOKMdaV1kWzrweyTtzADTs3MJtwScDnHQ/vprv/1/ns/isYU4vQ9om_QH5p6pVlg4m0U/reg/0/playlist_type/DVR/initcwndbps/1646250/met/1776059031,/mh/6S/mm/44/mn/sn-uxab05-ub0e/ms/lva/mv/m/mvi/2/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565116,51565681,51869322/n/zeOMvLgSWvXnuA/mt/1776058608/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,gcr,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAOrGEjXXWy7bkfJ3SKIAWYzn83lcZW94xRae4Js8v7m4AiBJvgXCGnX8i_1pTJeD5MIifmxAb5rRrbbihvjnI0MQrQ%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRQIhAKWKXb49iAuQFB6lRdX4gBaz9Z8gcX23mx-6R_X2_ZZPAiB-26hb_5GlpnWcXundq4CUMnoIhzT1Xvh9DUeFymRM5g%3D%3D/playlist/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "DISNEY YUNIOR",
+        "imagen": "https://1000marcas.net/wp-content/uploads/2022/01/Disney-Junior-Logo.png",
+        "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776082095/ei/T4jcaYHqDI7yy_sP3_au4Ag/ip/181.115.119.86/id/w2sB87jLE1I.2/itag/95/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hls_chunk_host/rr2---sn-uxab05-ub0l.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/gcr/hn/bui/AUUZDGI0HBlW2rc1gTG_MbH1hX-9haAqaYQ8kRHCszXBvNkCfSdT_dZ4ldD0bsDzIl8K-FMBnLL0jXRj/spc/jlWavZ9iahdpX40D4vXBCQk7eeDKH4k-YzYP-X7O5xMyCxzjhMBtEHJOJ0a0BoTcvXIsXw/vprv/1/ns/7DqIUGt41s2og2nK0vsrTWIU/reg/0/playlist_type/DVR/initcwndbps/1792500/met/1776060501,/mh/IV/mm/44/mn/sn-uxab05-ub0l/ms/lva/mv/m/mvi/2/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565115,51565682,51869322/n/0V45pMWKfUVovg/mt/1776060275/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,gcr,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAPJAH1YXTlx7SkKtcLg46_j6ueDohabYyX2pV3Qpd1zLAiBJUVf5OTjkj_G_d_mDAuGL5e4aJuCiyC2RCNWqULAvzA%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRgIhAMqkW1Oslo8A1BaAyUJgykGcDmvzHdyPy-TjC_Li9HEpAiEAh3qZARK6SydkTmLAigwcdGg8t-RG3wkoZGY6Pxo2mfI%3D/playlist/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "NICK JUNIOR",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nick_Jr._logo_2023_%28outline%29.svg/3840px-Nick_Jr._logo_2023_%28outline%29.svg.png",
+        "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776082744/ei/2Ircacj4EJGDy_sPyaGkoAI/ip/181.115.119.86/id/M3QCpMx2jLw.2/itag/300/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D298/rqh/1/hls_chunk_host/rr1---sn-uxab05-ub0e.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/bui/AUUZDGLmqg-dBaqCXlcljG5Ot1PbokMM9hqqlEOQlRvM2uKi4S4No-fYSkjM9_E7BZvaY4aXagEJWvEX/spc/jlWavTMTlLamhsh9O4tv4kVdKcQT27bSE-_n4R9sk7scL8hYjsnhaTv9iP23arlJoS55PA/vprv/1/ns/q5J1B2-tIv6wFvlxRI47RtMU/reg/0/playlist_type/DVR/initcwndbps/1753750/met/1776061150,/mh/S8/mm/44/mn/sn-uxab05-ub0e/ms/lva/mv/m/mvi/1/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565116,51565681,51869322/n/MCS5rtgLNb3mug/mt/1776060765/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAKajR6DWRDudQsNA8USNpmO4hq5mZcnir8aAI4Fyr-VQAiAwPPnBkhHgBmJGHxSSHykQGOwUDwji8WbxjSwdPhq36Q%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRgIhALCgguE3E3RJYpr6dxd-xh0LY3c4eywjRi8FN0GpaYatAiEAk4Ss8sFLKNIdgUl8Mjl4URmkiqhikSuHYLgpjmAvozE%3D/playlist/index.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "CARTOON NETWORK",
+        "imagen": "https://brandemia.org/contenido/subidas/2022/04/brandemia-cartoon-network-esteban-zamora-rediseno-2022-1-1200x670.jpg",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/31_.m3u8?token=Hn6_R2XekcQvDwFZXrYp3g&expires=1776107700",
+        "pais": "USA"
+    },
+    {
+        "nombre": "SUPER CHANNEL 12",
+        "imagen": "https://yt3.googleusercontent.com/zG7qEPbOfKZXK5fM4U4kgKYQaJ-7Wjul-pMWt9ZUI6zJmsr7NJsNdURx2AHm3lWC5YLOlMqU=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://servilive.com/live-stream-video-widget/channel12",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TV CUATRO 4.1",
+        "imagen": "https://tvcuatro.tv/wp-content/uploads/2025/04/logo-tv42025.png",
+        "url": "https://5fc584f3f19c9.streamlock.net:443/tv4/_definst_/smil:tv4.smil/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TV CUATRO 4.2",
+        "imagen": "https://tvcuatro.tv/wp-content/uploads/2025/04/adist.jpg",
+        "url": "https://5f1af61612fb5.streamlock.net/tv42/tv42.smil/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TV MAR",
+        "imagen": "https://directostv.teleame.com/wp-content/uploads/2020/10/TV-Mar-La-Paz-en-VIVO-Online-.png",
+        "url": "https://conceptoweb-studio.com/radio/video/tvmarlapaz//",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TVMAS VERACRUZ",
+        "imagen": "https://elementosmx.com/wp-content/uploads/2022/02/834AC08B-020E-4C61-A520-D024A8896D85.jpeg",
+        "url": "https://5f1af61612fb5.streamlock.net/rtv/videortv/chunklist_w1660372894.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TVP CULIACAN",
+        "imagen": "https://dev.tvpacifico.mx/images/_tvp/tvp/logo_tvp_footer.png",
+        "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico1/smil:gpculiacan.smil/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TVP MAZATLAN ",
+        "imagen": "https://tvpacifico.mx/admin/images/noticias/237895-131991.png",
+        "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico4/smil:mazatlan.smil/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TVP MOCHIS",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
+        "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico2/smil:mochis.smil/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TVP OBREGON",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
+        "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico3/smil:obregon.smil/playlist.m3u8?DVR",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TLAXCALA",
+        "imagen": "https://www.tlaxcalatelevision.tv/images/2022/Logo-Tlaxcala-Television.png",
+        "url": "https://vid26.mega00.com:5443/live/streams/qNmc7nulmq8zPYZE1582752735050.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "UMTV",
+        "imagen": "https://umtv.mx/uploads/images/channel_75_1762899316_poster.png",
+        "url": "https://60417ddeaf0d9.streamlock.net/montemorelos/videomontemorelos/chunklist_w1895581626.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "ULTRA TV PUEBLA",
+        "imagen": "https://www.newslinereport.com/online/nota_ultravision-entra-al-mercado-everywhere-con-su-app.jpg",
+        "url": "https://5e50264bd6766.streamlock.net/telemetrika2/smil:telemetrika2.smil/chunklist_w1517329670_b1428000_sleng.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "GOLDEN",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_logo.png",
+        "url": "https://regionales.saohgdasregions.fun:9092/MTgxLjExNS4xMTkuODY=/69_.m3u8?token=zkAC-7qvsrahpCZ4psuzzg&expires=1772647498",
+        "pais": "USA"
+    },
+    {
+        "nombre": "MYTIME MOVIE NETWORK ",
+        "imagen": "https://pbs.twimg.com/profile_images/1522616715187732480/sxy9nTrJ_400x400.jpg",
+        "url": "https://teleon.tv/embed/NGYzYzJhNTY0NjA0ZjNjMmEAOF/",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TELEPLAY ",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
+        "url": "https://player.tvstream.mx/livestream/teleplay/livesd/playlist.m3u8",
+        "pais": "USA"
+    },
+    {
+        "nombre": "ALCANCE TV ",
+        "imagen": "https://lifestreammedia.net/wp-content/uploads/2020/06/alcancetv_logo-3d.png",
+        "url": "https://lifestreammedia.net/embed/player/player.html?c=alcance_tv&v=1708206757",
+        "pais": "USA"
+    },
+    {
+        "nombre": "EXPRESA TV ",
+        "imagen": "https://expresatv.com.mx/wp-content/uploads/2023/04/expresa-600x200-1.png",
+        "url": "https://conceptoweb-studio.com/radio/video/teleradio",
+        "pais": "USA"
+    }
 ]
