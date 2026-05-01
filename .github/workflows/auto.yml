@@ -2,7 +2,7 @@ name: Actualizador de Canales
 
 on:
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: '0 */1 * * *' # Lo puse cada hora para que el token no expire
   workflow_dispatch:
 
 permissions:
@@ -11,8 +11,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
@@ -20,10 +18,12 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' # Actualizado para mejor soporte de yt-dlp
+          python-version: '3.10'
 
-      - name: Instalar librerías
-        run: pip install cloudscraper yt-dlp
+      - name: Instalar Playwright y dependencias
+        run: |
+          pip install playwright
+          playwright install chromium --with-deps
 
       - name: Ejecutar script
         run: python cazador.py
@@ -32,7 +32,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # Agregamos ambos archivos para que se guarden los cambios de México y USA
           git add mexico.json usa.json
-          git commit -m "Actualización automática: ZAZ y Animal Planet" || exit 0
+          git commit -m "Link actualizado por el sniffer" || exit 0
           git push origin main
