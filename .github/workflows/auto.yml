@@ -20,7 +20,7 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10' # Actualizado para mejor soporte de yt-dlp
 
       - name: Instalar librerías
         run: pip install cloudscraper yt-dlp
@@ -32,7 +32,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # Añadimos ambos archivos para que se guarden los cambios de ZAZ y Animal Planet
+          # Agregamos ambos archivos para que se guarden los cambios de México y USA
           git add mexico.json usa.json
-          git commit -m "Actualización automática de links (ZAZ y Animal Planet)" || exit 0
+          git commit -m "Actualización automática: ZAZ y Animal Planet" || exit 0
           git push origin main
