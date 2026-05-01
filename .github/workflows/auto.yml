@@ -23,7 +23,7 @@ jobs:
           python-version: '3.9'
 
       - name: Instalar librerías
-        run: pip install cloudscraper
+        run: pip install cloudscraper yt-dlp
 
       - name: Ejecutar script
         run: python cazador.py
@@ -32,6 +32,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add mexico.json
-          git commit -m "Actualización automática de link" || exit 0
+          # Añadimos ambos archivos para que se guarden los cambios de ZAZ y Animal Planet
+          git add mexico.json usa.json
+          git commit -m "Actualización automática de links (ZAZ y Animal Planet)" || exit 0
           git push origin main
