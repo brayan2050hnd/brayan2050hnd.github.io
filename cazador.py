@@ -3,57 +3,62 @@ import re
 import json
 
 def actualizar_json():
+    # Usamos cloudscraper para saltar protecciones básicas
     scraper = cloudscraper.create_scraper(
         browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
     )
     
-    url_web = "https://elnovelerovariadito.com/2024/07/distrito-comedia-en-vivo/"
-    url_iframe = "https://embed.ksdjugfsddeports.com/embed2/distritocomedia.html"
+    fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/zaz-tv"
+    print(f"Buscando señal de ZAZ en: {fuente_web}")
 
     try:
-        # Usamos el Referer de la web para que nos deje entrar al iframe
-        headers = {'Referer': url_web}
-        response = scraper.get(url_iframe, headers=headers, timeout=15).text
+        # 1. Obtenemos el contenido de la página principal
+        response = scraper.get(fuente_web, timeout=15).text
         
-        # 1. Buscamos TODOS los posibles links m3u8
-        # Esta vez usamos un patrón más amplio para no perder nada
-        links_sucios = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        # 2. Buscamos el link .m3u8
+        # Buscamos patrones comunes y también el específico de playback.studio que tienes en tu JSON
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
         
-        link_ganador = None
+        # Si no aparece, buscamos dentro de iframes
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+            for frame_url in iframes:
+                if 'google' in frame_url or 'facebook' in frame_url: continue
+                try:
+                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
+                except:
+                    continue
 
-        # 2. Analizamos los links uno por uno
-        for l in links_sucios:
-            # Limpieza básica
+        link_valido = None
+        for l in links:
             l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
-            
-            # REGLA DE ORO: Si tiene 'regionales', es el link que viste en Web Video Caster.
-            # Este es el que nos interesa sí o sí.
-            if 'regionales' in l_limpio.lower():
-                link_ganador = l_limpio
-                break
-            
-            # Si no hay 'regionales', aceptamos cualquier m3u8 que NO sea el anuncio wcpkck
-            if not link_ganador and 'wcpkckormoghp' not in l_limpio:
-                link_ganador = l_limpio
+            # Evitamos anuncios
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
+                continue
+            link_valido = l_limpio
+            break
 
-        if link_ganador:
-            print(f"¡SEÑAL LOCALIZADA!: {link_ganador}")
-            
+        if link_valido:
+            print(f"¡LOGRADO! Link de ZAZ encontrado: {link_valido}")
+
+            # 3. Actualizamos mexico.json
             with open('mexico.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
             for canal in data:
-                if "DISTRITO COMEDIA" in canal.get('nombre', '').upper():
-                    canal['url'] = link_ganador
+                # Buscamos exactamente el nombre "ZAZ"
+                if canal.get('nombre') == "ZAZ":
+                    canal['url'] = link_valido
+                    print("URL de ZAZ actualizada en el JSON.")
 
             with open('mexico.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            print("Archivo mexico.json actualizado correctamente.")
         else:
-            print("ERROR: El servidor escondió el link de 'regionales'.")
+            print("No se encontró ningún link .m3u8 válido para ZAZ.")
 
     except Exception as e:
-        print(f"Fallo en el sistema: {e}")
+        print(f"Error en la captura: {e}")
 
 if __name__ == "__main__":
     actualizar_json()
