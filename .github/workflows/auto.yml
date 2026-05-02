@@ -2,7 +2,7 @@ name: Actualizador de Canales
 
 on:
   schedule:
-    - cron: '0 */1 * * *' # Lo puse cada hora para que el token no expire
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -11,6 +11,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
@@ -18,11 +20,11 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
-      - name: Instalar Playwright y dependencias
+      - name: Instalar librerías
         run: |
-          pip install playwright
+          pip install cloudscraper playwright
           playwright install chromium --with-deps
 
       - name: Ejecutar script
@@ -33,5 +35,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mexico.json usa.json
-          git commit -m "Link actualizado por el sniffer" || exit 0
+          git commit -m "Actualización automática de link" || exit 0
           git push origin main
