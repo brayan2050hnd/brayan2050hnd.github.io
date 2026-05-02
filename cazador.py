@@ -59,7 +59,7 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — método avanzado con Playwright + stealth
+# ANIMAL PLANET — apunta directo al iframe del player
 # ============================================================
 STEALTH_SCRIPT = """
 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -68,9 +68,11 @@ Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
 window.chrome = { runtime: {} };
 """
 
+URL_PRINCIPAL   = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
+URL_PLAYER      = "https://www.tvporinternet2.com/live/animalplanet.php"
+
 async def capturar_animal_planet():
     link_encontrado = None
-    url_fuente = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(
@@ -96,59 +98,69 @@ async def capturar_animal_planet():
                 timezone_id="America/Tegucigalpa",
                 extra_http_headers={
                     "Accept-Language": "es-HN,es;q=0.9,en;q=0.8",
-                    "Referer": "https://www.google.com/"
+                    # Referer = página principal para que el player crea que viene de ahí
+                    "Referer": URL_PRINCIPAL
                 }
             )
             await context.add_init_script(STEALTH_SCRIPT)
 
+            # Capturar CUALQUIER .m3u8 (sin filtrar por keyword)
             def interceptar(request):
                 nonlocal link_encontrado
-                if ".m3u8" in request.url and "regionales" in request.url:
-                    print(f"  ✅ Capturado: {request.url[:80]}...")
-                    link_encontrado = request.url
+                url = request.url
+                if ".m3u8" in url and not link_encontrado:
+                    # Ignorar anuncios
+                    if any(x in url.lower() for x in ['ads', 'doubleclick', 'googlevideo']):
+                        return
+                    print(f"  ✅ M3U8 capturado: {url[:80]}...")
+                    link_encontrado = url
 
             context.on("request", interceptar)
             page = await context.new_page()
 
             try:
-                print(f"  Cargando página (intento {intento + 1})...")
-                await page.goto(url_fuente, wait_until="domcontentloaded", timeout=60000)
-                await page.mouse.move(640, 300)
-                await page.evaluate("window.scrollTo({ top: 300, behavior: 'smooth' })")
-                await asyncio.sleep(12)
+                print(f"  Intento {intento + 1}: cargando player directo...")
 
-                if not link_encontrado:
-                    iframes_src = await page.evaluate("""
-                        () => Array.from(document.querySelectorAll('iframe'))
-                             .map(f => f.src)
-                             .filter(s => s && s.startsWith('http'))
-                    """)
-                    print(f"  Iframes encontrados: {len(iframes_src)}")
+                # Paso 1: visitar la página principal primero (para que el servidor
+                # vea el historial de navegación correcto)
+                await page.goto(URL_PRINCIPAL, wait_until="domcontentloaded", timeout=30000)
+                await asyncio.sleep(3)
 
-                    for iframe_url in iframes_src[:3]:
-                        if link_encontrado:
+                # Paso 2: navegar directo al iframe del player con el referer ya establecido
+                await page.goto(URL_PLAYER, wait_until="networkidle", timeout=60000)
+                await asyncio.sleep(5)
+
+                # Paso 3: simular humano
+                await page.mouse.move(640, 360)
+                await asyncio.sleep(2)
+
+                # Paso 4: intentar click en play con varios selectores
+                selectores_play = [
+                    '.jw-icon-display',
+                    '.jw-display-icon-display',
+                    '.jw-display',
+                    'button[aria-label="Play"]',
+                    '.vjs-big-play-button',
+                    '.play-button',
+                    'video',
+                    '.fp-play',
+                    '#player',
+                ]
+                for sel in selectores_play:
+                    try:
+                        el = await page.query_selector(sel)
+                        if el:
+                            await el.click()
+                            print(f"  Click en: {sel}")
+                            await asyncio.sleep(10)
                             break
-                        print(f"  Entrando a iframe: {iframe_url[:60]}...")
-                        p2 = await context.new_page()
-                        try:
-                            await p2.goto(iframe_url, wait_until="networkidle", timeout=30000)
-                            await asyncio.sleep(5)
-                            for sel in ['.jw-icon-display', '.vjs-big-play-button', 'video', '.fp-play']:
-                                try:
-                                    el = await p2.query_selector(sel)
-                                    if el:
-                                        await el.click()
-                                        await asyncio.sleep(8)
-                                        break
-                                except:
-                                    pass
-                        except Exception as e:
-                            print(f"  ⚠ Error iframe: {e}")
-                        finally:
-                            await p2.close()
+                    except:
+                        pass
 
+                # Paso 5: esperar más si todavía no capturó
                 if not link_encontrado:
-                    await asyncio.sleep(10)
+                    print("  Esperando que el player genere el stream...")
+                    await asyncio.sleep(15)
 
             except Exception as e:
                 print(f"  ❌ Error: {e}")
@@ -161,7 +173,7 @@ async def capturar_animal_planet():
 
 
 def actualizar_animal_planet():
-    print("\nBuscando señal de ANIMAL PLANET en: tvporinternet2.com")
+    print("\nBuscando señal de ANIMAL PLANET...")
     link = asyncio.run(capturar_animal_planet())
 
     if link:
