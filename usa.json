@@ -20,7 +20,7 @@
     {
         "nombre": "ANIMAL PLANET",
         "imagen": "https://1000marcas.net/wp-content/uploads/2020/11/Animal-Planet-Logo.jpg",
-        "url": "https://regionales.saohgdasregions.fun:9092/MTcyLjE4NC4yMTMuMTc5/46_.m3u8?token=kMtC7ELRysKXTwv2Cyjn_A&expires=1777721600",
+        "url": "https://cazador-api-production.up.railway.app/animal-planet",
         "pais": "USA"
     },
     {
