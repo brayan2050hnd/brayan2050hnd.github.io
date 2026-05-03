@@ -59,7 +59,7 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — ACCESO VÍA PÁGINA PRINCIPAL E IFRAME
+# ANIMAL PLANET — VERSIÓN FINAL: ELIMINA ANUNCIO + JS PLAY
 # ============================================================
 PAGINA_PRINCIPAL = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
 
@@ -91,111 +91,117 @@ async def capturar_animal_planet():
         )
 
         page = await context.new_page()
-        m3u8_encontrado = None
-
-        # Interceptar peticiones de red a nivel global (incluye iframes)
-        page.on("request", lambda request: (
-            print(f"📡 Petición: {request.url[:120]}") if ".m3u8" in request.url or ".mpd" in request.url else None,
-            # Guardamos la URL si aún no tenemos una
-            setattr(asyncio.get_event_loop(), '__m3u8', request.url) if (".m3u8" in request.url or ".mpd" in request.url) and not m3u8_encontrado else None
-        ))
-        # Nota: el truco con get_event_loop no es seguro; mejor usar una variable externa
-        # Pero como estamos en async, podemos usar una variable mutable (lista)
-
         m3u8_capturado = []
 
-        async def interceptar(request):
-            if ".m3u8" in request.url or ".mpd" in request.url:
-                print(f"📡 Stream candidato interceptado: {request.url[:120]}")
-                m3u8_capturado.append(request.url)
-
-        page.on("request", interceptar)
+        # Interceptar peticiones de red
+        page.on("request", lambda request: (
+            print(f"📡 Petición: {request.url[:120]}") if ".m3u8" in request.url or ".mpd" in request.url else None,
+            m3u8_capturado.append(request.url) if (".m3u8" in request.url or ".mpd" in request.url) else None
+        ))
 
         try:
             print(f"Cargando página principal: {PAGINA_PRINCIPAL}")
-            # Usamos 'domcontentloaded' para no esperar a que todos los anuncios carguen, pero debemos esperar un poco más
             await page.goto(PAGINA_PRINCIPAL, wait_until="domcontentloaded", timeout=60000)
-            print("Página principal cargada (DOM). Esperando a que el iframe del reproductor aparezca...")
+            print("Página principal cargada (DOM). Esperando iframe 'player'...")
 
-            # Esperar a que el iframe con name="player" esté presente y tenga un src
+            # Esperar a que aparezca el iframe con name="player"
             try:
                 await page.wait_for_selector('iframe[name="player"]', timeout=15000)
-                print("Iframe del reproductor encontrado.")
+                print("Iframe del reproductor presente.")
             except:
-                print("No se encontró el iframe 'player'. Continuando...")
+                print("No se encontró el iframe 'player'. Continuando con la página principal...")
 
-            # Obtener el frame del iframe (puede que aún no haya cargado)
-            # Damos tiempo para que cargue
-            await asyncio.sleep(3)
+            # Dar tiempo a que el iframe cargue
+            await asyncio.sleep(5)
 
-            # Intentar acceder al frame
+            # Obtener el frame "player"
             frame = None
             for f in page.frames:
                 if f.name == "player":
                     frame = f
                     break
-            if not frame:
-                print("No se pudo obtener el frame 'player'. Intentando extraer de la página principal...")
-            else:
-                print("Frame 'player' obtenido. Esperando a que el reproductor cargue...")
-                # Dentro del frame, esperar por un elemento de reproductor
+
+            if frame:
+                print("Frame 'player' obtenido. Preparando reproducción...")
+
+                # 1. Ocultar el anuncio que bloquea los clics (id="don'tfoid")
                 try:
-                    await frame.wait_for_selector("video, .jwplayer, .video-js", timeout=15000)
-                    print("Reproductor detectado dentro del iframe.")
-                except:
-                    print("No se detectó reproductor visual en el iframe, pero continuamos.")
-
-                # Simular interacción para forzar reproducción
-                await frame.click("body", timeout=2000)
-                # Intentar clic en botón play
-                selectores_play = [
-                    '.jw-icon-playback', '.jw-icon-display', '.vjs-big-play-button',
-                    'button[aria-label="Play"]', '.play-button', '.fp-play',
-                    'video', '.jwplayer'
-                ]
-                for sel in selectores_play:
-                    try:
-                        el = await frame.query_selector(sel)
-                        if el:
-                            await el.click()
-                            print(f"Click en {sel} dentro del iframe")
-                            break
-                    except:
-                        continue
-
-            # Esperar un buen rato mientras se generan peticiones
-            print("Esperando hasta 60 segundos a que aparezca un stream...")
-            for i in range(12):
-                await asyncio.sleep(5)
-                # Intentar extraer con JS desde el frame si aún no tenemos stream
-                if not m3u8_capturado and frame:
-                    js_result = await frame.evaluate("""
-                        (() => {
-                            try { if (typeof jwplayer !== 'undefined') { const pl = jwplayer().getPlaylist(); if (pl && pl[0]) return pl[0].file; } } catch(e) {}
-                            try { if (typeof videojs !== 'undefined') { return videojs('player').currentSource().src; } } catch(e) {}
-                            try { const v = document.querySelector('video'); if (v && v.src) return v.src; } catch(e) {}
-                            return null;
-                        })()
+                    await frame.evaluate("""
+                        const ad = document.getElementById('don\\'tfoid');
+                        if (ad) ad.style.display = 'none';
                     """)
-                    if js_result and ("m3u8" in js_result or "mpd" in js_result):
-                        print(f"✅ Stream obtenido por JS: {js_result[:120]}")
-                        m3u8_capturado.append(js_result)
+                    print("Anuncio bloqueante ocultado.")
+                except Exception as e:
+                    print(f"No se pudo ocultar el anuncio: {e}")
+
+                # 2. Intentar iniciar la reproducción con JavaScript
+                js_play = """
+                (() => {
+                    // Intentar con JW Player
+                    try {
+                        if (typeof jwplayer !== 'undefined') {
+                            const playlist = jwplayer().getPlaylist();
+                            if (playlist && playlist[0]) {
+                                // Devolver directamente la URL del stream si está disponible
+                                return playlist[0].file;
+                            }
+                            // O forzar play
+                            jwplayer().play();
+                        }
+                    } catch(e) {}
+                    // Intentar con VideoJS
+                    try {
+                        if (typeof videojs !== 'undefined') {
+                            const player = videojs('player');
+                            player.play();
+                            const src = player.currentSource().src;
+                            if (src) return src;
+                        }
+                    } catch(e) {}
+                    // Intentar con elemento <video>
+                    try {
+                        const v = document.querySelector('video');
+                        if (v) {
+                            v.play();
+                            return v.src;
+                        }
+                    } catch(e) {}
+                    return null;
+                })()
+                """
+                resultado_js = await frame.evaluate(js_play)
+                if resultado_js and ("m3u8" in resultado_js or "mpd" in resultado_js):
+                    print(f"✅ Stream obtenido por JS: {resultado_js[:120]}")
+                    m3u8_capturado.append(resultado_js)
+                else:
+                    print("JS no devolvió stream, pero se inició la reproducción (si es posible).")
+
+                # 3. Esperar a que aparezcan peticiones de red del stream
+                print("Esperando hasta 45 segundos a que se genere el stream definitivo...")
+                for i in range(9):
+                    if len(m3u8_capturado) > 1:  # ya tenemos al menos un candidato después del inicial
+                        # El primer elemento podría ser el de antes, nos interesa el último
                         break
-                if m3u8_capturado:
-                    break
+                    await asyncio.sleep(5)
+
+            else:
+                # Si no hay frame, esperamos un poco más a ver si aparece
+                print("Esperando stream desde la página principal...")
+                await asyncio.sleep(30)
 
         except Exception as e:
             print(f"Error: {e}")
         finally:
             await browser.close()
 
+        # Tomamos el último m3u8 capturado (el más reciente, que debería ser el definitivo)
         if m3u8_capturado:
-            return m3u8_capturado[0]
+            return m3u8_capturado[-1]
         return None
 
 
 def actualizar_animal_planet():
-    print("\n🔎 Buscando señal de ANIMAL PLANET (desde la página principal)...")
+    print("\n🔎 Buscando señal de ANIMAL PLANET...")
     link = asyncio.run(capturar_animal_planet())
 
     if link:
