@@ -59,7 +59,7 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — apunta directo al iframe del player
+# ANIMAL PLANET — NUEVA VERSIÓN ROBUSTA
 # ============================================================
 STEALTH_SCRIPT = """
 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -68,106 +68,75 @@ Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
 window.chrome = { runtime: {} };
 """
 
-URL_PRINCIPAL   = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
-URL_PLAYER      = "https://www.tvporinternet2.com/live/animalplanet.php"
+URL_PRINCIPAL = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
 
 async def capturar_animal_planet():
     link_encontrado = None
+    m3u8_candidatos = []
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
-            args=[
-                "--no-sandbox",
-                "--disable-blink-features=AutomationControlled",
-                "--disable-dev-shm-usage",
-            ]
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
         )
 
-        for intento in range(3):
-            if link_encontrado:
-                break
-            if intento > 0:
-                print(f"  Reintento {intento}/2...")
-                await asyncio.sleep(5)
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            viewport={"width": 1280, "height": 720},
+            locale="es-HN",
+            timezone_id="America/Tegucigalpa",
+        )
+        await context.add_init_script(STEALTH_SCRIPT)
 
-            context = await browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                viewport={"width": 1280, "height": 720},
-                locale="es-HN",
-                timezone_id="America/Tegucigalpa",
-                extra_http_headers={
-                    "Accept-Language": "es-HN,es;q=0.9,en;q=0.8",
-                    # Referer = página principal para que el player crea que viene de ahí
-                    "Referer": URL_PRINCIPAL
-                }
-            )
-            await context.add_init_script(STEALTH_SCRIPT)
+        page = await context.new_page()
 
-            # Capturar CUALQUIER .m3u8 (sin filtrar por keyword)
-            def interceptar(request):
-                nonlocal link_encontrado
-                url = request.url
-                if ".m3u8" in url and not link_encontrado:
-                    # Ignorar anuncios
-                    if any(x in url.lower() for x in ['ads', 'doubleclick', 'googlevideo']):
-                        return
-                    print(f"  ✅ M3U8 capturado: {url[:80]}...")
-                    link_encontrado = url
+        # Interceptar peticiones de red (respaldo)
+        def interceptar(request):
+            url = request.url
+            if ".m3u8" in url or ".mpd" in url:
+                if not any(x in url.lower() for x in ['ads', 'doubleclick', 'googlevideo']):
+                    m3u8_candidatos.append(url)
+        page.on("request", interceptar)
 
-            context.on("request", interceptar)
-            page = await context.new_page()
+        try:
+            print("Cargando página principal...")
+            await page.goto(URL_PRINCIPAL, wait_until="networkidle", timeout=60000)
+            print("Página cargada.")
 
+            # Esperar a que el reproductor esté presente
             try:
-                print(f"  Intento {intento + 1}: cargando player directo...")
+                await page.wait_for_selector("iframe, video, .jwplayer, .video-js", timeout=10000)
+            except:
+                print("No se detectó un reproductor estándar, continuando...")
 
-                # Paso 1: visitar la página principal primero (para que el servidor
-                # vea el historial de navegación correcto)
-                await page.goto(URL_PRINCIPAL, wait_until="domcontentloaded", timeout=30000)
-                await asyncio.sleep(3)
+            # Intentar extraer con JavaScript (JW Player, VideoJS, etc.)
+            js_extractores = [
+                "(() => { try { return jwplayer().getPlaylist()[0].file; } catch(e) { return null; } })()",
+                "(() => { try { return videojs('player').currentSource().src; } catch(e) { return null; } })()",
+                "(() => { try { return document.querySelector('video').src; } catch(e) { return null; } })()",
+                "(() => { try { return document.querySelector('iframe').src; } catch(e) { return null; } })()",
+            ]
+            for js in js_extractores:
+                resultado = await page.evaluate(js)
+                if resultado and (resultado.startswith("http") or resultado.startswith("//")):
+                    if resultado.startswith("//"):
+                        resultado = "https:" + resultado
+                    print(f"Extraído por JS: {resultado[:100]}...")
+                    link_encontrado = resultado
+                    break
 
-                # Paso 2: navegar directo al iframe del player con el referer ya establecido
-                await page.goto(URL_PLAYER, wait_until="networkidle", timeout=60000)
-                await asyncio.sleep(5)
+            # Si no se obtuvo, dar tiempo extra y usar candidatos de red
+            if not link_encontrado:
+                print("Esperando 10 segundos más para capturar peticiones...")
+                await asyncio.sleep(10)
+                if m3u8_candidatos:
+                    link_encontrado = m3u8_candidatos[0]
+                    print(f"Capturado de red: {link_encontrado[:80]}...")
 
-                # Paso 3: simular humano
-                await page.mouse.move(640, 360)
-                await asyncio.sleep(2)
-
-                # Paso 4: intentar click en play con varios selectores
-                selectores_play = [
-                    '.jw-icon-display',
-                    '.jw-display-icon-display',
-                    '.jw-display',
-                    'button[aria-label="Play"]',
-                    '.vjs-big-play-button',
-                    '.play-button',
-                    'video',
-                    '.fp-play',
-                    '#player',
-                ]
-                for sel in selectores_play:
-                    try:
-                        el = await page.query_selector(sel)
-                        if el:
-                            await el.click()
-                            print(f"  Click en: {sel}")
-                            await asyncio.sleep(10)
-                            break
-                    except:
-                        pass
-
-                # Paso 5: esperar más si todavía no capturó
-                if not link_encontrado:
-                    print("  Esperando que el player genere el stream...")
-                    await asyncio.sleep(15)
-
-            except Exception as e:
-                print(f"  ❌ Error: {e}")
-            finally:
-                await context.close()
-
-        await browser.close()
+        except Exception as e:
+            print(f"Error durante la captura: {e}")
+        finally:
+            await browser.close()
 
     return link_encontrado
 
