@@ -59,15 +59,13 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — EMULACIÓN COMPLETA DE WEB VIDEO CASTER
+# ANIMAL PLANET — DIAGNÓSTICO + EXTRACCIÓN MEJORADA
 # ============================================================
 STEALTH_SCRIPT = """
-// Eliminar rastros de automatización
 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
 Object.defineProperty(navigator, 'plugins', { get: () => [1,2,3,4,5] });
 Object.defineProperty(navigator, 'languages', { get: () => ['es-HN', 'es'] });
 window.chrome = { runtime: {} };
-// Sobrescribir el permiso de notificaciones para evitar bloqueos
 const originalQuery = window.navigator.permissions.query;
 window.navigator.permissions.query = (parameters) => (
     parameters.name === 'notifications' ?
@@ -76,22 +74,22 @@ window.navigator.permissions.query = (parameters) => (
 );
 """
 
-URL_PLAYER = "https://www.tvporinternet2.com/live/animalplanet.php"
-REFERER    = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
+URL_PRINCIPAL = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
+URL_PLAYER    = "https://www.tvporinternet2.com/live/animalplanet.php"
+REFERER       = URL_PRINCIPAL
 
 async def capturar_animal_planet():
     m3u8_encontrado = None
-    todas_peticiones = []  # para depuración
+    todas_peticiones = []
 
     async with async_playwright() as p:
-        # Emular un Galaxy S9 (Android Chrome)
         browser = await p.chromium.launch(
             headless=True,
             args=[
                 "--no-sandbox",
                 "--disable-blink-features=AutomationControlled",
                 "--disable-dev-shm-usage",
-                "--disable-web-security",           # permite iframes cross-origin
+                "--disable-web-security",
                 "--disable-features=IsolateOrigins,site-per-process"
             ]
         )
@@ -113,12 +111,11 @@ async def capturar_animal_planet():
         await context.add_init_script(STEALTH_SCRIPT)
         page = await context.new_page()
 
-        # Interceptar todas las peticiones de red y registrar las relevantes
+        # Interceptar peticiones de red para depuración y captura
         async def interceptar(request):
             url = request.url
             todas_peticiones.append(url)
             if ".m3u8" in url or ".mpd" in url:
-                # Ignorar solo las de anuncios muy obvias (pero las guardamos igual en log)
                 if not any(x in url.lower() for x in ['doubleclick', 'googleads', 'sharethis']):
                     print(f"📡 Stream candidato: {url[:120]}")
                     nonlocal m3u8_encontrado
@@ -127,29 +124,61 @@ async def capturar_animal_planet():
         page.on("request", interceptar)
 
         try:
-            print(f"Cargando reproductor móvil: {URL_PLAYER}")
-            # Usamos 'load' en lugar de 'networkidle' para que no se cuelgue con anuncios
+            # ---------- PASO 1: Cargar la página del reproductor ----------
+            print(f"Cargando reproductor: {URL_PLAYER}")
             await page.goto(URL_PLAYER, wait_until="load", timeout=60000)
-            print("Página del reproductor cargada (evento load).")
+            print("Página cargada (evento load).")
 
-            # Esperar a que el reproductor se inicialice (JW Player, video, etc.)
-            try:
-                await page.wait_for_selector("video, .jwplayer, .video-js, iframe", timeout=10000)
-                print("Elemento reproductor detectado.")
-            except:
-                print("No se detectó reproductor visual, continuando...")
+            # Esperar un poco para que se ejecute cualquier JS inicial
+            await asyncio.sleep(5)
 
-            # Simular interacción humana: scroll, toque en el centro (play)
+            # ---------- PASO 2: Obtener el HTML completo ----------
+            html = await page.content()
+            print("--- HTML DEL REPRODUCTOR (primeros 2000 caracteres) ---")
+            print(html[:2000])
+
+            # ---------- PASO 3: Buscar en el HTML patrones de stream o iframes ----------
+            # Buscar URLs de iframes que no sean de sharethis ni vacíos
+            iframes = re.findall(r'<iframe[^>]+src=["\']([^"\']+)["\']', html, re.IGNORECASE)
+            iframes_validos = [src for src in iframes if src and 'sharethis' not in src and not src.startswith('about:')]
+            print(f"\nIframes encontrados en el HTML: {iframes_validos}")
+
+            # Buscar cualquier URL que contenga "m3u8", "token=", "expires=", o la IP codificada
+            patrones_stream = re.findall(r'(https?://[^\s"\']*?(?:m3u8|token=|expires=|MTgx)[^\s"\']*)', html)
+            print(f"\nPosibles enlaces de stream en HTML: {patrones_stream}")
+
+            # Si hay un iframe distinto, navegar a él
+            stream_iframe = None
+            for src in iframes_validos:
+                if 'live' in src or 'player' in src or 'animal' in src:
+                    stream_iframe = src
+                    break
+            if not stream_iframe and iframes_validos:
+                stream_iframe = iframes_validos[0]  # tomar el primero
+
+            if stream_iframe:
+                print(f"\nNavegando a iframe interno: {stream_iframe}")
+                await page.goto(stream_iframe, wait_until="load", timeout=60000)
+                await asyncio.sleep(5)
+                html_interno = await page.content()
+                print("--- HTML del iframe interno (primeros 2000 caracteres) ---")
+                print(html_interno[:2000])
+                # Buscar de nuevo patrones
+                patrones_stream2 = re.findall(r'(https?://[^\s"\']*?(?:m3u8|token=|expires=|MTgx)[^\s"\']*)', html_interno)
+                print(f"Posibles enlaces en iframe interno: {patrones_stream2}")
+
+            # ---------- PASO 4: Interacción simulada en la página actual ----------
+            # Intentar varios clics y esperas
             await page.mouse.move(200, 400)
             await page.wait_for_timeout(500)
             await page.mouse.click(200, 400)
-            print("Toque en el centro del reproductor.")
+            print("Toque en el centro.")
 
-            # Intentar hacer clic en el botón de play con selectores habituales
+            # Selectores de play típicos
             selectores_play = [
                 '.jw-icon-playback', '.jw-icon-display', '.vjs-big-play-button',
                 'button[aria-label="Play"]', '.play-button', '.fp-play',
-                'video', '.jwplayer'
+                'video', '.jwplayer', '#player'
             ]
             for sel in selectores_play:
                 try:
@@ -161,31 +190,20 @@ async def capturar_animal_planet():
                 except:
                     continue
 
-            # Esperar un buen rato a que se genere el stream (máximo 45 segundos)
+            # Esperar hasta 60 segundos para capturar petición de stream
             intentos = 0
-            while not m3u8_encontrado and intentos < 9:
-                print(f"Esperando stream... ({intentos+1}/9)")
+            while not m3u8_encontrado and intentos < 12:
+                print(f"Esperando stream... ({intentos+1}/12)")
                 await asyncio.sleep(5)
                 intentos += 1
 
-            # Si aún no apareció, intentar extraer con JavaScript
+            # Último intento con JS
             if not m3u8_encontrado:
                 js = """
                 (() => {
-                    // JW Player
                     try { if (typeof jwplayer !== 'undefined') { const pl = jwplayer().getPlaylist(); if (pl && pl[0]) return pl[0].file; } } catch(e) {}
-                    // VideoJS
-                    try { if (typeof videojs !== 'undefined') { const src = videojs('player').currentSource().src; if (src) return src; } } catch(e) {}
-                    // HTML5 video
+                    try { if (typeof videojs !== 'undefined') { return videojs('player').currentSource().src; } } catch(e) {}
                     try { const v = document.querySelector('video'); if (v && v.src) return v.src; } catch(e) {}
-                    // Buscar en todos los iframes
-                    const iframes = document.querySelectorAll('iframe');
-                    for (const iframe of iframes) {
-                        try {
-                            const v = iframe.contentDocument.querySelector('video');
-                            if (v && v.src) return v.src;
-                        } catch(e) {}
-                    }
                     return null;
                 })()
                 """
@@ -195,11 +213,11 @@ async def capturar_animal_planet():
                     m3u8_encontrado = js_result
 
         except Exception as e:
-            print(f"Error durante la carga: {e}")
+            print(f"Error: {e}")
         finally:
-            # Guardar todas las peticiones capturadas para depuración
-            print("--- DEBUG: Primeras 30 peticiones (URLs) ---")
-            for u in todas_peticiones[:30]:
+            # Imprimir todas las peticiones de red (primeras 50)
+            print("\n--- DEBUG: Primeras 50 peticiones de red ---")
+            for u in todas_peticiones[:50]:
                 print(u[:150])
             await browser.close()
 
@@ -207,7 +225,7 @@ async def capturar_animal_planet():
 
 
 def actualizar_animal_planet():
-    print("\nBuscando señal de ANIMAL PLANET (emulando Web Video Caster)...")
+    print("\nBuscando señal de ANIMAL PLANET...")
     link = asyncio.run(capturar_animal_planet())
 
     if link:
