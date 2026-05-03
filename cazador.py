@@ -59,103 +59,101 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — ESTRATEGIA CORREGIDA
+# ANIMAL PLANET — EMULACIÓN COMPLETA DE WEB VIDEO CASTER
 # ============================================================
 STEALTH_SCRIPT = """
+// Eliminar rastros de automatización
 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-Object.defineProperty(navigator, 'languages', { get: () => ['es-HN', 'es', 'en-US', 'en'] });
-Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
+Object.defineProperty(navigator, 'plugins', { get: () => [1,2,3,4,5] });
+Object.defineProperty(navigator, 'languages', { get: () => ['es-HN', 'es'] });
 window.chrome = { runtime: {} };
+// Sobrescribir el permiso de notificaciones para evitar bloqueos
+const originalQuery = window.navigator.permissions.query;
+window.navigator.permissions.query = (parameters) => (
+    parameters.name === 'notifications' ?
+    Promise.resolve({ state: Notification.permission }) :
+    originalQuery(parameters)
+);
 """
 
-URL_PRINCIPAL = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
-URL_PLAYER    = "https://www.tvporinternet2.com/live/animalplanet.php"
+URL_PLAYER = "https://www.tvporinternet2.com/live/animalplanet.php"
+REFERER    = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
 
 async def capturar_animal_planet():
-    link_encontrado = None
-    m3u8_candidatos = []
-
-    # Palabras clave prohibidas en la URL del stream
-    PALABRAS_PROHIBIDAS = [
-        'sharethis', 'doubleclick', 'googleads', 'googlevideo',
-        'facebook', 'twitter', 'pinterest', 'whatsapp', 'telegram',
-        'ads', 'adservice', 'adnxs', 'criteo', 'outbrain', 'taboola'
-    ]
+    m3u8_encontrado = None
+    todas_peticiones = []  # para depuración
 
     async with async_playwright() as p:
+        # Emular un Galaxy S9 (Android Chrome)
         browser = await p.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
+            args=[
+                "--no-sandbox",
+                "--disable-blink-features=AutomationControlled",
+                "--disable-dev-shm-usage",
+                "--disable-web-security",           # permite iframes cross-origin
+                "--disable-features=IsolateOrigins,site-per-process"
+            ]
         )
 
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            viewport={"width": 1280, "height": 720},
+            user_agent="Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.43 Mobile Safari/537.36",
+            viewport={"width": 412, "height": 823},
+            device_scale_factor=2,
+            is_mobile=True,
+            has_touch=True,
             locale="es-HN",
             timezone_id="America/Tegucigalpa",
+            extra_http_headers={
+                "Accept-Language": "es-HN,es;q=0.9,en;q=0.8",
+                "Referer": REFERER,
+                "Origin": "https://www.tvporinternet2.com"
+            }
         )
         await context.add_init_script(STEALTH_SCRIPT)
+        page = await context.new_page()
 
-        # --- Página principal: obtener cookies y el iframe del reproductor ---
-        pagina_principal = await context.new_page()
-        try:
-            print("Cargando página principal...")
-            await pagina_principal.goto(URL_PRINCIPAL, wait_until="networkidle", timeout=60000)
-            print("Página principal cargada.")
-
-            # Extraer el src del iframe del reproductor (normalmente con "live" en la URL)
-            iframe_src = await pagina_principal.evaluate("""
-                () => {
-                    const iframes = document.querySelectorAll('iframe');
-                    for (const iframe of iframes) {
-                        const src = iframe.src || '';
-                        if (src.includes('live') || src.includes('player') || src.includes('animalplanet')) {
-                            return src;
-                        }
-                    }
-                    return null;
-                }
-            """)
-            if iframe_src:
-                print(f"Iframe del reproductor encontrado: {iframe_src}")
-            else:
-                print("No se encontró iframe del reproductor, usando URL por defecto.")
-                iframe_src = URL_PLAYER
-        except Exception as e:
-            print(f"Error en página principal: {e}")
-            iframe_src = URL_PLAYER
-        finally:
-            await pagina_principal.close()
-
-        # --- Ahora dentro del reproductor ---
-        pagina_player = await context.new_page()
-
-        # Interceptar peticiones de red en este contexto
-        def interceptar(request):
+        # Interceptar todas las peticiones de red y registrar las relevantes
+        async def interceptar(request):
             url = request.url
-            # Solo nos interesan streams
+            todas_peticiones.append(url)
             if ".m3u8" in url or ".mpd" in url:
-                # Rechazar si contiene palabras prohibidas
-                url_lower = url.lower()
-                if any(p in url_lower for p in PALABRAS_PROHIBIDAS):
-                    return
-                print(f"  -> Stream candidato: {url[:100]}...")
-                m3u8_candidatos.append(url)
-        pagina_player.on("request", interceptar)
+                # Ignorar solo las de anuncios muy obvias (pero las guardamos igual en log)
+                if not any(x in url.lower() for x in ['doubleclick', 'googleads', 'sharethis']):
+                    print(f"📡 Stream candidato: {url[:120]}")
+                    nonlocal m3u8_encontrado
+                    if not m3u8_encontrado:
+                        m3u8_encontrado = url
+        page.on("request", interceptar)
 
         try:
-            print(f"Cargando reproductor: {iframe_src}")
-            await pagina_player.goto(iframe_src, wait_until="networkidle", timeout=60000)
-            print("Reproductor cargado.")
+            print(f"Cargando reproductor móvil: {URL_PLAYER}")
+            # Usamos 'load' en lugar de 'networkidle' para que no se cuelgue con anuncios
+            await page.goto(URL_PLAYER, wait_until="load", timeout=60000)
+            print("Página del reproductor cargada (evento load).")
 
-            # Intentar hacer clic en el botón de play para forzar la carga
+            # Esperar a que el reproductor se inicialice (JW Player, video, etc.)
+            try:
+                await page.wait_for_selector("video, .jwplayer, .video-js, iframe", timeout=10000)
+                print("Elemento reproductor detectado.")
+            except:
+                print("No se detectó reproductor visual, continuando...")
+
+            # Simular interacción humana: scroll, toque en el centro (play)
+            await page.mouse.move(200, 400)
+            await page.wait_for_timeout(500)
+            await page.mouse.click(200, 400)
+            print("Toque en el centro del reproductor.")
+
+            # Intentar hacer clic en el botón de play con selectores habituales
             selectores_play = [
                 '.jw-icon-playback', '.jw-icon-display', '.vjs-big-play-button',
-                'button[aria-label="Play"]', '.play-button', '.fp-play'
+                'button[aria-label="Play"]', '.play-button', '.fp-play',
+                'video', '.jwplayer'
             ]
             for sel in selectores_play:
                 try:
-                    el = await pagina_player.wait_for_selector(sel, timeout=5000)
+                    el = await page.query_selector(sel)
                     if el:
                         await el.click()
                         print(f"Click en {sel}")
@@ -163,47 +161,53 @@ async def capturar_animal_planet():
                 except:
                     continue
 
-            # Esperar hasta 30 segundos a que aparezca un m3u8
+            # Esperar un buen rato a que se genere el stream (máximo 45 segundos)
             intentos = 0
-            while not m3u8_candidatos and intentos < 6:
-                print(f"Esperando stream... ({intentos+1}/6)")
+            while not m3u8_encontrado and intentos < 9:
+                print(f"Esperando stream... ({intentos+1}/9)")
                 await asyncio.sleep(5)
                 intentos += 1
 
-            if m3u8_candidatos:
-                link_encontrado = m3u8_candidatos[0]
-                print(f"Stream capturado: {link_encontrado[:100]}...")
-            else:
-                # Último intento: extraer con JS desde el reproductor
-                js_result = await pagina_player.evaluate("""
-                    () => {
+            # Si aún no apareció, intentar extraer con JavaScript
+            if not m3u8_encontrado:
+                js = """
+                (() => {
+                    // JW Player
+                    try { if (typeof jwplayer !== 'undefined') { const pl = jwplayer().getPlaylist(); if (pl && pl[0]) return pl[0].file; } } catch(e) {}
+                    // VideoJS
+                    try { if (typeof videojs !== 'undefined') { const src = videojs('player').currentSource().src; if (src) return src; } } catch(e) {}
+                    // HTML5 video
+                    try { const v = document.querySelector('video'); if (v && v.src) return v.src; } catch(e) {}
+                    // Buscar en todos los iframes
+                    const iframes = document.querySelectorAll('iframe');
+                    for (const iframe of iframes) {
                         try {
-                            if (typeof jwplayer !== 'undefined') {
-                                return jwplayer().getPlaylist()[0].file;
-                            }
-                        } catch(e) {}
-                        try {
-                            const v = document.querySelector('video');
+                            const v = iframe.contentDocument.querySelector('video');
                             if (v && v.src) return v.src;
                         } catch(e) {}
-                        return null;
                     }
-                """)
+                    return null;
+                })()
+                """
+                js_result = await page.evaluate(js)
                 if js_result and ("m3u8" in js_result or "mpd" in js_result):
-                    link_encontrado = js_result
-                    print(f"Stream obtenido por JS: {link_encontrado[:100]}...")
+                    print(f"Extraído por JS: {js_result[:120]}")
+                    m3u8_encontrado = js_result
 
         except Exception as e:
-            print(f"Error en el reproductor: {e}")
+            print(f"Error durante la carga: {e}")
         finally:
-            await pagina_player.close()
+            # Guardar todas las peticiones capturadas para depuración
+            print("--- DEBUG: Primeras 30 peticiones (URLs) ---")
+            for u in todas_peticiones[:30]:
+                print(u[:150])
             await browser.close()
 
-    return link_encontrado
+    return m3u8_encontrado
 
 
 def actualizar_animal_planet():
-    print("\nBuscando señal de ANIMAL PLANET...")
+    print("\nBuscando señal de ANIMAL PLANET (emulando Web Video Caster)...")
     link = asyncio.run(capturar_animal_planet())
 
     if link:
@@ -222,7 +226,7 @@ def actualizar_animal_planet():
         except Exception as e:
             print(f"Error al guardar: {e}")
     else:
-        print("No se encontró ningún link .m3u8 para Animal Planet.")
+        print("No se encontró ningún link .m3u8 válido para Animal Planet.")
 
 
 # ============================================================
