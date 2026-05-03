@@ -26,7 +26,7 @@
     {
         "nombre": "CBS",
         "imagen": "https://wwwimage-tve.cbsstatic.com/base/files/seo/cbs_seo_1200x627_1.jpg",
-        "url": "https://www.cbsnews.com/common/video/cbsn-ny-prod.m3u8",
+        "url": "https://cbsn-us.cbsnstream.cbsnews.com/out/v1/55a8648e8f134e82a470f83d562deeca/master.m3u8",
         "pais": "USA"
     },
     {
