@@ -59,9 +59,11 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — VERSIÓN FINAL: ELIMINA ANUNCIO + JS PLAY
+# ANIMAL PLANET — VERSIÓN FINAL CON VALIDACIÓN
 # ============================================================
 PAGINA_PRINCIPAL = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
+REFERER = PAGINA_PRINCIPAL
+USER_AGENT = "Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.43 Mobile Safari/537.36"
 
 async def capturar_animal_planet():
     async with async_playwright() as p:
@@ -77,7 +79,7 @@ async def capturar_animal_planet():
         )
 
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.43 Mobile Safari/537.36",
+            user_agent=USER_AGENT,
             viewport={"width": 412, "height": 823},
             device_scale_factor=2,
             is_mobile=True,
@@ -91,27 +93,29 @@ async def capturar_animal_planet():
         )
 
         page = await context.new_page()
-        m3u8_capturado = []
+        m3u8_candidatos = []
+        stream_valido = None
 
         # Interceptar peticiones de red
-        page.on("request", lambda request: (
-            print(f"📡 Petición: {request.url[:120]}") if ".m3u8" in request.url or ".mpd" in request.url else None,
-            m3u8_capturado.append(request.url) if (".m3u8" in request.url or ".mpd" in request.url) else None
-        ))
+        async def interceptar(request):
+            if ".m3u8" in request.url or ".mpd" in request.url:
+                print(f"📡 Stream candidato: {request.url[:120]}")
+                m3u8_candidatos.append(request.url)
+
+        page.on("request", interceptar)
 
         try:
             print(f"Cargando página principal: {PAGINA_PRINCIPAL}")
             await page.goto(PAGINA_PRINCIPAL, wait_until="domcontentloaded", timeout=60000)
             print("Página principal cargada (DOM). Esperando iframe 'player'...")
 
-            # Esperar a que aparezca el iframe con name="player"
+            # Esperar a que aparezca el iframe del reproductor
             try:
                 await page.wait_for_selector('iframe[name="player"]', timeout=15000)
-                print("Iframe del reproductor presente.")
+                print("Iframe 'player' presente.")
             except:
-                print("No se encontró el iframe 'player'. Continuando con la página principal...")
+                print("No se encontró el iframe 'player'. Continuando sin él...")
 
-            # Dar tiempo a que el iframe cargue
             await asyncio.sleep(5)
 
             # Obtener el frame "player"
@@ -124,80 +128,68 @@ async def capturar_animal_planet():
             if frame:
                 print("Frame 'player' obtenido. Preparando reproducción...")
 
-                # 1. Ocultar el anuncio que bloquea los clics (id="don'tfoid")
+                # Ocultar anuncio bloqueante
                 try:
                     await frame.evaluate("""
                         const ad = document.getElementById('don\\'tfoid');
                         if (ad) ad.style.display = 'none';
                     """)
-                    print("Anuncio bloqueante ocultado.")
+                    print("Anuncio ocultado.")
                 except Exception as e:
-                    print(f"No se pudo ocultar el anuncio: {e}")
+                    print(f"No se pudo ocultar anuncio: {e}")
 
-                # 2. Intentar iniciar la reproducción con JavaScript
-                js_play = """
-                (() => {
-                    // Intentar con JW Player
-                    try {
-                        if (typeof jwplayer !== 'undefined') {
-                            const playlist = jwplayer().getPlaylist();
-                            if (playlist && playlist[0]) {
-                                // Devolver directamente la URL del stream si está disponible
-                                return playlist[0].file;
+                # Iniciar reproducción con JavaScript
+                await frame.evaluate("""
+                    (() => {
+                        try { if (typeof jwplayer !== 'undefined') { jwplayer().play(); } } catch(e) {}
+                        try { if (typeof videojs !== 'undefined') { videojs('player').play(); } } catch(e) {}
+                        try { const v = document.querySelector('video'); if (v) v.play(); } catch(e) {}
+                    })();
+                """)
+                print("Reproducción forzada vía JS.")
+
+            # Esperar a que aparezcan stream candidates
+            print("Esperando hasta 60 segundos para capturar streams...")
+            for i in range(12):
+                await asyncio.sleep(5)
+                if m3u8_candidatos:
+                    # Probar cada candidato inmediatamente desde el contexto de la página
+                    for candidato in m3u8_candidatos[-3:]:  # probamos los últimos 3
+                        print(f"🔍 Verificando: {candidato[:100]}...")
+                        # Hacer un fetch desde el mismo navegador (respeta cookies, referer, etc.)
+                        status = await page.evaluate("""
+                            async (url) => {
+                                try {
+                                    const resp = await fetch(url, {
+                                        method: 'GET',
+                                        headers: {
+                                            'Referer': arguments[1],
+                                            'User-Agent': arguments[2]
+                                        }
+                                    });
+                                    return resp.status;
+                                } catch(e) {
+                                    return 0;
+                                }
                             }
-                            // O forzar play
-                            jwplayer().play();
-                        }
-                    } catch(e) {}
-                    // Intentar con VideoJS
-                    try {
-                        if (typeof videojs !== 'undefined') {
-                            const player = videojs('player');
-                            player.play();
-                            const src = player.currentSource().src;
-                            if (src) return src;
-                        }
-                    } catch(e) {}
-                    // Intentar con elemento <video>
-                    try {
-                        const v = document.querySelector('video');
-                        if (v) {
-                            v.play();
-                            return v.src;
-                        }
-                    } catch(e) {}
-                    return null;
-                })()
-                """
-                resultado_js = await frame.evaluate(js_play)
-                if resultado_js and ("m3u8" in resultado_js or "mpd" in resultado_js):
-                    print(f"✅ Stream obtenido por JS: {resultado_js[:120]}")
-                    m3u8_capturado.append(resultado_js)
-                else:
-                    print("JS no devolvió stream, pero se inició la reproducción (si es posible).")
-
-                # 3. Esperar a que aparezcan peticiones de red del stream
-                print("Esperando hasta 45 segundos a que se genere el stream definitivo...")
-                for i in range(9):
-                    if len(m3u8_capturado) > 1:  # ya tenemos al menos un candidato después del inicial
-                        # El primer elemento podría ser el de antes, nos interesa el último
+                        """, candidato, REFERER, USER_AGENT)
+                        if status == 200:
+                            print(f"✅ Stream VÁLIDO (status {status}): {candidato[:100]}")
+                            stream_valido = candidato
+                            break
+                        else:
+                            print(f"❌ Stream inválido (status {status})")
+                    if stream_valido:
                         break
-                    await asyncio.sleep(5)
-
-            else:
-                # Si no hay frame, esperamos un poco más a ver si aparece
-                print("Esperando stream desde la página principal...")
-                await asyncio.sleep(30)
+                if stream_valido:
+                    break
 
         except Exception as e:
             print(f"Error: {e}")
         finally:
             await browser.close()
 
-        # Tomamos el último m3u8 capturado (el más reciente, que debería ser el definitivo)
-        if m3u8_capturado:
-            return m3u8_capturado[-1]
-        return None
+        return stream_valido
 
 
 def actualizar_animal_planet():
