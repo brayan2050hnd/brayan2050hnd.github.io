@@ -59,11 +59,10 @@ def actualizar_zaz():
 
 
 # ============================================================
-# ANIMAL PLANET — VERSIÓN FINAL CON VALIDACIÓN
+# ANIMAL PLANET — MÉTODO IDÉNTICO A WEB VIDEO CASTER
 # ============================================================
 PAGINA_PRINCIPAL = "https://www.tvporinternet2.com/animal-planet-en-vivo-por-internet.html"
 REFERER = PAGINA_PRINCIPAL
-USER_AGENT = "Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.43 Mobile Safari/537.36"
 
 async def capturar_animal_planet():
     async with async_playwright() as p:
@@ -79,7 +78,7 @@ async def capturar_animal_planet():
         )
 
         context = await browser.new_context(
-            user_agent=USER_AGENT,
+            user_agent="Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.43 Mobile Safari/537.36",
             viewport={"width": 412, "height": 823},
             device_scale_factor=2,
             is_mobile=True,
@@ -93,111 +92,102 @@ async def capturar_animal_planet():
         )
 
         page = await context.new_page()
-        m3u8_candidatos = []
-        stream_valido = None
-
-        # Interceptar peticiones de red
-        async def interceptar(request):
-            if ".m3u8" in request.url or ".mpd" in request.url:
-                print(f"📡 Stream candidato: {request.url[:120]}")
-                m3u8_candidatos.append(request.url)
-
-        page.on("request", interceptar)
+        stream_final = None
 
         try:
             print(f"Cargando página principal: {PAGINA_PRINCIPAL}")
             await page.goto(PAGINA_PRINCIPAL, wait_until="domcontentloaded", timeout=60000)
-            print("Página principal cargada (DOM). Esperando iframe 'player'...")
+            print("Página principal cargada. Esperando iframe 'player'...")
 
-            # Esperar a que aparezca el iframe del reproductor
+            # Esperar hasta 30 segundos a que aparezca el iframe
             try:
-                await page.wait_for_selector('iframe[name="player"]', timeout=15000)
-                print("Iframe 'player' presente.")
+                await page.wait_for_selector('iframe[name="player"]', timeout=30000)
             except:
-                print("No se encontró el iframe 'player'. Continuando sin él...")
+                print("No se encontró el iframe 'player'. Abortando.")
+                return None
 
-            await asyncio.sleep(5)
-
-            # Obtener el frame "player"
+            # Obtener el frame
             frame = None
-            for f in page.frames:
-                if f.name == "player":
-                    frame = f
-                    break
-
-            if frame:
-                print("Frame 'player' obtenido. Preparando reproducción...")
-
-                # Ocultar anuncio bloqueante
-                try:
-                    await frame.evaluate("""
-                        const ad = document.getElementById('don\\'tfoid');
-                        if (ad) ad.style.display = 'none';
-                    """)
-                    print("Anuncio ocultado.")
-                except Exception as e:
-                    print(f"No se pudo ocultar anuncio: {e}")
-
-                # Iniciar reproducción con JavaScript
-                await frame.evaluate("""
-                    (() => {
-                        try { if (typeof jwplayer !== 'undefined') { jwplayer().play(); } } catch(e) {}
-                        try { if (typeof videojs !== 'undefined') { videojs('player').play(); } } catch(e) {}
-                        try { const v = document.querySelector('video'); if (v) v.play(); } catch(e) {}
-                    })();
-                """)
-                print("Reproducción forzada vía JS.")
-
-            # Esperar a que aparezcan stream candidates
-            print("Esperando hasta 60 segundos para capturar streams...")
-            for i in range(12):
-                await asyncio.sleep(5)
-                if m3u8_candidatos:
-                    # Probar cada candidato inmediatamente desde el contexto de la página
-                    for candidato in m3u8_candidatos[-3:]:  # probamos los últimos 3
-                        print(f"🔍 Verificando: {candidato[:100]}...")
-                        # Hacer un fetch desde el mismo navegador (respeta cookies, referer, etc.)
-                        status = await page.evaluate("""
-                            async (url) => {
-                                try {
-                                    const resp = await fetch(url, {
-                                        method: 'GET',
-                                        headers: {
-                                            'Referer': arguments[1],
-                                            'User-Agent': arguments[2]
-                                        }
-                                    });
-                                    return resp.status;
-                                } catch(e) {
-                                    return 0;
-                                }
-                            }
-                        """, candidato, REFERER, USER_AGENT)
-                        if status == 200:
-                            print(f"✅ Stream VÁLIDO (status {status}): {candidato[:100]}")
-                            stream_valido = candidato
-                            break
-                        else:
-                            print(f"❌ Stream inválido (status {status})")
-                    if stream_valido:
+            for _ in range(10):  # Reintentar hasta 5 segundos
+                await asyncio.sleep(0.5)
+                for f in page.frames:
+                    if f.name == "player":
+                        frame = f
                         break
-                if stream_valido:
+                if frame:
                     break
+
+            if not frame:
+                print("No se pudo acceder al frame 'player'.")
+                return None
+
+            print("Frame 'player' obtenido. Ocultando anuncios...")
+            # Ocultar elementos que bloquean clics
+            await frame.evaluate("""
+                const blockers = document.querySelectorAll('a, div[style*="absolute"], iframe');
+                blockers.forEach(el => {
+                    if (el.offsetHeight < 50 || el.id === 'don\\'tfoid') {
+                        el.style.display = 'none';
+                    }
+                });
+            """)
+
+            # Forzar reproducción
+            await frame.evaluate("""
+                (() => {
+                    try { if (typeof jwplayer !== 'undefined') { jwplayer().play(); } } catch(e) {}
+                    try { if (typeof videojs !== 'undefined') { videojs('player').play(); } } catch(e) {}
+                    try { const v = document.querySelector('video'); if (v) v.play(); } catch(e) {}
+                })();
+            """)
+            print("Reproducción forzada. Esperando que el video cargue...")
+
+            # Esperar a que la etiqueta <video> tenga un src con .m3u8
+            # (hasta 60 segundos)
+            for intento in range(12):
+                await asyncio.sleep(5)
+                # Buscar el src del video dentro del iframe
+                video_src = await frame.evaluate("""
+                    () => {
+                        const v = document.querySelector('video');
+                        if (v && v.src && v.src.includes('.m3u8')) return v.src;
+                        // También buscar en JW Player
+                        try { if (typeof jwplayer !== 'undefined') { const pl = jwplayer().getPlaylist(); if (pl && pl[0]) return pl[0].file; } } catch(e) {}
+                        return null;
+                    }
+                """)
+                if video_src:
+                    print(f"📡 Stream encontrado en el DOM: {video_src[:100]}...")
+                    # Verificar que el servidor acepta este enlace (usando las cookies del contexto)
+                    status = await frame.evaluate("""
+                        async (url) => {
+                            try {
+                                const resp = await fetch(url, { method: 'GET' });
+                                return resp.status;
+                            } catch(e) { return 0; }
+                        }
+                    """, video_src)
+                    if status == 200:
+                        print(f"✅ Stream VÁLIDO (status 200).")
+                        stream_final = video_src
+                        break
+                    else:
+                        print(f"❌ Stream inválido (status {status}), esperando más...")
 
         except Exception as e:
             print(f"Error: {e}")
         finally:
             await browser.close()
 
-        return stream_valido
+        return stream_final
 
 
 def actualizar_animal_planet():
-    print("\n🔎 Buscando señal de ANIMAL PLANET...")
+    print("\n🔎 Buscando señal de ANIMAL PLANET (modo Web Video Caster)...")
     link = asyncio.run(capturar_animal_planet())
 
     if link:
-        print(f"¡LOGRADO! Link encontrado: {link}")
+        print(f"¡LOGRADO! Link funcional: {link}")
         try:
             with open('usa.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
