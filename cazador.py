@@ -2,9 +2,11 @@ import cloudscraper
 import re
 import json
 import subprocess
+import requests
+import os
 
 # ============================================================
-# CANAL ZAZ — sin cambios, funciona perfecto
+# CANAL ZAZ — NO SE TOCA, FUNCIONA PERFECTO
 # ============================================================
 def actualizar_zaz():
     scraper = cloudscraper.create_scraper(
@@ -58,60 +60,59 @@ def actualizar_zaz():
 
 
 # ============================================================
-# CANAL CHOLUVISION — extracción desde YouTube (cliente Android)
+# CANAL CHOLUVISION — ACTUALIZACIÓN CON API DE YOUTUBE
 # ============================================================
 def actualizar_choluvision():
-    youtube_url = "https://www.youtube.com/live/TEqTZ34X-_Q"
-    print(f"\nExtrayendo stream de CHOLUVISION desde: {youtube_url}")
-    
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    CHANNEL_ID = "UCeSq39TqpXgFqZzSqKTk_Zw"  # ID del canal de CHOLUVISION
+
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    print("\nVerificando si CHOLUVISION está en vivo...")
+    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={CHANNEL_ID}&eventType=live&type=video&key={API_KEY}"
+
     try:
-        # Comando con user-agent móvil y cliente Android para evitar bloqueo
-        comando = [
-            "yt-dlp",
-            "-g",
-            "--extractor-args", "youtube:player_client=android",
-            "--user-agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
-            youtube_url
-        ]
-        resultado = subprocess.run(
-            comando,
-            capture_output=True, text=True, check=True, timeout=30
-        )
-        link = resultado.stdout.strip()
-        if not link:
-            print("❌ yt-dlp no devolvió ninguna URL.")
-            return
-        
-        print(f"✅ Enlace M3U8 obtenido: {link}")
+        respuesta = requests.get(url).json()
+        items = respuesta.get("items", [])
 
-        # Guardar en honduras.json
-        try:
-            with open('honduras.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            print("⚠️ honduras.json no existe. Creándolo...")
-            data = []
+        if items:
+            video_id = items[0]["id"]["videoId"]
+            nuevo_link = f"https://www.youtube.com/embed/{video_id}?rel=0&showinfo=0&modestbranding=1&playsinline=1"
+            print(f"✅ Enlace de CHOLUVISION actualizado: {nuevo_link}")
 
-        for canal in data:
-            if "CHOLUVISION" in canal.get('nombre', '').upper():
-                canal['url'] = link
-                print("URL de CHOLUVISION actualizada en honduras.json.")
-                break
+            # Guardar en honduras.json
+            try:
+                with open('honduras.json', 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            except FileNotFoundError:
+                data = []
+
+            encontrado = False
+            for canal in data:
+                if "CHOLUVISION" in canal.get('nombre', '').upper():
+                    canal['url'] = nuevo_link
+                    encontrado = True
+                    print("URL de CHOLUVISION actualizada en honduras.json.")
+                    break
+
+            if not encontrado:
+                print("⚠️ No se encontró 'CHOLUVISION' en honduras.json. Agregando entrada nueva.")
+                data.append({
+                    "nombre": "CHOLUVISION",
+                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
+                    "url": nuevo_link,
+                    "pais": "HONDURAS"
+                })
+
+            with open('honduras.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
         else:
-            # Si no encuentra el canal, lo agrega al final
-            print("⚠️ No se encontró 'CHOLUVISION' en honduras.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "CHOLUVISION",
-                "url": link
-            })
+            print("ℹ️ CHOLUVISION no está transmitiendo en este momento. No se actualiza el enlace.")
 
-        with open('honduras.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error ejecutando yt-dlp: {e.stderr}")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Error al verificar el directo: {e}")
 
 
 # ============================================================
