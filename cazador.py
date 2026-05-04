@@ -58,16 +58,23 @@ def actualizar_zaz():
 
 
 # ============================================================
-# CANAL CHOLUVISION — extracción desde YouTube
+# CANAL CHOLUVISION — extracción desde YouTube (cliente Android)
 # ============================================================
 def actualizar_choluvision():
     youtube_url = "https://www.youtube.com/live/TEqTZ34X-_Q"
     print(f"\nExtrayendo stream de CHOLUVISION desde: {youtube_url}")
     
     try:
-        # Ejecutar yt-dlp -g para obtener el enlace directo
+        # Comando con user-agent móvil y cliente Android para evitar bloqueo
+        comando = [
+            "yt-dlp",
+            "-g",
+            "--extractor-args", "youtube:player_client=android",
+            "--user-agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+            youtube_url
+        ]
         resultado = subprocess.run(
-            ["yt-dlp", "-g", youtube_url],
+            comando,
             capture_output=True, text=True, check=True, timeout=30
         )
         link = resultado.stdout.strip()
@@ -78,8 +85,12 @@ def actualizar_choluvision():
         print(f"✅ Enlace M3U8 obtenido: {link}")
 
         # Guardar en honduras.json
-        with open('honduras.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        try:
+            with open('honduras.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            print("⚠️ honduras.json no existe. Creándolo...")
+            data = []
 
         for canal in data:
             if "CHOLUVISION" in canal.get('nombre', '').upper():
