@@ -60,21 +60,39 @@ def actualizar_zaz():
 
 
 # ============================================================
-# CANAL CHOLUVISION — ACTUALIZACIÓN CON API DE YOUTUBE
+# CANAL CHOLUVISION — OBTIENE EL ID DEL CANAL Y BUSCA EN VIVO
 # ============================================================
 def actualizar_choluvision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_ID = "UCeSq39TqpXgFqZzSqKTk_Zw"  # ID del canal de CHOLUVISION
+    VIDEO_ID = "TEqTZ34X-_Q"  # ID del video de ejemplo para obtener el canal
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    print("\nVerificando si CHOLUVISION está en vivo...")
-    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={CHANNEL_ID}&eventType=live&type=video&key={API_KEY}"
+    print("\nObteniendo ID del canal de CHOLUVISION...")
+    
+    # Paso 1: Obtener el ID del canal a partir del ID del video
+    video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID}&key={API_KEY}"
+    
+    try:
+        video_resp = requests.get(video_url).json()
+        items = video_resp.get("items", [])
+        if not items:
+            print("❌ No se pudo obtener información del video.")
+            return
+        channel_id = items[0]["snippet"]["channelId"]
+        print(f"ℹ️ ID del canal obtenido: {channel_id}")
+    except Exception as e:
+        print(f"❌ Error al obtener ID del canal: {e}")
+        return
+
+    # Paso 2: Buscar transmisiones en vivo del canal
+    print("Verificando si CHOLUVISION está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
 
     try:
-        respuesta = requests.get(url).json()
+        respuesta = requests.get(search_url).json()
         items = respuesta.get("items", [])
 
         if items:
