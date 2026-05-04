@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
         run: |
           pip install cloudscraper playwright
           playwright install chromium --with-deps
-          pip install yt-dlp
+          pip install requests
 
       - name: Ejecutar script
         run: python cazador.py
