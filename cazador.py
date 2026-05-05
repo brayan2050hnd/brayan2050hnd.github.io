@@ -165,57 +165,109 @@ def actualizar_choluvision():
 
 
 # ============================================================
-# CANAL TELEMUNDO (USA) — extrae m3u8 de xtremo-stereo
+# CANAL TELEMUNDO FLORIDA — desde YouTube @TelemundoSeries
 # ============================================================
-def actualizar_telemundo():
-    scraper = cloudscraper.create_scraper(
-        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
-    )
-    
-    fuente_web = "https://www.xtremo-stereo.com/telemundo-en-vivo/"
-    print(f"Buscando señal de Telemundo en: {fuente_web}")
+def actualizar_telemundo_florida():
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    CHANNEL_HANDLE = "@TelemundoSeries"  # Nombre de usuario
+
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    print("\nObteniendo ID del canal de Telemundo Florida...")
+    # Obtener el ID del canal a partir del handle
+    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
+    try:
+        ch_resp = requests.get(channels_url).json()
+        items = ch_resp.get("items", [])
+        if not items:
+            print("❌ No se encontró el canal con el handle especificado.")
+            return
+        channel_id = items[0]["id"]
+        print(f"ℹ️ ID del canal: {channel_id}")
+    except Exception as e:
+        print(f"❌ Error al obtener ID del canal: {e}")
+        return
+
+    print("Verificando si Telemundo Florida está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
 
     try:
-        response = scraper.get(fuente_web, timeout=15).text
-        
-        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
-        
-        if not links:
-            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
-            for frame_url in iframes:
-                if 'google' in frame_url or 'facebook' in frame_url: continue
-                try:
-                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
-                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
-                except:
-                    continue
+        respuesta = requests.get(search_url).json()
+        items = respuesta.get("items", [])
 
-        link_valido = None
-        for l in links:
-            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
-            # Filtramos solo los que contengan "telemundo" para evitar enlaces incorrectos
-            if 'telemundo' in l_limpio.lower() and not any(x in l_limpio.lower() for x in ['ads', 'click', 'pop']):
-                link_valido = l_limpio
-                break
+        if not items:
+            print("ℹ️ Telemundo Florida no está transmitiendo en este momento. No se actualiza el HTML.")
+            return
 
-        if link_valido:
-            print(f"¡LOGRADO! Link de Telemundo encontrado: {link_valido}")
+        video_id = items[0]["id"]["videoId"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
 
+        html_path = "telemundo_florida.html"
+        try:
+            with open(html_path, "r", encoding="utf-8") as f:
+                html = f.read()
+        except FileNotFoundError:
+            html = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TELEMUNDO FLORIDA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+        if "VIDEO_ID" in html:
+            nuevo_html = html.replace("VIDEO_ID", video_id)
+        else:
+            import re
+            nuevo_html = re.sub(r'(embed/)[^"?]+', r'\1' + video_id, html)
+
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(nuevo_html)
+        print("✅ Archivo telemundo_florida.html actualizado con el nuevo directo.")
+
+        url_html = "https://brayan2050hnd.github.io/telemundo_florida.html"
+        try:
             with open('usa.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
+        except FileNotFoundError:
+            data = []
 
-            for canal in data:
-                if "TELEMUNDO" in canal.get('nombre', '').upper():
-                    canal['url'] = link_valido
-                    print("URL de Telemundo actualizada en el JSON.")
+        encontrado = False
+        for canal in data:
+            if "TELEMUNDO FLORIDA" in canal.get('nombre', '').upper() or "TELEMUNDO FL" in canal.get('nombre', '').upper():
+                canal['url'] = url_html
+                encontrado = True
+                print("URL de Telemundo Florida en usa.json actualizada a la página HTML fija.")
+                break
 
-            with open('usa.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-        else:
-            print("No se encontró ningún link .m3u8 válido y específico para Telemundo.")
+        if not encontrado:
+            print("⚠️ No se encontró 'TELEMUNDO FLORIDA' en usa.json. Agregando entrada nueva.")
+            data.append({
+                "nombre": "TELEMUNDO FLORIDA",
+                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
+                "url": url_html,
+                "pais": "USA"
+            })
+
+        with open('usa.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
     except Exception as e:
-        print(f"Error en la captura: {e}")
+        print(f"❌ Error al verificar el directo: {e}")
 
 
 # ============================================================
@@ -224,4 +276,4 @@ def actualizar_telemundo():
 if __name__ == "__main__":
     actualizar_zaz()
     actualizar_choluvision()
-    actualizar_telemundo()
+    actualizar_telemundo_florida()
