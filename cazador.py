@@ -534,65 +534,104 @@ def actualizar_usa():
 
 
 # ============================================================
-# ============================================================
-# CANAL DISNEY CHANNEL — usa Playwright para interceptar el stream
+# CANAL DISNEY CHANNEL — búsqueda en YouTube con selección aleatoria
 # ============================================================
 def actualizar_disney_channel():
-    import asyncio
-    from playwright.async_api import async_playwright
+    import random
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    CHANNEL_ID = "UCayRpbmAiiuU50OpDPVSjwA"
 
-    fuente_web = "https://deporflix.net/canales/disney-channel/"
-    print(f"Buscando señal de Disney Channel en: {fuente_web}")
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
 
-    async def extraer():
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page()
-            link_valido = None
-
-            async def interceptar(request):
-                nonlocal link_valido
-                if ".m3u8" in request.url and "ads" not in request.url:
-                    link_valido = request.url
-
-            page.on("request", interceptar)
-            await page.goto(fuente_web, wait_until="domcontentloaded", timeout=60000)
-            # Tiempo para que el reproductor cargue
-            await asyncio.sleep(8)
-            await browser.close()
-            return link_valido
+    print("\nVerificando si Disney Channel España está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={CHANNEL_ID}&eventType=live&type=video&key={API_KEY}"
 
     try:
-        link_valido = asyncio.run(extraer())
+        respuesta = requests.get(search_url).json()
+        items = respuesta.get("items", [])
 
-        if link_valido:
-            print(f"¡LOGRADO! Link de Disney Channel encontrado: {link_valido}")
+        if not items:
+            print("ℹ️ Disney Channel no está transmitiendo en este momento. No se actualiza el HTML.")
+            return
 
+        # Si hay más de un directo, elegir uno aleatoriamente
+        if len(items) > 1:
+            print(f"⚠️ Se encontraron {len(items)} transmisiones en vivo. Seleccionando una aleatoriamente...")
+            elegido = random.choice(items)
+        else:
+            elegido = items[0]
+
+        video_id = elegido["id"]["videoId"]
+        titulo = elegido["snippet"]["title"]
+        print(f"✅ Transmisión seleccionada: '{titulo}' (ID: {video_id})")
+
+        # Actualizar el archivo HTML
+        html_path = "disney.html"
+        try:
+            with open(html_path, "r", encoding="utf-8") as f:
+                html = f.read()
+        except FileNotFoundError:
+            html = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DISNEY CHANNEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+        if "VIDEO_ID" in html:
+            nuevo_html = html.replace("VIDEO_ID", video_id)
+        else:
+            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
+
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(nuevo_html)
+        print("✅ Archivo disney.html actualizado.")
+
+        # Actualizar el enlace en usa.json
+        url_html = "https://brayan2050hnd.github.io/disney.html"
+        try:
             with open('usa.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
+        except FileNotFoundError:
+            data = []
 
-            for canal in data:
-                if "DISNEY CHANNEL" in canal.get('nombre', '').upper():
-                    canal['url'] = link_valido
-                    print("URL de Disney Channel actualizada en el JSON.")
-                    break
-            else:
-                print("⚠️ No se encontró 'DISNEY CHANNEL' en usa.json. Agregando entrada nueva.")
-                data.append({
-                    "nombre": "DISNEY CHANNEL",
-                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Disney_Channel_logo.svg/640px-Disney_Channel_logo.svg.png",
-                    "url": link_valido,
-                    "pais": "USA"
-                })
+        encontrado = False
+        for canal in data:
+            if "DISNEY CHANNEL" in canal.get('nombre', '').upper():
+                canal['url'] = url_html
+                encontrado = True
+                print("URL de Disney Channel en usa.json actualizada.")
+                break
 
-            with open('usa.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-        else:
-            print("No se encontró ningún link .m3u8 válido para Disney Channel.")
+        if not encontrado:
+            print("⚠️ No se encontró 'DISNEY CHANNEL' en usa.json. Agregando entrada nueva.")
+            data.append({
+                "nombre": "DISNEY CHANNEL",
+                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Disney_Channel_logo.svg/640px-Disney_Channel_logo.svg.png",
+                "url": url_html,
+                "pais": "USA"
+            })
+
+        with open('usa.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
     except Exception as e:
-        print(f"Error en la captura: {e}")
-
+        print(f"❌ Error al verificar el directo: {e}")
 
 # ============================================================
 # EJECUCIÓN
