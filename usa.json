@@ -193,8 +193,7 @@
     },
     {
         "nombre": "BOOMERANG",
-        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Boomerang_HD_Logo_2015.svg/3840px-Boomerang_HD_Logo_2015.svg.png",
-        "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776080625/ei/kYLcadfnFbzFy_sP0tukwAw/ip/181.115.119.86/id/rEKifG2XUZg.2/itag/95/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hls_chunk_host/rr2---sn-uxab05-ub0e.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/gcr/hn/bui/AUUZDGJzjZs4Iuu4MW2TU-_lBD7gb9d5_WTMot0Uf-z-OG6hA2JyQuDgQHn9lNWqQ9eJpSaFCdTbKQSt/spc/jlWavZJT-l3M3szwHKiZiBmml5DFWuRBfvCAUpOKMdaV1kWzrweyTtzADTs3MJtwScDnHQ/vprv/1/ns/isYU4vQ9om_QH5p6pVlg4m0U/reg/0/playlist_type/DVR/initcwndbps/1646250/met/1776059031,/mh/6S/mm/44/mn/sn-uxab05-ub0e/ms/lva/mv/m/mvi/2/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565116,51565681,51869322/n/zeOMvLgSWvXnuA/mt/1776058608/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,gcr,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAOrGEjXXWy7bkfJ3SKIAWYzn83lcZW94xRae4Js8v7m4AiBJvgXCGnX8i_1pTJeD5MIifmxAb5rRrbbihvjnI0MQrQ%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRQIhAKWKXb49iAuQFB6lRdX4gBaz9Z8gcX23mx-6R_X2_ZZPAiB-26hb_5GlpnWcXundq4CUMnoIhzT1Xvh9DUeFymRM5g%3D%3D/playlist/index.m3u8",
+        "imagen": "http://23.237.104.106:8080/USA_BOOMERANG/index.m3u8",
         "pais": "USA"
     },
     {
