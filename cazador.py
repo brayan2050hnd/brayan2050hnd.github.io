@@ -333,7 +333,7 @@ def actualizar_telemundo_miami():
 
 
 # ============================================================
-# CANAL TELEMUNDO ACCIÓN — cloudscraper (mismo método que ZAZ)
+# CANAL TELEMUNDO ACCION — cloudscraper (mismo método que ZAZ)
 # ============================================================
 def actualizar_telemundo_accion():
     scraper = cloudscraper.create_scraper(
@@ -341,7 +341,7 @@ def actualizar_telemundo_accion():
     )
     
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/telemundo-accion"
-    print(f"Buscando señal de Telemundo Acción en: {fuente_web}")
+    print(f"Buscando señal de Telemundo Accion en: {fuente_web}")
 
     try:
         response = scraper.get(fuente_web, timeout=15).text
@@ -367,20 +367,21 @@ def actualizar_telemundo_accion():
             break
 
         if link_valido:
-            print(f"¡LOGRADO! Link de Telemundo Acción encontrado: {link_valido}")
+            print(f"¡LOGRADO! Link de Telemundo Accion encontrado: {link_valido}")
 
             with open('usa.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
             for canal in data:
-                if "TELEMUNDO ACCIÓN" in canal.get('nombre', '').upper():
+                # Busca sin tilde
+                if "TELEMUNDO ACCION" in canal.get('nombre', '').upper():
                     canal['url'] = link_valido
-                    print("URL de Telemundo Acción actualizada en el JSON.")
+                    print("URL de Telemundo Accion actualizada en el JSON.")
                     break
             else:
-                print("⚠️ No se encontró 'TELEMUNDO ACCIÓN' en usa.json. Agregando entrada nueva.")
+                print("⚠️ No se encontró 'TELEMUNDO ACCION' en usa.json. Agregando entrada nueva.")
                 data.append({
-                    "nombre": "TELEMUNDO ACCIÓN",
+                    "nombre": "TELEMUNDO ACCION",
                     "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
                     "url": link_valido,
                     "pais": "USA"
@@ -389,7 +390,7 @@ def actualizar_telemundo_accion():
             with open('usa.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         else:
-            print("No se encontró ningún link .m3u8 válido para Telemundo Acción.")
+            print("No se encontró ningún link .m3u8 válido para Telemundo Accion.")
 
     except Exception as e:
         print(f"Error en la captura: {e}")
