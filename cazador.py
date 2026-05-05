@@ -534,38 +534,36 @@ def actualizar_usa():
 
 
 # ============================================================
-# CANAL DISNEY CHANNEL — extrae m3u8 de deporflix.net (cloudscraper)
+# ============================================================
+# CANAL DISNEY CHANNEL — usa Playwright para interceptar el stream
 # ============================================================
 def actualizar_disney_channel():
-    scraper = cloudscraper.create_scraper(
-        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
-    )
-    
+    import asyncio
+    from playwright.async_api import async_playwright
+
     fuente_web = "https://deporflix.net/canales/disney-channel/"
     print(f"Buscando señal de Disney Channel en: {fuente_web}")
 
-    try:
-        response = scraper.get(fuente_web, timeout=15).text
-        
-        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
-        
-        if not links:
-            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
-            for frame_url in iframes:
-                if 'google' in frame_url or 'facebook' in frame_url: continue
-                try:
-                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
-                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
-                except:
-                    continue
+    async def extraer():
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            page = await browser.new_page()
+            link_valido = None
 
-        link_valido = None
-        for l in links:
-            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
-            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
-                continue
-            link_valido = l_limpio
-            break
+            async def interceptar(request):
+                nonlocal link_valido
+                if ".m3u8" in request.url and "ads" not in request.url:
+                    link_valido = request.url
+
+            page.on("request", interceptar)
+            await page.goto(fuente_web, wait_until="domcontentloaded", timeout=60000)
+            # Tiempo para que el reproductor cargue
+            await asyncio.sleep(8)
+            await browser.close()
+            return link_valido
+
+    try:
+        link_valido = asyncio.run(extraer())
 
         if link_valido:
             print(f"¡LOGRADO! Link de Disney Channel encontrado: {link_valido}")
