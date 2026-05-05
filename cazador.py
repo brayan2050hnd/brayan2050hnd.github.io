@@ -454,7 +454,6 @@ def actualizar_usa():
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
-            # IMPORTANTE: esta línea NO debe estar indentada con espacios extra
             html = """<!DOCTYPE html>
 <html>
 <head>
@@ -535,6 +534,69 @@ def actualizar_usa():
 
 
 # ============================================================
+# CANAL DISNEY CHANNEL — extrae m3u8 de deporflix.net (cloudscraper)
+# ============================================================
+def actualizar_disney_channel():
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
+    fuente_web = "https://deporflix.net/canales/disney-channel/"
+    print(f"Buscando señal de Disney Channel en: {fuente_web}")
+
+    try:
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+            for frame_url in iframes:
+                if 'google' in frame_url or 'facebook' in frame_url: continue
+                try:
+                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
+                except:
+                    continue
+
+        link_valido = None
+        for l in links:
+            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
+                continue
+            link_valido = l_limpio
+            break
+
+        if link_valido:
+            print(f"¡LOGRADO! Link de Disney Channel encontrado: {link_valido}")
+
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            for canal in data:
+                if "DISNEY CHANNEL" in canal.get('nombre', '').upper():
+                    canal['url'] = link_valido
+                    print("URL de Disney Channel actualizada en el JSON.")
+                    break
+            else:
+                print("⚠️ No se encontró 'DISNEY CHANNEL' en usa.json. Agregando entrada nueva.")
+                data.append({
+                    "nombre": "DISNEY CHANNEL",
+                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Disney_Channel_logo.svg/640px-Disney_Channel_logo.svg.png",
+                    "url": link_valido,
+                    "pais": "USA"
+                })
+
+            with open('usa.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+        else:
+            print("No se encontró ningún link .m3u8 válido para Disney Channel.")
+
+    except Exception as e:
+        print(f"Error en la captura: {e}")
+
+
+# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
@@ -544,3 +606,4 @@ if __name__ == "__main__":
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
     actualizar_usa()
+    actualizar_disney_channel()
