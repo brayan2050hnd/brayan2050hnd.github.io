@@ -395,6 +395,114 @@ def actualizar_telemundo_california():
         print(f"Error en la captura: {e}")
 
 
+
+
+
+# ============================================================
+# CANAL USA — desde YouTube @usaenvivo
+# ============================================================
+def actualizar_usa():
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    VIDEO_ID_REFERENCIA = "Ck1H1OQRPPk"  # ID del video que me pasaste
+
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    print("\nObteniendo ID del canal de USA...")
+    video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID_REFERENCIA}&key={API_KEY}"
+
+    try:
+        video_resp = requests.get(video_url).json()
+        items = video_resp.get("items", [])
+        if not items:
+            print("❌ No se pudo obtener información del video.")
+            return
+        channel_id = items[0]["snippet"]["channelId"]
+        print(f"ℹ️ ID del canal: {channel_id}")
+    except Exception as e:
+        print(f"❌ Error al obtener ID del canal: {e}")
+        return
+
+    print("Verificando si USA está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+
+    try:
+        respuesta = requests.get(search_url).json()
+        items = respuesta.get("items", [])
+
+        if not items:
+            print("ℹ️ USA no está transmitiendo en este momento. No se actualiza el HTML.")
+            return
+
+        video_id = items[0]["id"]["videoId"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
+
+        html_path = "usa.html"
+        try:
+            with open(html_path, "r", encoding="utf-8") as f:
+                html = f.read()
+        except FileNotFoundError:
+            html = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>USA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+        if "VIDEO_ID" in html:
+            nuevo_html = html.replace("VIDEO_ID", video_id)
+        else:
+            import re
+            nuevo_html = re.sub(r'(embed/)[^"?]+', r'\1' + video_id, html)
+
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(nuevo_html)
+        print("✅ Archivo usa.html actualizado con el nuevo directo.")
+
+        url_html = "https://brayan2050hnd.github.io/usa.html"
+        try:
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            data = []
+
+        encontrado = False
+        for canal in data:
+            if "USA" == canal.get('nombre', '').strip().upper():
+                canal['url'] = url_html
+                encontrado = True
+                print("URL de USA en usa.json actualizada a la página HTML fija.")
+                break
+
+        if not encontrado:
+            print("⚠️ No se encontró 'USA' en usa.json. Agregando entrada nueva.")
+            data.append({
+                "nombre": "USA",
+                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/USA_Network_logo.svg/640px-USA_Network_logo.svg.png",
+                "url": url_html,
+                "pais": "USA"
+            })
+
+        with open('usa.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+    except Exception as e:
+        print(f"❌ Error al verificar el directo: {e}")
+
 # ============================================================
 # EJECUCIÓN
 # ============================================================
