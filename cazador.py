@@ -126,7 +126,6 @@ def actualizar_choluvision():
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
-            # CORRECCIÓN: evitar error de backreference
             nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
 
         with open(html_path, "w", encoding="utf-8") as f:
@@ -231,7 +230,6 @@ def actualizar_telemundo_florida():
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
-            # CORRECCIÓN: evitar error de backreference
             nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
 
         with open(html_path, "w", encoding="utf-8") as f:
@@ -396,27 +394,24 @@ def actualizar_telemundo_california():
 
 
 # ============================================================
-
-# ============================================================
-# CANAL USA — desde YouTube (busca el canal a partir de un video de referencia)
+# CANAL USA — desde YouTube (con filtro anti-estreno y anti-anuncios)
 # ============================================================
 def actualizar_usa():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    VIDEO_ID_REFERENCIA = "Ck1H1OQRPPk"  # ID del video que me pasaste
+    VIDEO_ID_REFERENCIA = "Ck1H1OQRPPk"
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
     print("\nObteniendo ID del canal de USA...")
-    # 1. Obtener el channelId a partir del video de referencia
     video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID_REFERENCIA}&key={API_KEY}"
 
     try:
         video_resp = requests.get(video_url).json()
         items = video_resp.get("items", [])
         if not items:
-            print("❌ No se pudo obtener información del video de referencia.")
+            print("❌ No se pudo obtener información del video.")
             return
         channel_id = items[0]["snippet"]["channelId"]
         print(f"ℹ️ ID del canal: {channel_id}")
@@ -425,7 +420,6 @@ def actualizar_usa():
         return
 
     print("Verificando si USA está en vivo...")
-    # 2. Buscar el directo en el canal
     search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
 
     try:
@@ -436,8 +430,6 @@ def actualizar_usa():
             print("ℹ️ USA no está transmitiendo en este momento. No se actualiza el HTML.")
             return
 
-        # --- NUEVO FILTRO ---
-        # 3. Obtener detalles para verificar que es una transmisión EN VIVO y no un estreno
         video_id_candidato = items[0]["id"]["videoId"]
         detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id_candidato}&key={API_KEY}"
         detalles_resp = requests.get(detalles_url).json()
@@ -453,19 +445,17 @@ def actualizar_usa():
         if broadcast_content != "live":
             print(f"ℹ️ El video encontrado no es una transmisión en vivo real (es '{broadcast_content}'). No se actualiza el HTML.")
             return
-        # --- FIN DEL NUEVO FILTRO ---
 
         video_id_final = video_id_candidato
         print(f"✅ Nuevo directo detectado: {video_id_final}")
 
-        # 4. Actualizar archivo usa.html
         html_path = "usa.html"
         try:
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
-            
-html = """<!DOCTYPE html>
+            # IMPORTANTE: esta línea NO debe estar indentada con espacios extra
+            html = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -483,33 +473,27 @@ html = """<!DOCTYPE html>
             allowfullscreen>
     </iframe>
     <script>
-        // Reactivar el sonido después de 3 segundos
         setTimeout(() => {
-            const iframe = document.querySelector('iframe');
+            const iframe = document.getElementById('player');
             if (iframe) {
                 iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
             }
         }, 3000);
 
-        // Intento básico de bloqueo de anuncios (se ejecuta repetidamente)
         setInterval(() => {
             try {
                 const iframe = document.getElementById('player');
                 if (iframe && iframe.contentWindow) {
-                    // Intenta saltar cualquier anuncio de video que pueda aparecer
                     iframe.contentWindow.postMessage('{"event":"command","func":"skipVideoAd","args":""}', '*');
-                    
-                    // Intenta ocultar overlays de anuncios comunes
                     const adElements = iframe.contentDocument.querySelectorAll('.ytp-ad-module, .ytp-ad-image-overlay, .ytp-ad-player-overlay');
                     adElements.forEach(el => el.remove());
                 }
-            } catch (e) {
-                // Ignorar errores de cross-origin
-            }
+            } catch (e) {}
         }, 1000);
     </script>
 </body>
 </html>"""
+
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id_final)
         else:
@@ -519,7 +503,6 @@ html = """<!DOCTYPE html>
             f.write(nuevo_html)
         print("✅ Archivo usa.html actualizado con el nuevo directo.")
 
-        # 5. Actualizar el enlace en usa.json
         url_html = "https://brayan2050hnd.github.io/usa.html"
         try:
             with open('usa.json', 'r', encoding='utf-8') as f:
