@@ -464,7 +464,8 @@ def actualizar_usa():
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
-            html = """<!DOCTYPE html>
+            
+html = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -477,21 +478,38 @@ def actualizar_usa():
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
+    <iframe id="player" src="https://www.youtube-nocookie.com/embed/VIDEO_ID?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
             allowfullscreen>
     </iframe>
     <script>
+        // Reactivar el sonido después de 3 segundos
         setTimeout(() => {
             const iframe = document.querySelector('iframe');
             if (iframe) {
                 iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
             }
         }, 3000);
+
+        // Intento básico de bloqueo de anuncios (se ejecuta repetidamente)
+        setInterval(() => {
+            try {
+                const iframe = document.getElementById('player');
+                if (iframe && iframe.contentWindow) {
+                    // Intenta saltar cualquier anuncio de video que pueda aparecer
+                    iframe.contentWindow.postMessage('{"event":"command","func":"skipVideoAd","args":""}', '*');
+                    
+                    // Intenta ocultar overlays de anuncios comunes
+                    const adElements = iframe.contentDocument.querySelectorAll('.ytp-ad-module, .ytp-ad-image-overlay, .ytp-ad-player-overlay');
+                    adElements.forEach(el => el.remove());
+                }
+            } catch (e) {
+                // Ignorar errores de cross-origin
+            }
+        }, 1000);
     </script>
 </body>
 </html>"""
-
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id_final)
         else:
