@@ -440,7 +440,7 @@ def actualizar_usa():
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
-            html = """<!DOCTYPE html>
+           html = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -453,10 +453,19 @@ def actualizar_usa():
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
             allowfullscreen>
     </iframe>
+    <script>
+        // Esperar 2 segundos y luego activar el sonido manualmente
+        setTimeout(() => {
+            const iframe = document.querySelector('iframe');
+            if (iframe) {
+                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+            }
+        }, 3000);
+    </script>
 </body>
 </html>"""
 
