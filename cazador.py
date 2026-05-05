@@ -3,29 +3,6 @@ import re
 import json
 import requests
 import os
-import asyncio
-from playwright.async_api import async_playwright
-
-# ============================================================
-# FUNCIÓN AUXILIAR CON PLAYWRIGHT
-# ============================================================
-async def extraer_m3u8_con_playwright(fuente_web):
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
-        link_valido = None
-
-        async def interceptar(request):
-            nonlocal link_valido
-            if ".m3u8" in request.url:
-                link_valido = request.url
-
-        page.on("request", interceptar)
-        await page.goto(fuente_web, wait_until="networkidle")
-        await asyncio.sleep(5)  # esperar a que el reproductor cargue
-        await browser.close()
-        return link_valido
-
 
 # ============================================================
 # CANAL ZAZ — NO SE TOCA, FUNCIONA PERFECTO
@@ -293,7 +270,7 @@ def actualizar_telemundo_florida():
 
 
 # ============================================================
-# CANAL TELEMUNDO MIAMI — extrae m3u8 de cxtvenvivo
+# CANAL TELEMUNDO MIAMI — extrae m3u8 de cxtvenvivo (cloudscraper)
 # ============================================================
 def actualizar_telemundo_miami():
     scraper = cloudscraper.create_scraper(
@@ -356,14 +333,38 @@ def actualizar_telemundo_miami():
 
 
 # ============================================================
-# CANAL TELEMUNDO ACCIÓN — extrae m3u8 de cxtvenvivo (con Playwright)
+# CANAL TELEMUNDO ACCIÓN — cloudscraper (mismo método que ZAZ)
 # ============================================================
 def actualizar_telemundo_accion():
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/telemundo-accion"
     print(f"Buscando señal de Telemundo Acción en: {fuente_web}")
 
     try:
-        link_valido = asyncio.run(extraer_m3u8_con_playwright(fuente_web))
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+            for frame_url in iframes:
+                if 'google' in frame_url or 'facebook' in frame_url: continue
+                try:
+                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
+                except:
+                    continue
+
+        link_valido = None
+        for l in links:
+            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
+                continue
+            link_valido = l_limpio
+            break
 
         if link_valido:
             print(f"¡LOGRADO! Link de Telemundo Acción encontrado: {link_valido}")
@@ -372,14 +373,14 @@ def actualizar_telemundo_accion():
                 data = json.load(f)
 
             for canal in data:
-                if "TELEMUNDO ACCION" in canal.get('nombre', '').upper():
+                if "TELEMUNDO ACCIÓN" in canal.get('nombre', '').upper():
                     canal['url'] = link_valido
                     print("URL de Telemundo Acción actualizada en el JSON.")
                     break
             else:
-                print("⚠️ No se encontró 'TELEMUNDO ACCION' en usa.json. Agregando entrada nueva.")
+                print("⚠️ No se encontró 'TELEMUNDO ACCIÓN' en usa.json. Agregando entrada nueva.")
                 data.append({
-                    "nombre": "TELEMUNDO ACCION",
+                    "nombre": "TELEMUNDO ACCIÓN",
                     "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
                     "url": link_valido,
                     "pais": "USA"
@@ -395,14 +396,38 @@ def actualizar_telemundo_accion():
 
 
 # ============================================================
-# CANAL TELEMUNDO CALIFORNIA — extrae m3u8 de cxtvenvivo (con Playwright)
+# CANAL TELEMUNDO CALIFORNIA — cloudscraper (mismo método que ZAZ)
 # ============================================================
 def actualizar_telemundo_california():
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/telemundo-california"
     print(f"Buscando señal de Telemundo California en: {fuente_web}")
 
     try:
-        link_valido = asyncio.run(extraer_m3u8_con_playwright(fuente_web))
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+            for frame_url in iframes:
+                if 'google' in frame_url or 'facebook' in frame_url: continue
+                try:
+                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
+                except:
+                    continue
+
+        link_valido = None
+        for l in links:
+            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
+                continue
+            link_valido = l_limpio
+            break
 
         if link_valido:
             print(f"¡LOGRADO! Link de Telemundo California encontrado: {link_valido}")
