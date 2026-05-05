@@ -126,8 +126,8 @@ def actualizar_choluvision():
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
-            import re
-            nuevo_html = re.sub(r'(embed/)[^"?]+', r'\1' + video_id, html)
+            # CORRECCIÓN: evitar error de backreference
+            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
 
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(nuevo_html)
@@ -231,8 +231,8 @@ def actualizar_telemundo_florida():
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
-            import re
-            nuevo_html = re.sub(r'(embed/)[^"?]+', r'\1' + video_id, html)
+            # CORRECCIÓN: evitar error de backreference
+            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
 
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(nuevo_html)
@@ -395,11 +395,8 @@ def actualizar_telemundo_california():
         print(f"Error en la captura: {e}")
 
 
-
-
-
 # ============================================================
-# CANAL USA — desde YouTube @usaenvivo
+# CANAL USA — desde YouTube (ID del video de referencia)
 # ============================================================
 def actualizar_usa():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -466,8 +463,8 @@ def actualizar_usa():
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
-            import re
-            nuevo_html = re.sub(r'(embed/)[^"?]+', r'\1' + video_id, html)
+            # CORRECCIÓN: evitar error de backreference
+            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
 
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(nuevo_html)
@@ -503,6 +500,7 @@ def actualizar_usa():
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
 
+
 # ============================================================
 # EJECUCIÓN
 # ============================================================
@@ -512,3 +510,4 @@ if __name__ == "__main__":
     actualizar_telemundo_florida()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
+    actualizar_usa()
