@@ -165,14 +165,14 @@ def actualizar_choluvision():
 
 
 # ============================================================
-# CANAL TELEMUNDO (USA) — usa cloudscraper como ZAZ
+# CANAL TELEMUNDO (USA) — extrae m3u8 de xtremo-stereo
 # ============================================================
 def actualizar_telemundo():
     scraper = cloudscraper.create_scraper(
         browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
     )
     
-    fuente_web = "https://www.tvspacehd.com/2022/10/telemundo.html?m=1"
+    fuente_web = "https://www.xtremo-stereo.com/telemundo-en-vivo/"
     print(f"Buscando señal de Telemundo en: {fuente_web}")
 
     try:
@@ -193,10 +193,10 @@ def actualizar_telemundo():
         link_valido = None
         for l in links:
             l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
-            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
-                continue
-            link_valido = l_limpio
-            break
+            # Filtramos solo los que contengan "telemundo" para evitar enlaces incorrectos
+            if 'telemundo' in l_limpio.lower() and not any(x in l_limpio.lower() for x in ['ads', 'click', 'pop']):
+                link_valido = l_limpio
+                break
 
         if link_valido:
             print(f"¡LOGRADO! Link de Telemundo encontrado: {link_valido}")
@@ -212,7 +212,7 @@ def actualizar_telemundo():
             with open('usa.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         else:
-            print("No se encontró ningún link .m3u8 válido para Telemundo.")
+            print("No se encontró ningún link .m3u8 válido y específico para Telemundo.")
 
     except Exception as e:
         print(f"Error en la captura: {e}")
