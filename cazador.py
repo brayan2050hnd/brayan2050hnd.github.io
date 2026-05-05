@@ -333,63 +333,64 @@ def actualizar_telemundo_miami():
 
 
 # ============================================================
-# ============================================================
-# CANAL TELEMUNDO ACCION — Playwright (necesita JavaScript)
+# CANAL TELEMUNDO ACCION — cloudscraper (mismo método que ZAZ)
 # ============================================================
 def actualizar_telemundo_accion():
-    import asyncio
-    from playwright.async_api import async_playwright
-
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/telemundo-accion"
     print(f"Buscando señal de Telemundo Accion en: {fuente_web}")
 
-    async def extraer():
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page()
-            link_valido = None
+    try:
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+            for frame_url in iframes:
+                if 'google' in frame_url or 'facebook' in frame_url: continue
+                try:
+                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
+                except:
+                    continue
 
-            # Interceptamos las peticiones de red
-            async def interceptar(request):
-                nonlocal link_valido
-                if ".m3u8" in request.url:
-                    link_valido = request.url
+        link_valido = None
+        for l in links:
+            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
+                continue
+            link_valido = l_limpio
+            break
 
-            page.on("request", interceptar)
+        if link_valido:
+            print(f"¡LOGRADO! Link de Telemundo Accion encontrado: {link_valido}")
 
-            # Cargamos la página y esperamos a que se genere tráfico
-            await page.goto(fuente_web, wait_until="domcontentloaded", timeout=60000)
-            # Tiempo para que el reproductor cargue y pida el stream
-            await asyncio.sleep(8)
-            await browser.close()
-            return link_valido
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
 
-    link_valido = asyncio.run(extraer())
+            for canal in data:
+                if "TELEMUNDO ACCION" in canal.get('nombre', '').upper():
+                    canal['url'] = link_valido
+                    print("URL de Telemundo Accion actualizada en el JSON.")
+                    break
+            else:
+                print("⚠️ No se encontró 'TELEMUNDO ACCION' en usa.json. Agregando entrada nueva.")
+                data.append({
+                    "nombre": "TELEMUNDO ACCION",
+                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
+                    "url": link_valido,
+                    "pais": "USA"
+                })
 
-    if link_valido:
-        print(f"¡LOGRADO! Link de Telemundo Accion encontrado: {link_valido}")
-
-        with open('usa.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        for canal in data:
-            if "TELEMUNDO ACCION" in canal.get('nombre', '').upper():
-                canal['url'] = link_valido
-                print("URL de Telemundo Accion actualizada en el JSON.")
-                break
+            with open('usa.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
         else:
-            print("⚠️ No se encontró 'TELEMUNDO ACCION' en usa.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "TELEMUNDO ACCION",
-                "imagen": "...",
-                "url": link_valido,
-                "pais": "USA"
-            })
+            print("No se encontró ningún link .m3u8 válido para Telemundo Accion.")
 
-        with open('usa.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-    else:
-        print("No se encontró ningún link .m3u8 válido para Telemundo Accion.")
     except Exception as e:
         print(f"Error en la captura: {e}")
 
