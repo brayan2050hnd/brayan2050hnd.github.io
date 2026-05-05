@@ -63,7 +63,7 @@ def actualizar_zaz():
 # ============================================================
 def actualizar_choluvision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    VIDEO_ID_REFERENCIA = "TEqTZ34X-_Q"  # ID del video de ejemplo para obtener el canal
+    VIDEO_ID_REFERENCIA = "TEqTZ34X-_Q"
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
@@ -98,7 +98,6 @@ def actualizar_choluvision():
         video_id = items[0]["id"]["videoId"]
         print(f"✅ Nuevo directo detectado: {video_id}")
 
-        # Leer el archivo HTML base (o crearlo si no existe)
         html_path = "choluvision.html"
         try:
             with open(html_path, "r", encoding="utf-8") as f:
@@ -124,11 +123,9 @@ def actualizar_choluvision():
 </body>
 </html>"""
 
-        # Reemplazar el marcador VIDEO_ID o el ID antiguo
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
-            # Reemplazar cualquier ID después de embed/
             import re
             nuevo_html = re.sub(r'(embed/)[^"?]+', r'\1' + video_id, html)
 
@@ -136,7 +133,6 @@ def actualizar_choluvision():
             f.write(nuevo_html)
         print("✅ Archivo choluvision.html actualizado con el nuevo directo.")
 
-        # Asegurar que honduras.json tenga la URL fija del HTML
         url_html = "https://brayan2050hnd.github.io/choluvision.html"
         try:
             with open('honduras.json', 'r', encoding='utf-8') as f:
@@ -169,8 +165,63 @@ def actualizar_choluvision():
 
 
 # ============================================================
+# CANAL TELEMUNDO (USA) — usa cloudscraper como ZAZ
+# ============================================================
+def actualizar_telemundo():
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
+    fuente_web = "https://www.tvspacehd.com/2022/10/telemundo.html?m=1"
+    print(f"Buscando señal de Telemundo en: {fuente_web}")
+
+    try:
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        
+        if not links:
+            iframes = re.findall(r'src=["\'](https?://[^\s<>"\']+?)["\']', response)
+            for frame_url in iframes:
+                if 'google' in frame_url or 'facebook' in frame_url: continue
+                try:
+                    f_res = scraper.get(frame_url, headers={'Referer': fuente_web}, timeout=10).text
+                    links.extend(re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', f_res))
+                except:
+                    continue
+
+        link_valido = None
+        for l in links:
+            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop', 'wcpkck']):
+                continue
+            link_valido = l_limpio
+            break
+
+        if link_valido:
+            print(f"¡LOGRADO! Link de Telemundo encontrado: {link_valido}")
+
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            for canal in data:
+                if "TELEMUNDO" in canal.get('nombre', '').upper():
+                    canal['url'] = link_valido
+                    print("URL de Telemundo actualizada en el JSON.")
+
+            with open('usa.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+        else:
+            print("No se encontró ningún link .m3u8 válido para Telemundo.")
+
+    except Exception as e:
+        print(f"Error en la captura: {e}")
+
+
+# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
     actualizar_zaz()
     actualizar_choluvision()
+    actualizar_telemundo()
