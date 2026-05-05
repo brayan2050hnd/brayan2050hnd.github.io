@@ -59,8 +59,17 @@
         "url": "https://aegis-cloudfront-1.tubi.video/0ecc85a2-5e1b-482a-9c69-3eaaee160f2e/index.m3u8",
         "pais": "USA"
     },
-    {
+    
+     {
         "nombre": "TELEMUNDO",
+        "imagen": "https://www.brandemia.org/wp-content/uploads/2013/02/logo_telemundo_principal.jpg",
+        "url": "https://agendawwe.com/canales/telemundo/",
+        "pais": "USA"
+    },
+
+    
+    {
+        "nombre": "TELEMUNDO FLORIDA",
         "imagen": "https://www.brandemia.org/wp-content/uploads/2013/02/logo_telemundo_principal.jpg",
         "url": "https://agendawwe.com/canales/telemundo/",
         "pais": "USA"
