@@ -206,7 +206,7 @@
     {
         "nombre": "NICK JUNIOR",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nick_Jr._logo_2023_%28outline%29.svg/3840px-Nick_Jr._logo_2023_%28outline%29.svg.png",
-        "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776082744/ei/2Ircacj4EJGDy_sPyaGkoAI/ip/181.115.119.86/id/M3QCpMx2jLw.2/itag/300/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D298/rqh/1/hls_chunk_host/rr1---sn-uxab05-ub0e.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/bui/AUUZDGLmqg-dBaqCXlcljG5Ot1PbokMM9hqqlEOQlRvM2uKi4S4No-fYSkjM9_E7BZvaY4aXagEJWvEX/spc/jlWavTMTlLamhsh9O4tv4kVdKcQT27bSE-_n4R9sk7scL8hYjsnhaTv9iP23arlJoS55PA/vprv/1/ns/q5J1B2-tIv6wFvlxRI47RtMU/reg/0/playlist_type/DVR/initcwndbps/1753750/met/1776061150,/mh/S8/mm/44/mn/sn-uxab05-ub0e/ms/lva/mv/m/mvi/1/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565116,51565681,51869322/n/MCS5rtgLNb3mug/mt/1776060765/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAKajR6DWRDudQsNA8USNpmO4hq5mZcnir8aAI4Fyr-VQAiAwPPnBkhHgBmJGHxSSHykQGOwUDwji8WbxjSwdPhq36Q%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRgIhALCgguE3E3RJYpr6dxd-xh0LY3c4eywjRi8FN0GpaYatAiEAk4Ss8sFLKNIdgUl8Mjl4URmkiqhikSuHYLgpjmAvozE%3D/playlist/index.m3u8",
+        "url": "http://84.17.50.102/nickjr/index.m3u8",
         "pais": "USA"
     },
     {
