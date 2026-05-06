@@ -200,7 +200,7 @@
     {
         "nombre": "DISNEY YUNIOR",
         "imagen": "https://1000marcas.net/wp-content/uploads/2022/01/Disney-Junior-Logo.png",
-        "url": "https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1776082095/ei/T4jcaYHqDI7yy_sP3_au4Ag/ip/181.115.119.86/id/w2sB87jLE1I.2/itag/95/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hls_chunk_host/rr2---sn-uxab05-ub0l.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/gcr/hn/bui/AUUZDGI0HBlW2rc1gTG_MbH1hX-9haAqaYQ8kRHCszXBvNkCfSdT_dZ4ldD0bsDzIl8K-FMBnLL0jXRj/spc/jlWavZ9iahdpX40D4vXBCQk7eeDKH4k-YzYP-X7O5xMyCxzjhMBtEHJOJ0a0BoTcvXIsXw/vprv/1/ns/7DqIUGt41s2og2nK0vsrTWIU/reg/0/playlist_type/DVR/initcwndbps/1792500/met/1776060501,/mh/IV/mm/44/mn/sn-uxab05-ub0l/ms/lva/mv/m/mvi/2/pl/24/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51565115,51565682,51869322/n/0V45pMWKfUVovg/mt/1776060275/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,gcr,bui,spc,vprv,ns,reg,playlist_type/sig/AHEqNM4wRQIhAPJAH1YXTlx7SkKtcLg46_j6ueDohabYyX2pV3Qpd1zLAiBJUVf5OTjkj_G_d_mDAuGL5e4aJuCiyC2RCNWqULAvzA%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRgIhAMqkW1Oslo8A1BaAyUJgykGcDmvzHdyPy-TjC_Li9HEpAiEAh3qZARK6SydkTmLAigwcdGg8t-RG3wkoZGY6Pxo2mfI%3D/playlist/index.m3u8",
+        "url": "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8",
         "pais": "USA"
     },
     {
