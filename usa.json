@@ -164,7 +164,7 @@
     {
         "nombre": "MS NOW",
         "imagen": "https://kfoxtv.com/resources/media2/1x1/600/1440/100x0/90/4c6de71e-aac2-4271-95d4-150a5057d352-AP25230528082823.jpg",
-        "url": "https://cdn.livenewsplayer.com/hls/msnbcsd/msnbcsd/playlist.m3u8?newzstarttime=1775628296&newzendtime=1775635496&newzhash=ujeIN3jkjD7c0il0FQzlyllj6ho_pHppPHnLEZizWnFeAxbBh1NN6EohdyijzT_imX3I_qtiqPXd-uJkdPYJew==",
+        "url": "http://41.205.93.154/MSNBC/index.m3u8",
         "pais": "USA"
     },
     {
