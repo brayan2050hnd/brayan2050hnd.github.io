@@ -631,12 +631,11 @@ def actualizar_disney_channel():
 
 
 # ============================================================
-# ============================================================
-# CANAL UNIVERSAL KIDS — desde YouTube (usa ID de video de referencia)
+# CANAL UNIVERSAL KIDS — desde YouTube (obtiene channelId del video de referencia)
 # ============================================================
 def actualizar_universal_kids():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    VIDEO_ID_REFERENCIA = "XAYgvRwSFKA"  # ID del video que me diste
+    VIDEO_ID_REFERENCIA = "XAYgvRwSFKA"
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
@@ -672,30 +671,33 @@ def actualizar_universal_kids():
         print(f"✅ Nuevo directo detectado: {video_id}")
 
         html_path = "universal_kids.html"
+        # Si el archivo no existe, se crea con el video de referencia
         try:
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
-            html = """<!DOCTYPE html>
+            html = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>UNIVERSAL KIDS</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    <iframe src="https://www.youtube.com/embed/{VIDEO_ID_REFERENCIA}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
             allowfullscreen>
     </iframe>
 </body>
 </html>"""
+            video_id = VIDEO_ID_REFERENCIA  # Para que el placeholder se reemplace correctamente
 
+        # Reemplazar el placeholder "VIDEO_ID" por el ID real
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
@@ -734,6 +736,7 @@ def actualizar_universal_kids():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
+
 
 # ============================================================
 # EJECUCIÓN
