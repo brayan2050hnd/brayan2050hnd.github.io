@@ -57,13 +57,14 @@ def actualizar_zaz():
     except Exception as e:
         print(f"Error en la captura: {e}")
 
-
 # ============================================================
 # CANAL CHOLUVISION — desde YouTube @choluvisioncanal27hd
+# (si no hay directo, mantiene el video de referencia)
 # ============================================================
 def actualizar_choluvision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
     CHANNEL_HANDLE = "@choluvisioncanal27hd"
+    VIDEO_ID_REFERENCIA = "TEqTZ34X-_Q"  # Video base por defecto
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
@@ -90,6 +91,7 @@ def actualizar_choluvision():
         respuesta = requests.get(search_url).json()
         items = respuesta.get("items", [])
 
+        # Si no hay directo, NO tocamos el HTML, mantenemos el que exista (con video de referencia)
         if not items:
             print("ℹ️ CHOLUVISION no está transmitiendo en este momento. No se actualiza el HTML.")
             return
@@ -102,26 +104,30 @@ def actualizar_choluvision():
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
-            html = """<!DOCTYPE html>
+            # Si el archivo no existe, lo creamos con el video de referencia
+            html = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CHOLUVISION</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    <iframe src="https://www.youtube.com/embed/{VIDEO_ID_REFERENCIA}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
             allowfullscreen>
     </iframe>
 </body>
 </html>"""
+            # Para que el reemplazo funcione correctamente con el placeholder
+            video_id = VIDEO_ID_REFERENCIA
 
+        # Reemplazar el placeholder "VIDEO_ID" por el ID real
         if "VIDEO_ID" in html:
             nuevo_html = html.replace("VIDEO_ID", video_id)
         else:
@@ -160,8 +166,6 @@ def actualizar_choluvision():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
-
-
 # ============================================================
 # CANAL TELEMUNDO FLORIDA — desde YouTube @TelemundoSeries
 # ============================================================
