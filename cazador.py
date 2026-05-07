@@ -95,9 +95,27 @@ def actualizar_choluvision():
             print("ℹ️ CHOLUVISION no está transmitiendo en este momento. No se actualiza el HTML.")
             return
 
-        video_id = items[0]["id"]["videoId"]
+        # Cogemos el primer candidato y verificamos que es realmente un directo
+        video_id_candidato = items[0]["id"]["videoId"]
+        detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id_candidato}&key={API_KEY}"
+        detalles_resp = requests.get(detalles_url).json()
+        detalles_items = detalles_resp.get("items", [])
+
+        if not detalles_items:
+            print("⚠️ No se pudieron obtener detalles del video. Se omite la actualización.")
+            return
+
+        broadcast_content = detalles_items[0]["snippet"]["liveBroadcastContent"]
+        print(f"   Tipo de emisión detectado: '{broadcast_content}'")
+
+        if broadcast_content != "live":
+            print(f"ℹ️ El video encontrado no es una transmisión en vivo real (es '{broadcast_content}'). No se actualiza el HTML.")
+            return
+
+        video_id = video_id_candidato
         print(f"✅ Nuevo directo detectado: {video_id}")
 
+        # Resto de la función (HTML, guardar en JSON) idéntico a como estaba antes
         html_path = "choluvision.html"
         try:
             with open(html_path, "r", encoding="utf-8") as f:
@@ -161,7 +179,6 @@ def actualizar_choluvision():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
-
 
 # ============================================================
 # CANAL TELEMUNDO FLORIDA — desde YouTube @TelemundoSeries
