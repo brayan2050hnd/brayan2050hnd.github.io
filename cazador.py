@@ -631,7 +631,7 @@ def actualizar_disney_channel():
 
 
 # ============================================================
-# CANAL UNIVERSAL KIDS — desde YouTube (obtiene channelId del video de referencia)
+# CANAL UNIVERSAL KIDS — desde YouTube (si no hay directo, mantiene el video de referencia)
 # ============================================================
 def actualizar_universal_kids():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -663,6 +663,7 @@ def actualizar_universal_kids():
         respuesta = requests.get(search_url).json()
         items = respuesta.get("items", [])
 
+        # Si no hay directo, mantenemos el HTML existente (no se modifica)
         if not items:
             print("ℹ️ Universal Kids no está transmitiendo en este momento. No se actualiza el HTML.")
             return
@@ -671,11 +672,11 @@ def actualizar_universal_kids():
         print(f"✅ Nuevo directo detectado: {video_id}")
 
         html_path = "universal_kids.html"
-        # Si el archivo no existe, se crea con el video de referencia
         try:
             with open(html_path, "r", encoding="utf-8") as f:
                 html = f.read()
         except FileNotFoundError:
+            # Si no existe el archivo, lo creamos con el video de referencia
             html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -695,7 +696,7 @@ def actualizar_universal_kids():
     </iframe>
 </body>
 </html>"""
-            video_id = VIDEO_ID_REFERENCIA  # Para que el placeholder se reemplace correctamente
+            video_id = VIDEO_ID_REFERENCIA  # Para que el placeholder funcione
 
         # Reemplazar el placeholder "VIDEO_ID" por el ID real
         if "VIDEO_ID" in html:
