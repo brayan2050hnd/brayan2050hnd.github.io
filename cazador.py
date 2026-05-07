@@ -58,13 +58,13 @@ def actualizar_zaz():
         print(f"Error en la captura: {e}")
 
 
-
-        # ============================================================
+# ============================================================
 # CANAL CHOLUVISION — desde YouTube @choluvisioncanal27hd
+# (CORREGIDO: igual que Telemundo Florida)
 # ============================================================
 def actualizar_choluvision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_HANDLE = "@choluvisioncanal27hd"   # ← handle que me diste
+    CHANNEL_HANDLE = "@choluvisioncanal27hd"   # handle que me diste
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
@@ -98,7 +98,6 @@ def actualizar_choluvision():
         video_id = items[0]["id"]["videoId"]
         print(f"✅ Nuevo directo detectado: {video_id}")
 
-        # Actualizar el HTML
         html_path = "choluvision.html"
         try:
             with open(html_path, "r", encoding="utf-8") as f:
@@ -133,7 +132,6 @@ def actualizar_choluvision():
             f.write(nuevo_html)
         print("✅ Archivo choluvision.html actualizado con el nuevo directo.")
 
-        # Actualizar la URL fija en el JSON
         url_html = "https://brayan2050hnd.github.io/choluvision.html"
         try:
             with open('honduras.json', 'r', encoding='utf-8') as f:
@@ -163,6 +161,8 @@ def actualizar_choluvision():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
+
+
 # ============================================================
 # CANAL TELEMUNDO FLORIDA — desde YouTube @TelemundoSeries
 # ============================================================
