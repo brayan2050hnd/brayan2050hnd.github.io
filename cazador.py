@@ -3,6 +3,156 @@ import re
 import json
 import requests
 import os
+import random
+
+# ============================================================
+# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
+# ============================================================
+def actualizar_canal_youtube(
+    canal_nombre,       # Nombre exacto en el JSON
+    html_file,          # Archivo HTML que se genera
+    json_file,          # Archivo JSON donde se guarda (ej. 'usa.json')
+    pais,               # País para el JSON
+    imagen_url,         # URL de la imagen del canal
+    handle=None,        # Handle del canal (ej. "@TelemundoSeries")
+    video_ref=None,     # ID de video de referencia (si no se usa handle)
+    channel_id=None,    # ID del canal directamente (si ya lo tienes)
+    filter_live=False,  # Si True, solo acepta directos reales ("live")
+    random_select=False # Si True, elige aleatoriamente entre varios directos
+):
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    # 1. Obtener channelId
+    print(f"\nObteniendo ID del canal de {canal_nombre}...")
+    try:
+        if channel_id:
+            pass  # ya lo tenemos
+        elif handle:
+            url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
+            resp = requests.get(url).json()
+            items = resp.get("items", [])
+            if not items:
+                print(f"❌ No se encontró el canal con handle {handle}.")
+                return
+            channel_id = items[0]["id"]
+        elif video_ref:
+            url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_ref}&key={API_KEY}"
+            resp = requests.get(url).json()
+            items = resp.get("items", [])
+            if not items:
+                print(f"❌ No se encontró el video de referencia {video_ref}.")
+                return
+            channel_id = items[0]["snippet"]["channelId"]
+        else:
+            print("❌ Se necesita handle, video_ref o channel_id.")
+            return
+        print(f"ℹ️ ID del canal: {channel_id}")
+    except Exception as e:
+        print(f"❌ Error al obtener ID: {e}")
+        return
+
+    # 2. Buscar transmisión en vivo
+    print(f"Verificando si {canal_nombre} está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+    try:
+        resp = requests.get(search_url).json()
+        items = resp.get("items", [])
+        if not items:
+            print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
+            return
+
+        if filter_live:
+            candidatos = []
+            for item in items:
+                vid = item["id"]["videoId"]
+                det_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={vid}&key={API_KEY}"
+                det_resp = requests.get(det_url).json()
+                det_items = det_resp.get("items", [])
+                if det_items and det_items[0]["snippet"]["liveBroadcastContent"] == "live":
+                    candidatos.append(item)
+            if not candidatos:
+                print(f"ℹ️ Ningún directo real encontrado para {canal_nombre}.")
+                return
+            items = candidatos
+
+        if random_select and len(items) > 1:
+            elegido = random.choice(items)
+            print(f"⚠️ {len(items)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
+        else:
+            elegido = items[0]
+
+        video_id = elegido["id"]["videoId"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
+
+    except Exception as e:
+        print(f"❌ Error al buscar directos: {e}")
+        return
+
+    # 3. Leer o crear plantilla HTML
+    try:
+        with open(html_file, "r", encoding="utf-8") as f:
+            html = f.read()
+    except FileNotFoundError:
+        html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+    if "VIDEO_ID" in html:
+        nuevo_html = html.replace("VIDEO_ID", video_id)
+    else:
+        nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(nuevo_html)
+    print(f"✅ Archivo {html_file} actualizado.")
+
+    # 4. Actualizar JSON
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
+
+    if not encontrado:
+        print(f"⚠️ No se encontró '{canal_nombre}' en {json_file}. Agregando entrada nueva.")
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
 
 # ============================================================
 # CANAL ZAZ — NO SE TOCA, FUNCIONA PERFECTO
@@ -56,218 +206,6 @@ def actualizar_zaz():
 
     except Exception as e:
         print(f"Error en la captura: {e}")
-
-# ============================================================
-# CANAL CHOLUVISION — desde YouTube @choluvisioncanal27hd
-# (si no hay directo, mantiene el video de referencia)
-# ============================================================
-def actualizar_choluvision():
-    API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_HANDLE = "@choluvisioncanal27hd"
-    VIDEO_ID_REFERENCIA = "TEqTZ34X-_Q"  # Video base por defecto
-
-    if not API_KEY:
-        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
-        return
-
-    print("\nObteniendo ID del canal de CHOLUVISION...")
-    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
-    try:
-        ch_resp = requests.get(channels_url).json()
-        items = ch_resp.get("items", [])
-        if not items:
-            print("❌ No se encontró el canal con el handle especificado.")
-            return
-        channel_id = items[0]["id"]
-        print(f"ℹ️ ID del canal: {channel_id}")
-    except Exception as e:
-        print(f"❌ Error al obtener ID del canal: {e}")
-        return
-
-    print("Verificando si CHOLUVISION está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-
-    try:
-        respuesta = requests.get(search_url).json()
-        items = respuesta.get("items", [])
-
-        # Si no hay directo, NO tocamos el HTML, mantenemos el que exista (con video de referencia)
-        if not items:
-            print("ℹ️ CHOLUVISION no está transmitiendo en este momento. No se actualiza el HTML.")
-            return
-
-        video_id = items[0]["id"]["videoId"]
-        print(f"✅ Nuevo directo detectado: {video_id}")
-
-        html_path = "choluvision.html"
-        try:
-            with open(html_path, "r", encoding="utf-8") as f:
-                html = f.read()
-        except FileNotFoundError:
-            # Si el archivo no existe, lo creamos con el video de referencia
-            html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CHOLUVISION</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
-        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
-    </style>
-</head>
-<body>
-    <iframe src="https://www.youtube.com/embed/{VIDEO_ID_REFERENCIA}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-</body>
-</html>"""
-            # Para que el reemplazo funcione correctamente con el placeholder
-            video_id = VIDEO_ID_REFERENCIA
-
-        # Reemplazar el placeholder "VIDEO_ID" por el ID real
-        if "VIDEO_ID" in html:
-            nuevo_html = html.replace("VIDEO_ID", video_id)
-        else:
-            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
-
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(nuevo_html)
-        print("✅ Archivo choluvision.html actualizado con el nuevo directo.")
-
-        url_html = "https://brayan2050hnd.github.io/choluvision.html"
-        try:
-            with open('honduras.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            data = []
-
-        encontrado = False
-        for canal in data:
-            if "CHOLUVISION" in canal.get('nombre', '').upper():
-                canal['url'] = url_html
-                encontrado = True
-                print("URL de CHOLUVISION en honduras.json actualizada a la página HTML fija.")
-                break
-
-        if not encontrado:
-            print("⚠️ No se encontró 'CHOLUVISION' en honduras.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "CHOLUVISION",
-                "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
-                "url": url_html,
-                "pais": "HONDURAS"
-            })
-
-        with open('honduras.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
-    except Exception as e:
-        print(f"❌ Error al verificar el directo: {e}")
-# ============================================================
-# CANAL TELEMUNDO FLORIDA — desde YouTube @TelemundoSeries
-# ============================================================
-def actualizar_telemundo_florida():
-    API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_HANDLE = "@TelemundoSeries"
-
-    if not API_KEY:
-        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
-        return
-
-    print("\nObteniendo ID del canal de Telemundo Florida...")
-    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
-    try:
-        ch_resp = requests.get(channels_url).json()
-        items = ch_resp.get("items", [])
-        if not items:
-            print("❌ No se encontró el canal con el handle especificado.")
-            return
-        channel_id = items[0]["id"]
-        print(f"ℹ️ ID del canal: {channel_id}")
-    except Exception as e:
-        print(f"❌ Error al obtener ID del canal: {e}")
-        return
-
-    print("Verificando si Telemundo Florida está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-
-    try:
-        respuesta = requests.get(search_url).json()
-        items = respuesta.get("items", [])
-
-        if not items:
-            print("ℹ️ Telemundo Florida no está transmitiendo en este momento. No se actualiza el HTML.")
-            return
-
-        video_id = items[0]["id"]["videoId"]
-        print(f"✅ Nuevo directo detectado: {video_id}")
-
-        html_path = "telemundo_florida.html"
-        try:
-            with open(html_path, "r", encoding="utf-8") as f:
-                html = f.read()
-        except FileNotFoundError:
-            html = """<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TELEMUNDO FLORIDA</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    </style>
-</head>
-<body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-</body>
-</html>"""
-
-        if "VIDEO_ID" in html:
-            nuevo_html = html.replace("VIDEO_ID", video_id)
-        else:
-            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
-
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(nuevo_html)
-        print("✅ Archivo telemundo_florida.html actualizado con el nuevo directo.")
-
-        url_html = "https://brayan2050hnd.github.io/telemundo_florida.html"
-        try:
-            with open('usa.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            data = []
-
-        encontrado = False
-        for canal in data:
-            if "TELEMUNDO FLORIDA" in canal.get('nombre', '').upper():
-                canal['url'] = url_html
-                encontrado = True
-                print("URL de Telemundo Florida en usa.json actualizada a la página HTML fija.")
-                break
-
-        if not encontrado:
-            print("⚠️ No se encontró 'TELEMUNDO FLORIDA' en usa.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "TELEMUNDO FLORIDA",
-                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
-                "url": url_html,
-                "pais": "USA"
-            })
-
-        with open('usa.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
-    except Exception as e:
-        print(f"❌ Error al verificar el directo: {e}")
 
 
 # ============================================================
@@ -397,361 +335,56 @@ def actualizar_telemundo_california():
 
 
 # ============================================================
-# CANAL USA — desde YouTube (con filtro anti-estreno y anti-anuncios)
-# ============================================================
-def actualizar_usa():
-    API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    VIDEO_ID_REFERENCIA = "Ck1H1OQRPPk"
-
-    if not API_KEY:
-        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
-        return
-
-    print("\nObteniendo ID del canal de USA...")
-    video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID_REFERENCIA}&key={API_KEY}"
-
-    try:
-        video_resp = requests.get(video_url).json()
-        items = video_resp.get("items", [])
-        if not items:
-            print("❌ No se pudo obtener información del video.")
-            return
-        channel_id = items[0]["snippet"]["channelId"]
-        print(f"ℹ️ ID del canal: {channel_id}")
-    except Exception as e:
-        print(f"❌ Error al obtener ID del canal: {e}")
-        return
-
-    print("Verificando si USA está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-
-    try:
-        respuesta = requests.get(search_url).json()
-        items = respuesta.get("items", [])
-
-        if not items:
-            print("ℹ️ USA no está transmitiendo en este momento. No se actualiza el HTML.")
-            return
-
-        video_id_candidato = items[0]["id"]["videoId"]
-        detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id_candidato}&key={API_KEY}"
-        detalles_resp = requests.get(detalles_url).json()
-        detalles_items = detalles_resp.get("items", [])
-
-        if not detalles_items:
-            print("⚠️ No se pudieron obtener detalles del video. Se omite la actualización.")
-            return
-
-        broadcast_content = detalles_items[0]["snippet"]["liveBroadcastContent"]
-        print(f"   Tipo de emisión detectado: '{broadcast_content}'")
-
-        if broadcast_content != "live":
-            print(f"ℹ️ El video encontrado no es una transmisión en vivo real (es '{broadcast_content}'). No se actualiza el HTML.")
-            return
-
-        video_id_final = video_id_candidato
-        print(f"✅ Nuevo directo detectado: {video_id_final}")
-
-        html_path = "usa.html"
-        try:
-            with open(html_path, "r", encoding="utf-8") as f:
-                html = f.read()
-        except FileNotFoundError:
-            html = """<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>USA</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    </style>
-</head>
-<body>
-    <iframe id="player" src="https://www.youtube-nocookie.com/embed/VIDEO_ID?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-    <script>
-        setTimeout(() => {
-            const iframe = document.getElementById('player');
-            if (iframe) {
-                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-            }
-        }, 3000);
-
-        setInterval(() => {
-            try {
-                const iframe = document.getElementById('player');
-                if (iframe && iframe.contentWindow) {
-                    iframe.contentWindow.postMessage('{"event":"command","func":"skipVideoAd","args":""}', '*');
-                    const adElements = iframe.contentDocument.querySelectorAll('.ytp-ad-module, .ytp-ad-image-overlay, .ytp-ad-player-overlay');
-                    adElements.forEach(el => el.remove());
-                }
-            } catch (e) {}
-        }, 1000);
-    </script>
-</body>
-</html>"""
-
-        if "VIDEO_ID" in html:
-            nuevo_html = html.replace("VIDEO_ID", video_id_final)
-        else:
-            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id_final}', html)
-
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(nuevo_html)
-        print("✅ Archivo usa.html actualizado con el nuevo directo.")
-
-        url_html = "https://brayan2050hnd.github.io/usa.html"
-        try:
-            with open('usa.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            data = []
-
-        encontrado = False
-        for canal in data:
-            if "USA" == canal.get('nombre', '').strip().upper():
-                canal['url'] = url_html
-                encontrado = True
-                print("URL de USA en usa.json actualizada a la página HTML fija.")
-                break
-
-        if not encontrado:
-            print("⚠️ No se encontró 'USA' en usa.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "USA",
-                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/USA_Network_logo.svg/640px-USA_Network_logo.svg.png",
-                "url": url_html,
-                "pais": "USA"
-            })
-
-        with open('usa.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
-    except Exception as e:
-        print(f"❌ Error al verificar el directo: {e}")
-
-
-# ============================================================
-# CANAL DISNEY CHANNEL — búsqueda en YouTube con selección aleatoria
-# ============================================================
-def actualizar_disney_channel():
-    import random
-    API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_ID = "UCayRpbmAiiuU50OpDPVSjwA"
-
-    if not API_KEY:
-        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
-        return
-
-    print("\nVerificando si Disney Channel España está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={CHANNEL_ID}&eventType=live&type=video&key={API_KEY}"
-
-    try:
-        respuesta = requests.get(search_url).json()
-        items = respuesta.get("items", [])
-
-        if not items:
-            print("ℹ️ Disney Channel no está transmitiendo en este momento. No se actualiza el HTML.")
-            return
-
-        if len(items) > 1:
-            print(f"⚠️ Se encontraron {len(items)} transmisiones en vivo. Seleccionando una aleatoriamente...")
-            elegido = random.choice(items)
-        else:
-            elegido = items[0]
-
-        video_id = elegido["id"]["videoId"]
-        titulo = elegido["snippet"]["title"]
-        print(f"✅ Transmisión seleccionada: '{titulo}' (ID: {video_id})")
-
-        html_path = "disney.html"
-        try:
-            with open(html_path, "r", encoding="utf-8") as f:
-                html = f.read()
-        except FileNotFoundError:
-            html = """<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DISNEY CHANNEL</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    </style>
-</head>
-<body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-</body>
-</html>"""
-
-        if "VIDEO_ID" in html:
-            nuevo_html = html.replace("VIDEO_ID", video_id)
-        else:
-            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
-
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(nuevo_html)
-        print("✅ Archivo disney.html actualizado.")
-
-        url_html = "https://brayan2050hnd.github.io/disney.html"
-        try:
-            with open('usa.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            data = []
-
-        encontrado = False
-        for canal in data:
-            if "DISNEY CHANNEL" in canal.get('nombre', '').upper():
-                canal['url'] = url_html
-                encontrado = True
-                print("URL de Disney Channel en usa.json actualizada.")
-                break
-
-        if not encontrado:
-            print("⚠️ No se encontró 'DISNEY CHANNEL' en usa.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "DISNEY CHANNEL",
-                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Disney_Channel_logo.svg/640px-Disney_Channel_logo.svg.png",
-                "url": url_html,
-                "pais": "USA"
-            })
-
-        with open('usa.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
-    except Exception as e:
-        print(f"❌ Error al verificar el directo: {e}")
-
-
-# ============================================================
-# CANAL UNIVERSAL KIDS — desde YouTube (si no hay directo, mantiene el video de referencia)
-# ============================================================
-def actualizar_universal_kids():
-    API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    VIDEO_ID_REFERENCIA = "XAYgvRwSFKA"
-
-    if not API_KEY:
-        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
-        return
-
-    print("\nObteniendo ID del canal de Universal Kids...")
-    # Obtener channelId a partir del video de referencia
-    video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID_REFERENCIA}&key={API_KEY}"
-    try:
-        video_resp = requests.get(video_url).json()
-        items = video_resp.get("items", [])
-        if not items:
-            print("❌ No se pudo obtener información del video de referencia.")
-            return
-        channel_id = items[0]["snippet"]["channelId"]
-        print(f"ℹ️ ID del canal: {channel_id}")
-    except Exception as e:
-        print(f"❌ Error al obtener ID del canal: {e}")
-        return
-
-    print("Verificando si Universal Kids está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-
-    try:
-        respuesta = requests.get(search_url).json()
-        items = respuesta.get("items", [])
-
-        # Si no hay directo, mantenemos el HTML existente (no se modifica)
-        if not items:
-            print("ℹ️ Universal Kids no está transmitiendo en este momento. No se actualiza el HTML.")
-            return
-
-        video_id = items[0]["id"]["videoId"]
-        print(f"✅ Nuevo directo detectado: {video_id}")
-
-        html_path = "universal_kids.html"
-        try:
-            with open(html_path, "r", encoding="utf-8") as f:
-                html = f.read()
-        except FileNotFoundError:
-            # Si no existe el archivo, lo creamos con el video de referencia
-            html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNIVERSAL KIDS</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
-        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
-    </style>
-</head>
-<body>
-    <iframe src="https://www.youtube.com/embed/{VIDEO_ID_REFERENCIA}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-</body>
-</html>"""
-            video_id = VIDEO_ID_REFERENCIA  # Para que el placeholder funcione
-
-        # Reemplazar el placeholder "VIDEO_ID" por el ID real
-        if "VIDEO_ID" in html:
-            nuevo_html = html.replace("VIDEO_ID", video_id)
-        else:
-            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
-
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(nuevo_html)
-        print("✅ Archivo universal_kids.html actualizado con el nuevo directo.")
-
-        url_html = "https://brayan2050hnd.github.io/universal_kids.html"
-        try:
-            with open('usa.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            data = []
-
-        encontrado = False
-        for canal in data:
-            if "UNIVERSAL KIDS" in canal.get('nombre', '').upper():
-                canal['url'] = url_html
-                encontrado = True
-                print("URL de Universal Kids en usa.json actualizada a la página HTML fija.")
-                break
-
-        if not encontrado:
-            print("⚠️ No se encontró 'UNIVERSAL KIDS' en usa.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "UNIVERSAL KIDS",
-                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
-                "url": url_html,
-                "pais": "USA"
-            })
-
-        with open('usa.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
-    except Exception as e:
-        print(f"❌ Error al verificar el directo: {e}")
-
-
-# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
     actualizar_zaz()
-    actualizar_choluvision()
-    actualizar_telemundo_florida()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
-    actualizar_usa()
-    actualizar_disney_channel()
-    actualizar_universal_kids()
+
+    actualizar_canal_youtube(
+        canal_nombre="CHOLUVISION",
+        html_file="choluvision.html",
+        json_file="honduras.json",
+        pais="HONDURAS",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
+        handle="@choluvisioncanal27hd"
+    )
+
+    actualizar_canal_youtube(
+        canal_nombre="TELEMUNDO FLORIDA",
+        html_file="telemundo_florida.html",
+        json_file="usa.json",
+        pais="USA",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
+        handle="@TelemundoSeries"
+    )
+
+    actualizar_canal_youtube(
+        canal_nombre="USA",
+        html_file="usa.html",
+        json_file="usa.json",
+        pais="USA",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/USA_Network_logo.svg/640px-USA_Network_logo.svg.png",
+        video_ref="Ck1H1OQRPPk",
+        filter_live=True
+    )
+
+    actualizar_canal_youtube(
+        canal_nombre="DISNEY CHANNEL",
+        html_file="disney.html",
+        json_file="usa.json",
+        pais="USA",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Disney_Channel_logo.svg/640px-Disney_Channel_logo.svg.png",
+        channel_id="UCayRpbmAiiuU50OpDPVSjwA",
+        random_select=True
+    )
+
+    actualizar_canal_youtube(
+        canal_nombre="UNIVERSAL KIDS",
+        html_file="universal_kids.html",
+        json_file="usa.json",
+        pais="USA",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
+        video_ref="XAYgvRwSFKA"
+    )
