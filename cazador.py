@@ -631,26 +631,27 @@ def actualizar_disney_channel():
 
 
 # ============================================================
-# CANAL UNIVERSAL KIDS — desde YouTube @universalkids
-# (MISMO MÉTODO QUE TELEMUNDO FLORIDA)
+# ============================================================
+# CANAL UNIVERSAL KIDS — desde YouTube (usa ID de video de referencia)
 # ============================================================
 def actualizar_universal_kids():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_HANDLE = "@universalkids"
+    VIDEO_ID_REFERENCIA = "XAYgvRwSFKA"  # ID del video que me diste
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
     print("\nObteniendo ID del canal de Universal Kids...")
-    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
+    # Obtener channelId a partir del video de referencia
+    video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID_REFERENCIA}&key={API_KEY}"
     try:
-        ch_resp = requests.get(channels_url).json()
-        items = ch_resp.get("items", [])
+        video_resp = requests.get(video_url).json()
+        items = video_resp.get("items", [])
         if not items:
-            print("❌ No se encontró el canal con el handle especificado.")
+            print("❌ No se pudo obtener información del video de referencia.")
             return
-        channel_id = items[0]["id"]
+        channel_id = items[0]["snippet"]["channelId"]
         print(f"ℹ️ ID del canal: {channel_id}")
     except Exception as e:
         print(f"❌ Error al obtener ID del canal: {e}")
@@ -733,7 +734,6 @@ def actualizar_universal_kids():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
-
 
 # ============================================================
 # EJECUCIÓN
