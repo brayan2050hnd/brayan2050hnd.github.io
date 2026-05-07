@@ -29,6 +29,14 @@ jobs:
           playwright install chromium --with-deps
           pip install requests
 
+      - name: Crear archivos HTML por defecto (si no existen)
+        run: |
+          for f in choluvision.html telemundo_florida.html usa.html disney.html; do
+            if [ ! -f "$f" ]; then
+              echo '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="background:#000;"></body></html>' > "$f"
+            fi
+          done
+
       - name: Ejecutar script
         run: python cazador.py
 
