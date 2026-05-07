@@ -312,17 +312,17 @@ if __name__ == "__main__":
     actualizar_zaz()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
-    
-actualizar_canal_youtube(
-    canal_nombre="CHOLUVISION",
-    html_file="choluvision.html",
-    json_file="honduras.json",
-    pais="HONDURAS",
-    imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
-    channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow",
-    filter_live=True  # ← AÑADE ESTO para que solo tome directos reales
-)
-    
+
+    actualizar_canal_youtube(
+        canal_nombre="CHOLUVISION",
+        html_file="choluvision.html",
+        json_file="honduras.json",
+        pais="HONDURAS",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
+        channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow",
+        filter_live=True          # ← ¡Solo transmisiones en vivo reales!
+    )
+
     actualizar_canal_youtube(
         canal_nombre="TELEMUNDO FLORIDA",
         html_file="telemundo_florida.html",
