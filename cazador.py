@@ -632,6 +632,95 @@ def actualizar_disney_channel():
 
 
 # ============================================================
+# CANAL UNIVERSAL KIDS — desde YouTube @universalkids
+# ============================================================
+def actualizar_universal_kids():
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    CHANNEL_ID = "UCY26xU0-avwTJ6F6TzUZVEw"  # ID que me diste
+
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    print("\nVerificando si Universal Kids está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={CHANNEL_ID}&eventType=live&type=video&key={API_KEY}"
+
+    try:
+        respuesta = requests.get(search_url).json()
+        items = respuesta.get("items", [])
+
+        if not items:
+            print("ℹ️ Universal Kids no está transmitiendo en este momento. No se actualiza el HTML.")
+            return
+
+        video_id = items[0]["id"]["videoId"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
+
+        html_path = "universal_kids.html"
+        try:
+            with open(html_path, "r", encoding="utf-8") as f:
+                html = f.read()
+        except FileNotFoundError:
+            html = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNIVERSAL KIDS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+        if "VIDEO_ID" in html:
+            nuevo_html = html.replace("VIDEO_ID", video_id)
+        else:
+            nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
+
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(nuevo_html)
+        print("✅ Archivo universal_kids.html actualizado con el nuevo directo.")
+
+        url_html = "https://brayan2050hnd.github.io/universal_kids.html"
+        try:
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            data = []
+
+        encontrado = False
+        for canal in data:
+            if "UNIVERSAL KIDS" in canal.get('nombre', '').upper():
+                canal['url'] = url_html
+                encontrado = True
+                print("URL de Universal Kids en usa.json actualizada a la página HTML fija.")
+                break
+
+        if not encontrado:
+            print("⚠️ No se encontró 'UNIVERSAL KIDS' en usa.json. Agregando entrada nueva.")
+            data.append({
+                "nombre": "UNIVERSAL KIDS",
+                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
+                "url": url_html,
+                "pais": "USA"
+            })
+
+        with open('usa.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+    except Exception as e:
+        print(f"❌ Error al verificar el directo: {e}")
+
+# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
@@ -642,3 +731,4 @@ if __name__ == "__main__":
     actualizar_telemundo_california()
     actualizar_usa()
     actualizar_disney_channel()
+    actualizar_universal_kids()  # ← Agrega esta línea
