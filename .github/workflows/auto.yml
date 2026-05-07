@@ -31,7 +31,7 @@ jobs:
 
       - name: Crear archivos HTML por defecto (si no existen)
         run: |
-          for f in choluvision.html telemundo_florida.html usa.html disney.html; do
+          for f in choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html; do
             if [ ! -f "$f" ]; then
               echo '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="background:#000;"></body></html>' > "$f"
             fi
@@ -44,6 +44,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add mexico.json usa.json honduras.json choluvision.html telemundo_florida.html usa.html disney.html
+          git add mexico.json usa.json honduras.json choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html
           git commit -m "Actualización automática de link" || exit 0
           git push origin main
