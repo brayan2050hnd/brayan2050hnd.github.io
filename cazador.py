@@ -60,11 +60,10 @@ def actualizar_zaz():
 
 # ============================================================
 # CANAL CHOLUVISION — desde YouTube @choluvisioncanal27hd
-# (CORREGIDO: igual que Telemundo Florida)
 # ============================================================
 def actualizar_choluvision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_HANDLE = "@choluvisioncanal27hd"   # handle que me diste
+    CHANNEL_HANDLE = "@choluvisioncanal27hd"
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
@@ -747,4 +746,4 @@ if __name__ == "__main__":
     actualizar_telemundo_california()
     actualizar_usa()
     actualizar_disney_channel()
-    actualizar_universal_kids()  # ← Agrega esta línea
+    actualizar_universal_kids()
