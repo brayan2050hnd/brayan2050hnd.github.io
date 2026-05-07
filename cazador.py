@@ -632,18 +632,33 @@ def actualizar_disney_channel():
 
 
 # ============================================================
-# CANAL UNIVERSAL KIDS — desde YouTube @universalkids (con filtro anti-estreno)
+# CANAL UNIVERSAL KIDS — desde YouTube @universalkids
+# (MISMO MÉTODO QUE TELEMUNDO FLORIDA)
 # ============================================================
 def actualizar_universal_kids():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    CHANNEL_ID = "UCY26xU0-avwTJ6F6TzUZVEw"
+    CHANNEL_HANDLE = "@universalkids"
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    print("\nVerificando si Universal Kids está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={CHANNEL_ID}&eventType=live&type=video&key={API_KEY}"
+    print("\nObteniendo ID del canal de Universal Kids...")
+    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
+    try:
+        ch_resp = requests.get(channels_url).json()
+        items = ch_resp.get("items", [])
+        if not items:
+            print("❌ No se encontró el canal con el handle especificado.")
+            return
+        channel_id = items[0]["id"]
+        print(f"ℹ️ ID del canal: {channel_id}")
+    except Exception as e:
+        print(f"❌ Error al obtener ID del canal: {e}")
+        return
+
+    print("Verificando si Universal Kids está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
 
     try:
         respuesta = requests.get(search_url).json()
@@ -653,25 +668,7 @@ def actualizar_universal_kids():
             print("ℹ️ Universal Kids no está transmitiendo en este momento. No se actualiza el HTML.")
             return
 
-        # --- FILTRO ANTI-ESTRENO ---
-        video_id_candidato = items[0]["id"]["videoId"]
-        detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id_candidato}&key={API_KEY}"
-        detalles_resp = requests.get(detalles_url).json()
-        detalles_items = detalles_resp.get("items", [])
-
-        if not detalles_items:
-            print("⚠️ No se pudieron obtener detalles del video. Se omite la actualización.")
-            return
-
-        broadcast_content = detalles_items[0]["snippet"]["liveBroadcastContent"]
-        print(f"   Tipo de emisión detectado: '{broadcast_content}'")
-
-        if broadcast_content != "live":
-            print(f"ℹ️ El video encontrado no es una transmisión en vivo real (es '{broadcast_content}'). No se actualiza el HTML.")
-            return
-        # --- FIN DEL FILTRO ---
-
-        video_id = video_id_candidato
+        video_id = items[0]["id"]["videoId"]
         print(f"✅ Nuevo directo detectado: {video_id}")
 
         html_path = "universal_kids.html"
@@ -737,6 +734,7 @@ def actualizar_universal_kids():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
+
 
 # ============================================================
 # EJECUCIÓN
