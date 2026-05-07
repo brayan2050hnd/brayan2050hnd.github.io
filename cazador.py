@@ -60,25 +60,26 @@ def actualizar_zaz():
 
 # ============================================================
 # CANAL CHOLUVISION — ACTUALIZA EL ARCHIVO choluvision.html
+# (CORREGIDO: usa handle y filtra estrenos)
 # ============================================================
 def actualizar_choluvision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    VIDEO_ID_REFERENCIA = "TEqTZ34X-_Q"
+    CHANNEL_HANDLE = "@choluvisioncanal27hd"  # Handle del canal
 
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    print("\nObteniendo ID del canal de CHOLUVISION...")
-    video_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={VIDEO_ID_REFERENCIA}&key={API_KEY}"
+    print("\nObteniendo ID del canal de CHOLUVISION desde el handle...")
+    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
 
     try:
-        video_resp = requests.get(video_url).json()
-        items = video_resp.get("items", [])
+        ch_resp = requests.get(channels_url).json()
+        items = ch_resp.get("items", [])
         if not items:
-            print("❌ No se pudo obtener información del video.")
+            print("❌ No se encontró el canal con el handle especificado.")
             return
-        channel_id = items[0]["snippet"]["channelId"]
+        channel_id = items[0]["id"]
         print(f"ℹ️ ID del canal obtenido: {channel_id}")
     except Exception as e:
         print(f"❌ Error al obtener ID del canal: {e}")
@@ -95,7 +96,7 @@ def actualizar_choluvision():
             print("ℹ️ CHOLUVISION no está transmitiendo en este momento. No se actualiza el HTML.")
             return
 
-        # Cogemos el primer candidato y verificamos que es realmente un directo
+        # Verificar que el directo sea real, no un estreno
         video_id_candidato = items[0]["id"]["videoId"]
         detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id_candidato}&key={API_KEY}"
         detalles_resp = requests.get(detalles_url).json()
@@ -115,7 +116,6 @@ def actualizar_choluvision():
         video_id = video_id_candidato
         print(f"✅ Nuevo directo detectado: {video_id}")
 
-        # Resto de la función (HTML, guardar en JSON) idéntico a como estaba antes
         html_path = "choluvision.html"
         try:
             with open(html_path, "r", encoding="utf-8") as f:
@@ -179,6 +179,7 @@ def actualizar_choluvision():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
+
 
 # ============================================================
 # CANAL TELEMUNDO FLORIDA — desde YouTube @TelemundoSeries
@@ -573,7 +574,6 @@ def actualizar_disney_channel():
             print("ℹ️ Disney Channel no está transmitiendo en este momento. No se actualiza el HTML.")
             return
 
-        # Si hay más de un directo, elegir uno aleatoriamente
         if len(items) > 1:
             print(f"⚠️ Se encontraron {len(items)} transmisiones en vivo. Seleccionando una aleatoriamente...")
             elegido = random.choice(items)
@@ -584,7 +584,6 @@ def actualizar_disney_channel():
         titulo = elegido["snippet"]["title"]
         print(f"✅ Transmisión seleccionada: '{titulo}' (ID: {video_id})")
 
-        # Actualizar el archivo HTML
         html_path = "disney.html"
         try:
             with open(html_path, "r", encoding="utf-8") as f:
@@ -619,7 +618,6 @@ def actualizar_disney_channel():
             f.write(nuevo_html)
         print("✅ Archivo disney.html actualizado.")
 
-        # Actualizar el enlace en usa.json
         url_html = "https://brayan2050hnd.github.io/disney.html"
         try:
             with open('usa.json', 'r', encoding='utf-8') as f:
@@ -649,6 +647,7 @@ def actualizar_disney_channel():
 
     except Exception as e:
         print(f"❌ Error al verificar el directo: {e}")
+
 
 # ============================================================
 # EJECUCIÓN
