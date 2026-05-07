@@ -9,54 +9,23 @@ import random
 # FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
 # ============================================================
 def actualizar_canal_youtube(
-    canal_nombre,       # Nombre exacto en el JSON
-    html_file,          # Archivo HTML que se genera
-    json_file,          # Archivo JSON donde se guarda (ej. 'usa.json')
-    pais,               # País para el JSON
-    imagen_url,         # URL de la imagen del canal
-    handle=None,        # Handle del canal (ej. "@TelemundoSeries")
-    video_ref=None,     # ID de video de referencia (si no se usa handle)
-    channel_id=None,    # ID del canal directamente (si ya lo tienes)
-    filter_live=False,  # Si True, solo acepta directos reales ("live")
-    random_select=False # Si True, elige aleatoriamente entre varios directos
+    canal_nombre,
+    html_file,
+    json_file,
+    pais,
+    imagen_url,
+    channel_id,
+    filter_live=False,
+    random_select=False
 ):
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
     if not API_KEY:
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    # 1. Obtener channelId
-    print(f"\nObteniendo ID del canal de {canal_nombre}...")
-    try:
-        if channel_id:
-            pass  # ya lo tenemos
-        elif handle:
-            url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
-            resp = requests.get(url).json()
-            items = resp.get("items", [])
-            if not items:
-                print(f"❌ No se encontró el canal con handle {handle}.")
-                return
-            channel_id = items[0]["id"]
-        elif video_ref:
-            url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_ref}&key={API_KEY}"
-            resp = requests.get(url).json()
-            items = resp.get("items", [])
-            if not items:
-                print(f"❌ No se encontró el video de referencia {video_ref}.")
-                return
-            channel_id = items[0]["snippet"]["channelId"]
-        else:
-            print("❌ Se necesita handle, video_ref o channel_id.")
-            return
-        print(f"ℹ️ ID del canal: {channel_id}")
-    except Exception as e:
-        print(f"❌ Error al obtener ID: {e}")
-        return
-
-    # 2. Buscar transmisión en vivo
-    print(f"Verificando si {canal_nombre} está en vivo...")
+    print(f"\nVerificando si {canal_nombre} está en vivo...")
     search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+
     try:
         resp = requests.get(search_url).json()
         items = resp.get("items", [])
@@ -64,6 +33,7 @@ def actualizar_canal_youtube(
             print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
             return
 
+        # Filtrado opcional de estrenos
         if filter_live:
             candidatos = []
             for item in items:
@@ -78,6 +48,7 @@ def actualizar_canal_youtube(
                 return
             items = candidatos
 
+        # Selección aleatoria si hay varios directos
         if random_select and len(items) > 1:
             elegido = random.choice(items)
             print(f"⚠️ {len(items)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
@@ -91,7 +62,7 @@ def actualizar_canal_youtube(
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # 3. Leer o crear plantilla HTML
+    # Leer o crear plantilla HTML
     try:
         with open(html_file, "r", encoding="utf-8") as f:
             html = f.read()
@@ -125,7 +96,7 @@ def actualizar_canal_youtube(
         f.write(nuevo_html)
     print(f"✅ Archivo {html_file} actualizado.")
 
-    # 4. Actualizar JSON
+    # Actualizar JSON
     url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
         with open(json_file, "r", encoding="utf-8") as f:
@@ -348,7 +319,7 @@ if __name__ == "__main__":
         json_file="honduras.json",
         pais="HONDURAS",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
-        handle="@choluvisioncanal27hd"
+        channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow"
     )
 
     actualizar_canal_youtube(
@@ -357,7 +328,7 @@ if __name__ == "__main__":
         json_file="usa.json",
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
-        handle="@TelemundoSeries"
+        channel_id="UCsDG_lFhRcvC14XRYVLeIfA"
     )
 
     actualizar_canal_youtube(
@@ -366,7 +337,7 @@ if __name__ == "__main__":
         json_file="usa.json",
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/USA_Network_logo.svg/640px-USA_Network_logo.svg.png",
-        video_ref="Ck1H1OQRPPk",
+        channel_id="UCAAxhCE6iHfINacI4FCx_8A",
         filter_live=True
     )
 
@@ -386,5 +357,5 @@ if __name__ == "__main__":
         json_file="usa.json",
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
-        video_ref="XAYgvRwSFKA"
+        channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
     )
