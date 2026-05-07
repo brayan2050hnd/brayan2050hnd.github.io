@@ -29,10 +29,11 @@ jobs:
           playwright install chromium --with-deps
           pip install requests
 
-      - name: Crear/sobrescribir archivos HTML por defecto
+      - name: Crear archivos HTML con video de referencia (si no existen)
         run: |
-          # Para choluvision.html, siempre forzamos el video de referencia
-          cat > choluvision.html << 'EOF'
+          # Choluvision
+          if [ ! -f choluvision.html ]; then
+            cat > choluvision.html << 'EOF'
           <!DOCTYPE html>
           <html>
           <head>
@@ -53,9 +54,86 @@ jobs:
           </body>
           </html>
           EOF
+          fi
 
-          # Para universal_kids.html, siempre forzamos el video de referencia
-          cat > universal_kids.html << 'EOF'
+          # Telemundo Florida
+          if [ ! -f telemundo_florida.html ]; then
+            cat > telemundo_florida.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+              <title>TELEMUNDO FLORIDA</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+              </style>
+          </head>
+          <body>
+              <iframe src="https://www.youtube.com/embed/_1XFjgx9i40?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen>
+              </iframe>
+          </body>
+          </html>
+          EOF
+          fi
+
+          # USA
+          if [ ! -f usa.html ]; then
+            cat > usa.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+              <title>USA</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+              </style>
+          </head>
+          <body>
+              <iframe src="https://www.youtube.com/embed/Ck1H1OQRPPk?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen>
+              </iframe>
+          </body>
+          </html>
+          EOF
+          fi
+
+          # Disney Channel
+          if [ ! -f disney.html ]; then
+            cat > disney.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+              <title>DISNEY CHANNEL</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+              </style>
+          </head>
+          <body>
+              <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen>
+              </iframe>
+          </body>
+          </html>
+          EOF
+          fi
+
+          # Universal Kids
+          if [ ! -f universal_kids.html ]; then
+            cat > universal_kids.html << 'EOF'
           <!DOCTYPE html>
           <html>
           <head>
@@ -76,13 +154,7 @@ jobs:
           </body>
           </html>
           EOF
-
-          # Los demás archivos se crean solo si no existen, no necesitan video por defecto
-          for f in telemundo_florida.html usa.html disney.html; do
-            if [ ! -f "$f" ]; then
-              echo '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="background:#000;"></body></html>' > "$f"
-            fi
-          done
+          fi
 
       - name: Ejecutar script
         run: python cazador.py
