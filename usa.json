@@ -170,7 +170,7 @@
     {
         "nombre": "CNBC",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/3840px-CNBC_logo.svg.png",
-        "url": "https://www.livehdtv.com/yayin/?kanal=93&yayin=&guvenlik=$2y$10$azHt68w91NttYmWo07dY4unHLP/6qvb2019xRAtdjN6sqqkc15oDe",
+        "url": "http://41.205.93.154/CNBC/index.m3u8",
         "pais": "USA"
     },
     {
