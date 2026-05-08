@@ -6,7 +6,7 @@ import os
 import random
 
 # ============================================================
-# MOTOR DE BÚSQUEDA DE DIRECTOS DE YOUTUBE (NUEVO Y OPTIMIZADO)
+# MOTOR DE BÚSQUEDA DE DIRECTOS DE YOUTUBE (VERSIÓN DEFINITIVA)
 # ============================================================
 def obtener_directo_youtube(channel_id, random_select=False):
     """
@@ -14,44 +14,39 @@ def obtener_directo_youtube(channel_id, random_select=False):
     Retorna el ID del video si hay directo, o None si no hay.
     """
     video_ids = []
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
 
-    # --- MÉTODO 1: Extracción Web Directa (El más efectivo para canales 24/7) ---
-    try:
-        url_live = f"https://www.youtube.com/channel/{channel_id}/live"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-        }
-        # Cookies para saltar la ventana de consentimiento de Google
-        cookies = {"CONSENT": "YES+cb"} 
-        
-        r = requests.get(url_live, headers=headers, cookies=cookies, timeout=10)
-        
-        # Buscamos el enlace canónico en el HTML de la página
-        match = re.search(r'rel="canonical" href="https://www.youtube.com/watch\?v=([^"]+)"', r.text)
-        if match:
-            vid = match.group(1)
-            # Confirmación estricta de que es un directo actual (evita videos grabados)
-            if 'isLiveNow' in r.text or '"isLive":true' in r.text or 'viewers' in r.text:
-                video_ids.append(vid)
-                if not random_select:
-                    return vid # Si no ocupamos aleatorio, este es el mejor y salimos de inmediato.
-    except Exception as e:
-        print(f"  [Info] Método Web no resolvió: {e}")
-
-    # --- MÉTODO 2: API de YouTube (Respaldo o para selección aleatoria) ---
-    if not video_ids or random_select:
-        API_KEY = os.environ.get('YOUTUBE_API_KEY')
-        if API_KEY:
-            try:
-                search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-                resp = requests.get(search_url).json()
-                
-                for item in resp.get("items", []):
+    # --- MÉTODO 1: API de YouTube (Sin el filtro bugueado) ---
+    # Pedimos los 5 videos más recientes y revisamos nosotros mismos cuál es el directo
+    if API_KEY:
+        try:
+            search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&order=date&type=video&maxResults=5&key={API_KEY}"
+            resp = requests.get(search_url).json()
+            
+            for item in resp.get("items", []):
+                # Revisamos si alguno de esos videos recientes está transmitiendo en este instante
+                if item.get("snippet", {}).get("liveBroadcastContent") == "live":
                     vid = item["id"]["videoId"]
                     if vid not in video_ids:
                         video_ids.append(vid)
-            except Exception as e:
-                print(f"  [Info] Fallo en la API de YouTube: {e}")
+        except Exception as e:
+            print(f"  [Info] Fallo en la API de YouTube: {e}")
+
+    # --- MÉTODO 2: Extracción Web Directa (Por si la API llega a fallar) ---
+    # Usamos cloudscraper en lugar de requests para evadir los bloqueos de GitHub Actions
+    if not video_ids:
+        try:
+            url_live = f"https://www.youtube.com/channel/{channel_id}/live"
+            scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'android', 'desktop': False})
+            r = scraper.get(url_live, timeout=10)
+            
+            match = re.search(r'rel="canonical" href="https://www.youtube.com/watch\?v=([^"]+)"', r.text)
+            if match:
+                vid = match.group(1)
+                # Si encuentra un ID canónico en la ruta /live, lo tomamos como válido
+                video_ids.append(vid)
+        except Exception as e:
+            print(f"  [Info] Método Web no resolvió: {e}")
 
     # --- RESOLUCIÓN FINAL ---
     if not video_ids:
@@ -73,7 +68,7 @@ def actualizar_canal_youtube(
     pais,
     imagen_url,
     channel_id,
-    filter_live=False, # (Mantenido por compatibilidad, aunque el motor ya lo filtra)
+    filter_live=False, 
     random_select=False
 ):
     print(f"\n📡 Analizando señal de {canal_nombre}...")
@@ -393,4 +388,3 @@ if __name__ == "__main__":
     )
     
     print("\n✅ ¡Actualización completada!")
-
