@@ -4,10 +4,9 @@ import json
 import requests
 import os
 import random
-import subprocess
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA CANALES DE YOUTUBE (USANDO API)
+# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -15,7 +14,7 @@ def actualizar_canal_youtube(
     json_file,
     pais,
     imagen_url,
-    channel_id=None,
+    channel_id,
     filter_live=False,
     random_select=False
 ):
@@ -34,6 +33,7 @@ def actualizar_canal_youtube(
             print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
             return
 
+        # Filtrado opcional de estrenos
         if filter_live:
             candidatos = []
             for item in items:
@@ -48,6 +48,7 @@ def actualizar_canal_youtube(
                 return
             items = candidatos
 
+        # Selección aleatoria si hay varios directos
         if random_select and len(items) > 1:
             elegido = random.choice(items)
             print(f"⚠️ {len(items)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
@@ -66,122 +67,16 @@ def actualizar_canal_youtube(
         with open(html_file, "r", encoding="utf-8") as f:
             html = f.read()
     except FileNotFoundError:
-        html = f"""<!DOCTYPE html>
+        html = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{canal_nombre}</title>
+    <title>""" + canal_nombre + """</title>
     <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
-        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
-    </style>
-</head>
-<body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-</body>
-</html>"""
-
-    if "VIDEO_ID" in html:
-        nuevo_html = html.replace("VIDEO_ID", video_id)
-    else:
-        nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
-
-    with open(html_file, "w", encoding="utf-8") as f:
-        f.write(nuevo_html)
-    print(f"✅ Archivo {html_file} actualizado.")
-
-    # Actualizar JSON
-    url_html = f"https://brayan2050hnd.github.io/{html_file}"
-    try:
-        with open(json_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except FileNotFoundError:
-        data = []
-
-    encontrado = False
-    for canal in data:
-        if canal.get("nombre", "").upper() == canal_nombre.upper():
-            canal["url"] = url_html
-            encontrado = True
-            print(f"URL de {canal_nombre} actualizada en {json_file}.")
-            break
-
-    if not encontrado:
-        print(f"⚠️ No se encontró '{canal_nombre}' en {json_file}. Agregando entrada nueva.")
-        data.append({
-            "nombre": canal_nombre,
-            "imagen": imagen_url,
-            "url": url_html,
-            "pais": pais
-        })
-
-    with open(json_file, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
-
-
-# ============================================================
-# NUEVA FUNCIÓN PARA CHOLUVISION (usa yt-dlp, no API)
-# ============================================================
-def actualizar_choluvision():
-    canal_nombre = "CHOLUVISION"
-    html_file = "choluvision.html"
-    json_file = "honduras.json"
-    pais = "HONDURAS"
-    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png"
-    canal_url = "https://www.youtube.com/@choluvisioncanal27hd"
-
-    print(f"\nExtrayendo directo de {canal_nombre} con yt-dlp...")
-    try:
-        # yt-dlp -g devuelve la URL del stream, pero con --flat-playlist obtienes la lista de URLs del canal
-        # Usamos --playlist-end 5 para no listar demasiados videos, y buscamos el que esté en vivo
-        result = subprocess.run(
-            ["yt-dlp", "--flat-playlist", "--print", "%(id)s", "--playlist-end", "10", canal_url],
-            capture_output=True, text=True, timeout=30
-        )
-        ids = result.stdout.strip().split('\n')
-        # Ahora necesitamos identificar cuál de estos IDs corresponde a una transmisión en vivo.
-        # Podemos obtener el título con yt-dlp --print title y buscar "LIVE" en algún lado,
-        # pero lo más fiable es obtener la página HTML de cada video y buscar "isLive":true
-        # Sin embargo, para simplificar, usamos yt-dlp con --print "live_status" y nos quedamos con el primer "is_live"
-        for vid in ids:
-            if not vid: continue
-            info = subprocess.run(
-                ["yt-dlp", "--print", "%(live_status)s", f"https://www.youtube.com/watch?v={vid}"],
-                capture_output=True, text=True, timeout=10
-            )
-            live_status = info.stdout.strip()
-            if live_status == "is_live":
-                print(f"✅ Directo detectado: {vid}")
-                video_id = vid
-                break
-        else:
-            print("ℹ️ No se encontró ningún directo.")
-            return
-
-    except Exception as e:
-        print(f"❌ Error con yt-dlp: {e}")
-        return
-
-    # Crear/actualizar HTML
-    try:
-        with open(html_file, "r", encoding="utf-8") as f:
-            html = f.read()
-    except FileNotFoundError:
-        html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{canal_nombre}</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
-        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
@@ -418,8 +313,15 @@ if __name__ == "__main__":
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
 
-    # CHOLUVISION ahora usa yt-dlp
-    actualizar_choluvision()
+    actualizar_canal_youtube(
+        canal_nombre="CHOLUVISION",
+        html_file="choluvision.html",
+        json_file="honduras.json",
+        pais="HONDURAS",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
+        channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow",
+        filter_live=True          # solo transmisiones en vivo reales
+    )
 
     actualizar_canal_youtube(
         canal_nombre="TELEMUNDO FLORIDA",
