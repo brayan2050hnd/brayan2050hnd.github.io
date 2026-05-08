@@ -6,7 +6,65 @@ import os
 import random
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
+# MOTOR DE BÚSQUEDA DE DIRECTOS DE YOUTUBE (NUEVO Y OPTIMIZADO)
+# ============================================================
+def obtener_directo_youtube(channel_id, random_select=False):
+    """
+    Busca de la forma más efectiva posible si un canal está en vivo.
+    Retorna el ID del video si hay directo, o None si no hay.
+    """
+    video_ids = []
+
+    # --- MÉTODO 1: Extracción Web Directa (El más efectivo para canales 24/7) ---
+    try:
+        url_live = f"https://www.youtube.com/channel/{channel_id}/live"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+        }
+        # Cookies para saltar la ventana de consentimiento de Google
+        cookies = {"CONSENT": "YES+cb"} 
+        
+        r = requests.get(url_live, headers=headers, cookies=cookies, timeout=10)
+        
+        # Buscamos el enlace canónico en el HTML de la página
+        match = re.search(r'rel="canonical" href="https://www.youtube.com/watch\?v=([^"]+)"', r.text)
+        if match:
+            vid = match.group(1)
+            # Confirmación estricta de que es un directo actual (evita videos grabados)
+            if 'isLiveNow' in r.text or '"isLive":true' in r.text or 'viewers' in r.text:
+                video_ids.append(vid)
+                if not random_select:
+                    return vid # Si no ocupamos aleatorio, este es el mejor y salimos de inmediato.
+    except Exception as e:
+        print(f"  [Info] Método Web no resolvió: {e}")
+
+    # --- MÉTODO 2: API de YouTube (Respaldo o para selección aleatoria) ---
+    if not video_ids or random_select:
+        API_KEY = os.environ.get('YOUTUBE_API_KEY')
+        if API_KEY:
+            try:
+                search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+                resp = requests.get(search_url).json()
+                
+                for item in resp.get("items", []):
+                    vid = item["id"]["videoId"]
+                    if vid not in video_ids:
+                        video_ids.append(vid)
+            except Exception as e:
+                print(f"  [Info] Fallo en la API de YouTube: {e}")
+
+    # --- RESOLUCIÓN FINAL ---
+    if not video_ids:
+        return None
+    
+    if random_select and len(video_ids) > 1:
+        return random.choice(video_ids)
+    else:
+        return video_ids[0]
+
+
+# ============================================================
+# FUNCIÓN PRINCIPAL DE YOUTUBE (HTML Y JSON)
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -15,58 +73,25 @@ def actualizar_canal_youtube(
     pais,
     imagen_url,
     channel_id,
-    filter_live=False,
+    filter_live=False, # (Mantenido por compatibilidad, aunque el motor ya lo filtra)
     random_select=False
 ):
-    API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    if not API_KEY:
-        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+    print(f"\n📡 Analizando señal de {canal_nombre}...")
+    
+    video_id = obtener_directo_youtube(channel_id, random_select)
+
+    if not video_id:
+        print(f"❌ {canal_nombre} no está transmitiendo en este momento.")
         return
 
-    print(f"\nVerificando si {canal_nombre} está en vivo...")
-    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+    print(f"✅ ¡Señal de {canal_nombre} capturada! Video ID: {video_id}")
 
-    try:
-        resp = requests.get(search_url).json()
-        items = resp.get("items", [])
-        if not items:
-            print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
-            return
-
-        # Filtrado opcional de estrenos
-        if filter_live:
-            candidatos = []
-            for item in items:
-                vid = item["id"]["videoId"]
-                det_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={vid}&key={API_KEY}"
-                det_resp = requests.get(det_url).json()
-                det_items = det_resp.get("items", [])
-                if det_items and det_items[0]["snippet"]["liveBroadcastContent"] == "live":
-                    candidatos.append(item)
-            if not candidatos:
-                print(f"ℹ️ Ningún directo real encontrado para {canal_nombre}.")
-                return
-            items = candidatos
-
-        # Selección aleatoria si hay varios directos
-        if random_select and len(items) > 1:
-            elegido = random.choice(items)
-            print(f"⚠️ {len(items)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
-        else:
-            elegido = items[0]
-
-        video_id = elegido["id"]["videoId"]
-        print(f"✅ Nuevo directo detectado: {video_id}")
-
-    except Exception as e:
-        print(f"❌ Error al buscar directos: {e}")
-        return
-
-    # Leer o crear plantilla HTML
+    # 1. ACTUALIZAR O CREAR ARCHIVO HTML
     try:
         with open(html_file, "r", encoding="utf-8") as f:
             html = f.read()
     except FileNotFoundError:
+        # Plantilla limpia desde cero
         html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -87,6 +112,7 @@ def actualizar_canal_youtube(
 </body>
 </html>"""
 
+    # Reemplazo seguro del ID en el HTML
     if "VIDEO_ID" in html:
         nuevo_html = html.replace("VIDEO_ID", video_id)
     else:
@@ -94,32 +120,33 @@ def actualizar_canal_youtube(
 
     with open(html_file, "w", encoding="utf-8") as f:
         f.write(nuevo_html)
-    print(f"✅ Archivo {html_file} actualizado.")
+    print(f"   --> Archivo {html_file} guardado correctamente.")
 
-    # Actualizar JSON
-    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    # 2. ACTUALIZAR ARCHIVO JSON
+    url_html_github = f"https://brayan2050hnd.github.io/{html_file}"
     try:
         with open(json_file, "r", encoding="utf-8") as f:
             data = json.load(f)
     except FileNotFoundError:
         data = []
 
-    encontrado = False
+    canal_existe = False
     for canal in data:
-        if canal.get("nombre", "").upper() == canal_nombre.upper():
-            canal["url"] = url_html
-            encontrado = True
-            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+        if canal.get("nombre", "").strip().upper() == canal_nombre.strip().upper():
+            canal["url"] = url_html_github
+            canal_existe = True
             break
 
-    if not encontrado:
-        print(f"⚠️ No se encontró '{canal_nombre}' en {json_file}. Agregando entrada nueva.")
+    if not canal_existe:
         data.append({
             "nombre": canal_nombre,
             "imagen": imagen_url,
-            "url": url_html,
+            "url": url_html_github,
             "pais": pais
         })
+        print(f"   --> Nuevo canal '{canal_nombre}' añadido a {json_file}.")
+    else:
+        print(f"   --> Ruta de '{canal_nombre}' actualizada en {json_file}.")
 
     with open(json_file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
@@ -134,7 +161,7 @@ def actualizar_zaz():
     )
     
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/zaz-tv"
-    print(f"Buscando señal de ZAZ en: {fuente_web}")
+    print(f"\nBuscando señal de ZAZ en: {fuente_web}")
 
     try:
         response = scraper.get(fuente_web, timeout=15).text
@@ -188,7 +215,7 @@ def actualizar_telemundo_miami():
     )
     
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/telemundo-51-miami"
-    print(f"Buscando señal de Telemundo Miami en: {fuente_web}")
+    print(f"\nBuscando señal de Telemundo Miami en: {fuente_web}")
 
     try:
         response = scraper.get(fuente_web, timeout=15).text
@@ -251,7 +278,7 @@ def actualizar_telemundo_california():
     )
     
     fuente_web = "https://www.cxtvenvivo.com/tv-en-vivo/telemundo-california"
-    print(f"Buscando señal de Telemundo California en: {fuente_web}")
+    print(f"\nBuscando señal de Telemundo California en: {fuente_web}")
 
     try:
         response = scraper.get(fuente_web, timeout=15).text
@@ -306,13 +333,17 @@ def actualizar_telemundo_california():
 
 
 # ============================================================
-# EJECUCIÓN
+# EJECUCIÓN DEL SCRIPT
 # ============================================================
 if __name__ == "__main__":
+    print("Iniciando cacería de enlaces...")
+    
+    # 1. Los que no son de YouTube (Funcionan con m3u8)
     actualizar_zaz()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
 
+    # 2. Los canales de YouTube
     actualizar_canal_youtube(
         canal_nombre="CHOLUVISION",
         html_file="choluvision.html",
@@ -320,7 +351,7 @@ if __name__ == "__main__":
         pais="HONDURAS",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
         channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow",
-        filter_live=True          # ← ¡Solo transmisiones en vivo reales!
+        filter_live=True
     )
 
     actualizar_canal_youtube(
@@ -359,4 +390,7 @@ if __name__ == "__main__":
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
-                    )
+    )
+    
+    print("\n✅ ¡Actualización completada!")
+
