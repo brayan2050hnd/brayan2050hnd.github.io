@@ -33,7 +33,7 @@ def actualizar_canal_youtube(
             print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
             return
 
-        # Filtrado opcional de estrenos
+        # Filtrado opcional de estrenos / contenido no vivo
         if filter_live:
             candidatos = []
             for item in items:
@@ -41,8 +41,15 @@ def actualizar_canal_youtube(
                 det_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={vid}&key={API_KEY}"
                 det_resp = requests.get(det_url).json()
                 det_items = det_resp.get("items", [])
-                if det_items and det_items[0]["snippet"]["liveBroadcastContent"] == "live":
-                    candidatos.append(item)
+                if det_items:
+                    tipo = det_items[0]["snippet"]["liveBroadcastContent"]
+                    print(f"   Candidato {vid}: {tipo}")
+                    if tipo == "live":
+                        candidatos.append(item)
+                    else:
+                        print(f"   ❌ Descartado (es '{tipo}')")
+                else:
+                    print(f"   ⚠️ No se pudieron obtener detalles de {vid}, se omite.")
             if not candidatos:
                 print(f"ℹ️ Ningún directo real encontrado para {canal_nombre}.")
                 return
@@ -320,7 +327,7 @@ if __name__ == "__main__":
         pais="HONDURAS",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
         channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow",
-        filter_live=True          # ← ¡Solo transmisiones en vivo reales!
+        filter_live=True          # ← solo transmisiones en vivo reales
     )
 
     actualizar_canal_youtube(
