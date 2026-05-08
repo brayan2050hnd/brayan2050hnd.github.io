@@ -6,7 +6,7 @@ import os
 import random
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE (CORREGIDA)
+# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -18,95 +18,65 @@ def actualizar_canal_youtube(
     filter_live=False,
     random_select=False
 ):
-    print(f"\nBuscando si {canal_nombre} está en vivo...")
-    video_id = None
-
-    # ----------------------------------------------------
-    # ESTRATEGIA 1: Scraping del enlace /live (Infalible para streams 24/7)
-    # ----------------------------------------------------
-    if not random_select:
-        try:
-            url_live = f"https://www.youtube.com/channel/{channel_id}/live"
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-            # Se usan cookies para saltar el molesto aviso de consentimiento de Google
-            res = requests.get(url_live, headers=headers, cookies={'CONSENT': 'YES+1'}, timeout=10)
-            
-            # Buscar la URL canónica del directo en el código fuente de la página
-            match = re.search(r'rel="canonical" href="https://www.youtube.com/watch\?v=([^"]+)"', res.text)
-            if match:
-                vid = match.group(1)
-                # Confirmar que es un directo activo y no un video normal
-                if '"isLive":true' in res.text or 'isLiveNow' in res.text or '"isLiveBroadcast":true' in res.text:
-                    video_id = vid
-                    print(f"✅ [Método Web] Directo detectado: {video_id}")
-        except Exception as e:
-            print(f"⚠️ Error en Método Web: {e}")
-
-    # ----------------------------------------------------
-    # ESTRATEGIA 2: API de YouTube (Si falla el web o si random_select es True)
-    # ----------------------------------------------------
-    if not video_id:
-        API_KEY = os.environ.get('YOUTUBE_API_KEY')
-        if not API_KEY:
-            print("❌ Error: No se encontró la clave de API de YouTube y el Método Web falló.")
-            return
-
-        print(f"Intentando con API de YouTube para {canal_nombre}...")
-        search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-        
-        try:
-            resp = requests.get(search_url).json()
-            items = resp.get("items", [])
-            
-            if items:
-                candidatos = []
-                # Extraemos IDs y consultamos su estado real con el endpoint de videos
-                vids = [item["id"]["videoId"] for item in items]
-                ids_str = ",".join(vids)
-                
-                det_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={ids_str}&key={API_KEY}"
-                det_resp = requests.get(det_url).json()
-                det_items = det_resp.get("items", [])
-                
-                for det in det_items:
-                    # Validar estrictamente que esté en vivo en este instante
-                    if det.get("snippet", {}).get("liveBroadcastContent") == "live":
-                        titulo = det.get("snippet", {}).get("title", "Directo")
-                        candidatos.append({"id": {"videoId": det["id"]}, "snippet": {"title": titulo}})
-                
-                if candidatos:
-                    if random_select and len(candidatos) > 1:
-                        elegido = random.choice(candidatos)
-                        print(f"⚠️ [API] {len(candidatos)} directos. Selección aleatoria: {elegido['snippet']['title']}")
-                    else:
-                        elegido = candidatos[0]
-                    video_id = elegido["id"]["videoId"]
-                    print(f"✅ [API] Nuevo directo detectado: {video_id}")
-        except Exception as e:
-            print(f"❌ Error al buscar directos con API: {e}")
-
-    # Si ninguna de las dos estrategias encuentra directo, abortamos actualización
-    if not video_id:
-        print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    # ============================================================
-    # CREACIÓN DEL HTML Y ACTUALIZACIÓN DEL JSON
-    # ============================================================
+    print(f"\nVerificando si {canal_nombre} está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+
+    try:
+        resp = requests.get(search_url).json()
+        items = resp.get("items", [])
+        if not items:
+            print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
+            return
+
+        # Filtrado opcional de estrenos
+        if filter_live:
+            candidatos = []
+            for item in items:
+                vid = item["id"]["videoId"]
+                det_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={vid}&key={API_KEY}"
+                det_resp = requests.get(det_url).json()
+                det_items = det_resp.get("items", [])
+                if det_items and det_items[0]["snippet"]["liveBroadcastContent"] == "live":
+                    candidatos.append(item)
+            if not candidatos:
+                print(f"ℹ️ Ningún directo real encontrado para {canal_nombre}.")
+                return
+            items = candidatos
+
+        # Selección aleatoria si hay varios directos
+        if random_select and len(items) > 1:
+            elegido = random.choice(items)
+            print(f"⚠️ {len(items)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
+        else:
+            elegido = items[0]
+
+        video_id = elegido["id"]["videoId"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
+
+    except Exception as e:
+        print(f"❌ Error al buscar directos: {e}")
+        return
+
+    # Leer o crear plantilla HTML
     try:
         with open(html_file, "r", encoding="utf-8") as f:
             html = f.read()
     except FileNotFoundError:
-        html = """<!DOCTYPE html>
+        html = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>""" + canal_nombre + """</title>
+    <title>{canal_nombre}</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
     </style>
 </head>
 <body>
@@ -350,7 +320,7 @@ if __name__ == "__main__":
         pais="HONDURAS",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
         channel_id="UCdEAEJ8Sdyn0kIQ3wbcX5ow",
-        filter_live=True          # solo transmisiones en vivo reales
+        filter_live=True          # ← ¡Solo transmisiones en vivo reales!
     )
 
     actualizar_canal_youtube(
@@ -389,4 +359,4 @@ if __name__ == "__main__":
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
-    )
+                    )
