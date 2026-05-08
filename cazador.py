@@ -4,9 +4,10 @@ import json
 import requests
 import os
 import random
+import subprocess
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
+# FUNCIÓN UNIFICADA PARA CANALES DE YOUTUBE (USANDO API)
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -14,8 +15,6 @@ def actualizar_canal_youtube(
     json_file,
     pais,
     imagen_url,
-    handle=None,
-    video_ref=None,
     channel_id=None,
     filter_live=False,
     random_select=False
@@ -25,38 +24,9 @@ def actualizar_canal_youtube(
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    # 1. Obtener channelId
-    print(f"\nObteniendo ID del canal de {canal_nombre}...")
-    try:
-        if channel_id:
-            pass  # ya lo tenemos
-        elif handle:
-            url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
-            resp = requests.get(url).json()
-            items = resp.get("items", [])
-            if not items:
-                print(f"❌ No se encontró el canal con handle {handle}.")
-                return
-            channel_id = items[0]["id"]
-        elif video_ref:
-            url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_ref}&key={API_KEY}"
-            resp = requests.get(url).json()
-            items = resp.get("items", [])
-            if not items:
-                print(f"❌ No se encontró el video de referencia {video_ref}.")
-                return
-            channel_id = items[0]["snippet"]["channelId"]
-        else:
-            print("❌ Se necesita handle, video_ref o channel_id.")
-            return
-        print(f"ℹ️ ID del canal: {channel_id}")
-    except Exception as e:
-        print(f"❌ Error al obtener ID: {e}")
-        return
-
-    # 2. Buscar transmisión en vivo
-    print(f"Verificando si {canal_nombre} está en vivo...")
+    print(f"\nVerificando si {canal_nombre} está en vivo (API)...")
     search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+
     try:
         resp = requests.get(search_url).json()
         items = resp.get("items", [])
@@ -91,7 +61,7 @@ def actualizar_canal_youtube(
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # 3. Leer o crear plantilla HTML
+    # Leer o crear plantilla HTML
     try:
         with open(html_file, "r", encoding="utf-8") as f:
             html = f.read()
@@ -125,7 +95,113 @@ def actualizar_canal_youtube(
         f.write(nuevo_html)
     print(f"✅ Archivo {html_file} actualizado.")
 
-    # 4. Actualizar JSON
+    # Actualizar JSON
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
+
+    if not encontrado:
+        print(f"⚠️ No se encontró '{canal_nombre}' en {json_file}. Agregando entrada nueva.")
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+# ============================================================
+# NUEVA FUNCIÓN PARA CHOLUVISION (usa yt-dlp, no API)
+# ============================================================
+def actualizar_choluvision():
+    canal_nombre = "CHOLUVISION"
+    html_file = "choluvision.html"
+    json_file = "honduras.json"
+    pais = "HONDURAS"
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png"
+    canal_url = "https://www.youtube.com/@choluvisioncanal27hd"
+
+    print(f"\nExtrayendo directo de {canal_nombre} con yt-dlp...")
+    try:
+        # yt-dlp -g devuelve la URL del stream, pero con --flat-playlist obtienes la lista de URLs del canal
+        # Usamos --playlist-end 5 para no listar demasiados videos, y buscamos el que esté en vivo
+        result = subprocess.run(
+            ["yt-dlp", "--flat-playlist", "--print", "%(id)s", "--playlist-end", "10", canal_url],
+            capture_output=True, text=True, timeout=30
+        )
+        ids = result.stdout.strip().split('\n')
+        # Ahora necesitamos identificar cuál de estos IDs corresponde a una transmisión en vivo.
+        # Podemos obtener el título con yt-dlp --print title y buscar "LIVE" en algún lado,
+        # pero lo más fiable es obtener la página HTML de cada video y buscar "isLive":true
+        # Sin embargo, para simplificar, usamos yt-dlp con --print "live_status" y nos quedamos con el primer "is_live"
+        for vid in ids:
+            if not vid: continue
+            info = subprocess.run(
+                ["yt-dlp", "--print", "%(live_status)s", f"https://www.youtube.com/watch?v={vid}"],
+                capture_output=True, text=True, timeout=10
+            )
+            live_status = info.stdout.strip()
+            if live_status == "is_live":
+                print(f"✅ Directo detectado: {vid}")
+                video_id = vid
+                break
+        else:
+            print("ℹ️ No se encontró ningún directo.")
+            return
+
+    except Exception as e:
+        print(f"❌ Error con yt-dlp: {e}")
+        return
+
+    # Crear/actualizar HTML
+    try:
+        with open(html_file, "r", encoding="utf-8") as f:
+            html = f.read()
+    except FileNotFoundError:
+        html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+    if "VIDEO_ID" in html:
+        nuevo_html = html.replace("VIDEO_ID", video_id)
+    else:
+        nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(nuevo_html)
+    print(f"✅ Archivo {html_file} actualizado.")
+
+    # Actualizar JSON
     url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
         with open(json_file, "r", encoding="utf-8") as f:
@@ -342,16 +418,8 @@ if __name__ == "__main__":
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
 
-    # CHOLUVISION ahora usa el handle (más fiable)
-    actualizar_canal_youtube(
-        canal_nombre="CHOLUVISION",
-        html_file="choluvision.html",
-        json_file="honduras.json",
-        pais="HONDURAS",
-        imagen_url="https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_Logo.png",
-        handle="@choluvisioncanal27hd",   # ← cambio aquí
-        filter_live=True
-    )
+    # CHOLUVISION ahora usa yt-dlp
+    actualizar_choluvision()
 
     actualizar_canal_youtube(
         canal_nombre="TELEMUNDO FLORIDA",
@@ -389,4 +457,4 @@ if __name__ == "__main__":
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
-                )
+    )
