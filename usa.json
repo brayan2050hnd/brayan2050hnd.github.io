@@ -176,7 +176,7 @@
     {
         "nombre": "BLOOMBERG",
         "imagen": "https://1000marcas.net/wp-content/uploads/2021/04/Bloomberg-symbol.jpg",
-        "url": "https://dai.google.com/linear/hls/pa/event/k-VHR5unRdusBDqoXAuB0Q/stream/80cb508f-e85a-4058-9854-a912cb8ea0d9:TUL/master.m3u8",
+        "url": "https://www.bloomberg.com/media-manifest/streams/us.m3u8",
         "pais": "USA"
     },
     {
