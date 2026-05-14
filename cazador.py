@@ -148,33 +148,77 @@ def actualizar_canal_youtube_ytdlp(
 ):
     print(f"\nVerificando si {canal_nombre} está en vivo (yt-dlp)...")
     try:
-        # yt-dlp imprime la URL del stream si encuentra una transmisión en vivo
-        # usamos --playlist-end 1 para solo mirar el primer video (el más reciente)
-        result = subprocess.run(
-            ["yt-dlp", "-g", "--playlist-end", "1", channel_url],
-            capture_output=True, text=True, timeout=30
-        )
-        output = result.stdout.strip()
-        if not output:
-            print(f"ℹ️ {canal_nombre} no está transmitiendo según yt-dlp.")
-            return
-        # la salida será la URL del stream (m3u8), no el ID del video
-        # pero podemos extraer el ID del video de la URL de YouTube
-        # Sin embargo, es más fácil obtener el ID del video con otro comando: yt-dlp --print id
-        # Pero ya tenemos -g que devuelve la URL del stream, podemos ignorar.
-        # Para obtener el ID del video:
         id_result = subprocess.run(
             ["yt-dlp", "--print", "id", "--playlist-end", "1", channel_url],
             capture_output=True, text=True, timeout=30
         )
         video_id = id_result.stdout.strip()
         if not video_id:
-            print(f"ℹ️ No se pudo obtener el ID del video.")
+            print(f"ℹ️ {canal_nombre} no está transmitiendo según yt-dlp.")
             return
         print(f"✅ Nuevo directo detectado (yt-dlp): {video_id}")
     except Exception as e:
         print(f"❌ Error con yt-dlp: {e}")
         return
+
+    # Crear HTML
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/{video_id}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+    try:
+        with open(html_file, "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"✅ Archivo {html_file} guardado correctamente.")
+    except Exception as e:
+        print(f"❌ Error al escribir {html_file}: {e}")
+        return
+
+    # Actualizar JSON
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            break
+
+    if not encontrado:
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    try:
+        with open(json_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"✅ JSON {json_file} actualizado correctamente.")
+    except Exception as e:
+        print(f"❌ Error al guardar {json_file}: {e}")
 
     # Sobrescribir HTML
     html = f"""<!DOCTYPE html>
