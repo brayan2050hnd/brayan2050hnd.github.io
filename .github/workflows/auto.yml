@@ -31,10 +31,9 @@ jobs:
 
       - name: Crear archivos HTML con video de referencia (si no existen)
         run: |
-          for f in choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html unetv.html; do
+          for f in choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html unetv.html discovery_family.html; do
             if [ ! -f "$f" ]; then
               if [ "$f" = "unetv.html" ]; then
-                # Video de referencia para UNETV (un video público del canal)
                 cat > "$f" << 'EOF'
           <!DOCTYPE html>
           <html>
@@ -56,6 +55,29 @@ jobs:
           </body>
           </html>
           EOF
+              elif [ "$f" = "discovery_family.html" ]; then
+                # Video de referencia para Discovery Family
+                cat > "$f" << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+              <title>DISCOVERY FAMILY</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+              </style>
+          </head>
+          <body>
+              <iframe src="https://www.youtube.com/embed/UCcOyfio8dDsZAoCX_RrJvYg?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen>
+              </iframe>
+          </body>
+          </html>
+          EOF
               else
                 echo '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="background:#000;"></body></html>' > "$f"
               fi
@@ -69,6 +91,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add mexico.json usa.json honduras.json choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html unetv.html
+          git add mexico.json usa.json honduras.json choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html unetv.html discovery_family.html
           git commit -m "Actualización automática de link" || exit 0
           git push origin main
