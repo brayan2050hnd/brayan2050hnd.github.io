@@ -4,9 +4,10 @@ import json
 import requests
 import os
 import random
+import subprocess
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
+# FUNCIÓN UNIFICADA PARA CANALES DE YOUTUBE (usa API)
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -24,7 +25,6 @@ def actualizar_canal_youtube(
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    # 1. Obtener channelId si no se proporciona directamente
     if not channel_id and handle:
         print(f"   Obteniendo ID del canal desde el handle '{handle}'...")
         channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
@@ -44,9 +44,8 @@ def actualizar_canal_youtube(
         print("❌ Error: No se proporcionó channel_id ni handle.")
         return
 
-    print(f"Verificando si {canal_nombre} está en vivo...")
+    print(f"Verificando si {canal_nombre} está en vivo (API)...")
     search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
-
     try:
         resp = requests.get(search_url)
         if resp.status_code != 200:
@@ -59,7 +58,6 @@ def actualizar_canal_youtube(
             print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
             return
 
-        # Filtrado opcional de estrenos
         if filter_live:
             candidatos = []
             for item in items:
@@ -74,7 +72,6 @@ def actualizar_canal_youtube(
                 return
             items = candidatos
 
-        # Selección aleatoria si hay varios directos
         if random_select and len(items) > 1:
             elegido = random.choice(items)
             print(f"⚠️ {len(items)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
@@ -82,13 +79,11 @@ def actualizar_canal_youtube(
             elegido = items[0]
 
         video_id = elegido["id"]["videoId"]
-        print(f"✅ Nuevo directo detectado: {video_id}")
-
     except Exception as e:
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # Sobrescribir siempre el HTML con la plantilla completa
+    # Sobrescribir HTML
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -113,7 +108,6 @@ def actualizar_canal_youtube(
         f.write(html)
     print(f"✅ Archivo {html_file} actualizado.")
 
-    # Actualizar JSON
     url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
         with open(json_file, "r", encoding="utf-8") as f:
@@ -130,7 +124,6 @@ def actualizar_canal_youtube(
             break
 
     if not encontrado:
-        print(f"⚠️ No se encontró '{canal_nombre}' en {json_file}. Agregando entrada nueva.")
         data.append({
             "nombre": canal_nombre,
             "imagen": imagen_url,
@@ -143,7 +136,100 @@ def actualizar_canal_youtube(
 
 
 # ============================================================
-# CANAL ZAZ — NO SE TOCA, FUNCIONA PERFECTO
+# NUEVA FUNCIÓN USANDO YT-DLP (para canales que fallan con la API)
+# ============================================================
+def actualizar_canal_youtube_ytdlp(
+    canal_nombre,
+    html_file,
+    json_file,
+    pais,
+    imagen_url,
+    channel_url
+):
+    print(f"\nVerificando si {canal_nombre} está en vivo (yt-dlp)...")
+    try:
+        # yt-dlp imprime la URL del stream si encuentra una transmisión en vivo
+        # usamos --playlist-end 1 para solo mirar el primer video (el más reciente)
+        result = subprocess.run(
+            ["yt-dlp", "-g", "--playlist-end", "1", channel_url],
+            capture_output=True, text=True, timeout=30
+        )
+        output = result.stdout.strip()
+        if not output:
+            print(f"ℹ️ {canal_nombre} no está transmitiendo según yt-dlp.")
+            return
+        # la salida será la URL del stream (m3u8), no el ID del video
+        # pero podemos extraer el ID del video de la URL de YouTube
+        # Sin embargo, es más fácil obtener el ID del video con otro comando: yt-dlp --print id
+        # Pero ya tenemos -g que devuelve la URL del stream, podemos ignorar.
+        # Para obtener el ID del video:
+        id_result = subprocess.run(
+            ["yt-dlp", "--print", "id", "--playlist-end", "1", channel_url],
+            capture_output=True, text=True, timeout=30
+        )
+        video_id = id_result.stdout.strip()
+        if not video_id:
+            print(f"ℹ️ No se pudo obtener el ID del video.")
+            return
+        print(f"✅ Nuevo directo detectado (yt-dlp): {video_id}")
+    except Exception as e:
+        print(f"❌ Error con yt-dlp: {e}")
+        return
+
+    # Sobrescribir HTML
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/{video_id}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ Archivo {html_file} actualizado.")
+
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
+
+    if not encontrado:
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+# ============================================================
+# CANAL ZAZ — NO SE TOCA
 # ============================================================
 def actualizar_zaz():
     scraper = cloudscraper.create_scraper(
@@ -387,13 +473,12 @@ if __name__ == "__main__":
         handle="@unetvhonduras-n2t"
     )
 
-    # --- NUEVO CANAL: DISCOVERY FAMILY (usando handle) ---
-actualizar_canal_youtube(
-    canal_nombre="DISCOVERY FAMILY",
-    html_file="discovery_family.html",
-    json_file="usa.json",
-    pais="USA",
-    imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png",
-    handle="@discovery_familia",          # ← Usamos el handle
-    filter_live=False                     # Aceptamos cualquier directo
-)
+    # --- DISCOVERY FAMILY ahora usa yt-dlp ---
+    actualizar_canal_youtube_ytdlp(
+        canal_nombre="DISCOVERY FAMILY",
+        html_file="discovery_family.html",
+        json_file="usa.json",
+        pais="USA",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png",
+        channel_url="https://www.youtube.com/@discovery_familia/live"
+        )
