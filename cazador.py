@@ -334,7 +334,7 @@ if __name__ == "__main__":
         json_file="usa.json",
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Telemundo_logo_2018.svg/640px-Telemundo_logo_2018.svg.png",
-        channel_id="UCsDG_lFhRcvC14XRYVLeIfA"
+        channel_id="UCRwA1NUcUnwsly35ikGhp0A"
     )
 
     actualizar_canal_youtube(
@@ -364,4 +364,14 @@ if __name__ == "__main__":
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
+    )
+
+    # --- NUEVO CANAL: UNETV ---
+    actualizar_canal_youtube(
+        canal_nombre="UNETV",
+        html_file="unetv.html",
+        json_file="honduras.json",
+        pais="HONDURAS",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Logo_UNE_TV.svg/640px-Logo_UNE_TV.svg.png",
+        channel_id="UCBBV8M1gvJqXrzdErJyTEuQ"
     )
