@@ -388,5 +388,11 @@
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Golden_TV_logo.png",
         "url": "https://brayan2050hnd.github.io/choluvision.html",
         "pais": "HONDURAS"
+    },
+    {
+        "nombre": "UNETV",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Logo_UNE_TV.svg/640px-Logo_UNE_TV.svg.png",
+        "url": "https://brayan2050hnd.github.io/unetv.html",
+        "pais": "HONDURAS"
     }
 ]
