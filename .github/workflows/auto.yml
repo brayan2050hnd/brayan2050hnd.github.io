@@ -31,130 +31,11 @@ jobs:
 
       - name: Crear archivos HTML con video de referencia (si no existen)
         run: |
-          # Choluvision
-          if [ ! -f choluvision.html ]; then
-            cat > choluvision.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-              <title>CHOLUVISION</title>
-              <style>
-                  * { margin: 0; padding: 0; box-sizing: border-box; }
-                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-              </style>
-          </head>
-          <body>
-              <iframe src="https://www.youtube.com/embed/TEqTZ34X-_Q?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-                      allow="autoplay; encrypted-media"
-                      allowfullscreen>
-              </iframe>
-          </body>
-          </html>
-          EOF
-          fi
-
-          # Telemundo Florida
-          if [ ! -f telemundo_florida.html ]; then
-            cat > telemundo_florida.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-              <title>TELEMUNDO FLORIDA</title>
-              <style>
-                  * { margin: 0; padding: 0; box-sizing: border-box; }
-                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-              </style>
-          </head>
-          <body>
-              <iframe src="https://www.youtube.com/embed/_1XFjgx9i40?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-                      allow="autoplay; encrypted-media"
-                      allowfullscreen>
-              </iframe>
-          </body>
-          </html>
-          EOF
-          fi
-
-          # USA
-          if [ ! -f usa.html ]; then
-            cat > usa.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-              <title>USA</title>
-              <style>
-                  * { margin: 0; padding: 0; box-sizing: border-box; }
-                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-              </style>
-          </head>
-          <body>
-              <iframe src="https://www.youtube.com/embed/Ck1H1OQRPPk?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-                      allow="autoplay; encrypted-media"
-                      allowfullscreen>
-              </iframe>
-          </body>
-          </html>
-          EOF
-          fi
-
-          # Disney Channel
-          if [ ! -f disney.html ]; then
-            cat > disney.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-              <title>DISNEY CHANNEL</title>
-              <style>
-                  * { margin: 0; padding: 0; box-sizing: border-box; }
-                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-              </style>
-          </head>
-          <body>
-              <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-                      allow="autoplay; encrypted-media"
-                      allowfullscreen>
-              </iframe>
-          </body>
-          </html>
-          EOF
-          fi
-
-          # Universal Kids
-          if [ ! -f universal_kids.html ]; then
-            cat > universal_kids.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-              <title>UNIVERSAL KIDS</title>
-              <style>
-                  * { margin: 0; padding: 0; box-sizing: border-box; }
-                  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-                  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-              </style>
-          </head>
-          <body>
-              <iframe src="https://www.youtube.com/embed/XAYgvRwSFKA?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-                      allow="autoplay; encrypted-media"
-                      allowfullscreen>
-              </iframe>
-          </body>
-          </html>
-          EOF
-          fi
+          for f in choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html unetv.html; do
+            if [ ! -f "$f" ]; then
+              echo '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="background:#000;"></body></html>' > "$f"
+            fi
+          done
 
       - name: Ejecutar script
         run: python cazador.py
@@ -163,6 +44,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add mexico.json usa.json honduras.json choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html
+          git add mexico.json usa.json honduras.json choluvision.html telemundo_florida.html usa.html disney.html universal_kids.html unetv.html
           git commit -m "Actualización automática de link" || exit 0
           git push origin main
