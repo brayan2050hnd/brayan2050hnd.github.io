@@ -387,12 +387,13 @@ if __name__ == "__main__":
         handle="@unetvhonduras-n2t"
     )
 
-    # --- NUEVO CANAL: DISCOVERY FAMILY ---
-    actualizar_canal_youtube(
-        canal_nombre="DISCOVERY FAMILY",
-        html_file="discovery_family.html",
-        json_file="usa.json",
-        pais="USA",
-        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png",
-        channel_id="UCcOyfio8dDsZAoCX_RrJvYg"
-    )
+    # --- NUEVO CANAL: DISCOVERY FAMILY (usando handle) ---
+actualizar_canal_youtube(
+    canal_nombre="DISCOVERY FAMILY",
+    html_file="discovery_family.html",
+    json_file="usa.json",
+    pais="USA",
+    imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png",
+    handle="@discovery_familia",          # ← Usamos el handle
+    filter_live=False                     # Aceptamos cualquier directo
+)
