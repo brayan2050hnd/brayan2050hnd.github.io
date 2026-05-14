@@ -136,89 +136,17 @@ def actualizar_canal_youtube(
 
 
 # ============================================================
-# NUEVA FUNCIÓN USANDO YT-DLP (para canales que fallan con la API)
+# NUEVA FUNCIÓN PARA DISCOVERY FAMILY (usa ID fijo)
 # ============================================================
-def actualizar_canal_youtube_ytdlp(
-    canal_nombre,
-    html_file,
-    json_file,
-    pais,
-    imagen_url,
-    channel_url
-):
-    print(f"\nVerificando si {canal_nombre} está en vivo (yt-dlp)...")
-    try:
-        id_result = subprocess.run(
-            ["yt-dlp", "--print", "id", "--playlist-end", "1", channel_url],
-            capture_output=True, text=True, timeout=30
-        )
-        video_id = id_result.stdout.strip()
-        if not video_id:
-            print(f"ℹ️ {canal_nombre} no está transmitiendo según yt-dlp.")
-            return
-        print(f"✅ Nuevo directo detectado (yt-dlp): {video_id}")
-    except Exception as e:
-        print(f"❌ Error con yt-dlp: {e}")
-        return
+def actualizar_discovery_family():
+    canal_nombre = "DISCOVERY FAMILY"
+    html_file = "discovery_family.html"
+    json_file = "usa.json"
+    pais = "USA"
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png"
+    video_id = "fqAm7noj81U"  # ID que me diste
 
-    # Crear HTML
-    html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{canal_nombre}</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
-        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
-    </style>
-</head>
-<body>
-    <iframe src="https://www.youtube.com/embed/{video_id}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-    </iframe>
-</body>
-</html>"""
-
-    try:
-        with open(html_file, "w", encoding="utf-8") as f:
-            f.write(html)
-        print(f"✅ Archivo {html_file} guardado correctamente.")
-    except Exception as e:
-        print(f"❌ Error al escribir {html_file}: {e}")
-        return
-
-    # Actualizar JSON
-    url_html = f"https://brayan2050hnd.github.io/{html_file}"
-    try:
-        with open(json_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except FileNotFoundError:
-        data = []
-
-    encontrado = False
-    for canal in data:
-        if canal.get("nombre", "").upper() == canal_nombre.upper():
-            canal["url"] = url_html
-            encontrado = True
-            break
-
-    if not encontrado:
-        data.append({
-            "nombre": canal_nombre,
-            "imagen": imagen_url,
-            "url": url_html,
-            "pais": pais
-        })
-
-    try:
-        with open(json_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-        print(f"✅ JSON {json_file} actualizado correctamente.")
-    except Exception as e:
-        print(f"❌ Error al guardar {json_file}: {e}")
+    print(f"\nActualizando {canal_nombre} con ID fijo: {video_id}")
 
     # Sobrescribir HTML
     html = f"""<!DOCTYPE html>
@@ -517,12 +445,5 @@ if __name__ == "__main__":
         handle="@unetvhonduras-n2t"
     )
 
-    # --- DISCOVERY FAMILY ahora usa yt-dlp ---
-    actualizar_canal_youtube_ytdlp(
-        canal_nombre="DISCOVERY FAMILY",
-        html_file="discovery_family.html",
-        json_file="usa.json",
-        pais="USA",
-        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png",
-        channel_url="https://www.youtube.com/@discovery_familia/live"
-        )
+    # --- DISCOVERY FAMILY ahora usa ID fijo ---
+    actualizar_discovery_family()
