@@ -88,7 +88,7 @@ def actualizar_canal_youtube(
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # --- NUEVA LÓGICA: Sobrescribir siempre el HTML con la plantilla completa ---
+    # Sobrescribir siempre el HTML con la plantilla completa
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -378,7 +378,6 @@ if __name__ == "__main__":
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
     )
 
-    # --- UNETV usando handle ---
     actualizar_canal_youtube(
         canal_nombre="UNETV",
         html_file="unetv.html",
@@ -386,4 +385,14 @@ if __name__ == "__main__":
         pais="HONDURAS",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Logo_UNE_TV.svg/640px-Logo_UNE_TV.svg.png",
         handle="@unetvhonduras-n2t"
+    )
+
+    # --- NUEVO CANAL: DISCOVERY FAMILY ---
+    actualizar_canal_youtube(
+        canal_nombre="DISCOVERY FAMILY",
+        html_file="discovery_family.html",
+        json_file="usa.json",
+        pais="USA",
+        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Discovery_Family_logo.svg/640px-Discovery_Family_logo.svg.png",
+        channel_id="UCcOyfio8dDsZAoCX_RrJvYg"
     )
