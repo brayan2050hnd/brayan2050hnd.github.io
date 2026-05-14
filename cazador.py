@@ -14,7 +14,8 @@ def actualizar_canal_youtube(
     json_file,
     pais,
     imagen_url,
-    channel_id,
+    channel_id=None,
+    handle=None,
     filter_live=False,
     random_select=False
 ):
@@ -23,7 +24,27 @@ def actualizar_canal_youtube(
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    print(f"\nVerificando si {canal_nombre} está en vivo...")
+    # 1. Obtener channelId si no se proporciona directamente
+    if not channel_id and handle:
+        print(f"   Obteniendo ID del canal desde el handle '{handle}'...")
+        channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
+        try:
+            ch_resp = requests.get(channels_url).json()
+            items = ch_resp.get("items", [])
+            if not items:
+                print(f"❌ No se encontró el canal con el handle {handle}.")
+                return
+            channel_id = items[0]["id"]
+            print(f"   ID obtenido: {channel_id}")
+        except Exception as e:
+            print(f"❌ Error al obtener ID del canal: {e}")
+            return
+
+    if not channel_id:
+        print("❌ Error: No se proporcionó channel_id ni handle.")
+        return
+
+    print(f"Verificando si {canal_nombre} está en vivo...")
     search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
 
     try:
@@ -366,12 +387,12 @@ if __name__ == "__main__":
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
     )
 
-    # --- NUEVO CANAL: UNETV ---
+    # --- UNETV usando handle ---
     actualizar_canal_youtube(
         canal_nombre="UNETV",
         html_file="unetv.html",
         json_file="honduras.json",
         pais="HONDURAS",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Logo_UNE_TV.svg/640px-Logo_UNE_TV.svg.png",
-        channel_id="UCBBV8M1gvJqXrzdErJyTEuQ"
+        handle="@unetvhonduras-n2t"
     )
