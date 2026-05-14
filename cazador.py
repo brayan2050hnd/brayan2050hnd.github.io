@@ -4,10 +4,11 @@ import json
 import requests
 import os
 import random
-import subprocess
+import asyncio
+from playwright.async_api import async_playwright
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA CANALES DE YOUTUBE (usa API)
+# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -379,53 +380,82 @@ def actualizar_telemundo_california():
     except Exception as e:
         print(f"Error en la captura: {e}")
 
+
 # ============================================================
-# CANAL ESPN — extrae m3u8 de tvtvhd.com (cloudscraper)
+# CANAL ESPN — Extracción con Playwright + Rotación de Proxy
 # ============================================================
 def actualizar_espn():
-    scraper = cloudscraper.create_scraper(
-        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
-    )
-    
-    # La página que realmente contiene el stream
     fuente_web = "https://tvtvhd.com/vivo/canales.php?stream=espn"
     print(f"Buscando señal de ESPN en: {fuente_web}")
 
+    # Lista de proxies gratuitos de EE.UU. (rotamos si fallan)
+    PROXY_LIST = [
+        {"server": "http://172.200.72.48:80"},
+        {"server": "http://54.241.232.209:1080"},
+        {"server": "http://35.209.198.222:80"},
+        {"server": "http://174.138.162.238:55636"},
+        {"server": "http://174.138.161.186:53282"},
+        {"server": "http://174.138.170.60:55318"},
+        {"server": "http://174.138.170.62:38516"}
+    ]
+
+    async def extraer():
+        for proxy in PROXY_LIST:
+            try:
+                async with async_playwright() as p:
+                    browser = await p.chromium.launch(
+                        headless=True,
+                        proxy=proxy,
+                        args=["--disable-blink-features=AutomationControlled"]
+                    )
+                    page = await browser.new_page()
+
+                    stream_link = None
+                    async def interceptar(request):
+                        nonlocal stream_link
+                        if ".m3u8" in request.url:
+                            stream_link = request.url
+                            print(f"   Candidato detectado: {request.url[:120]}")
+
+                    page.on("request", interceptar)
+                    await page.goto(fuente_web, wait_until="domcontentloaded", timeout=30000)
+                    await asyncio.sleep(5)
+
+                    if stream_link:
+                        await browser.close()
+                        return stream_link
+                    await browser.close()
+            except Exception as e:
+                print(f"Proxy {proxy['server']} falló: {e}. Intentando con otro...")
+        return None
+
     try:
-        response = scraper.get(fuente_web, timeout=15).text
-        
-        # Buscar la URL del playback en el script
-        match = re.search(r'var playbackURL = "(https?://[^\s"]+)"', response)
-        if not match:
-            print("No se encontró la URL del stream en la página.")
-            return
-        
-        link_valido = match.group(1)
-        print(f"¡LOGRADO! Link de ESPN encontrado: {link_valido}")
+        link_valido = asyncio.run(extraer())
 
-        # Guardar en usa.json (o el archivo que uses para canales de EE.UU.)
-        with open('usa.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        if link_valido:
+            print(f"¡LOGRADO! Link de ESPN encontrado: {link_valido}")
 
-        encontrado = False
-        for canal in data:
-            if "ESPN" == canal.get('nombre', '').strip().upper():
-                canal['url'] = link_valido
-                encontrado = True
-                print("URL de ESPN actualizada en el JSON.")
-                break
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
 
-        if not encontrado:
-            print("⚠️ No se encontró 'ESPN' en usa.json. Agregando entrada nueva.")
-            data.append({
-                "nombre": "ESPN",
-                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_logo.svg/640px-ESPN_logo.svg.png",
-                "url": link_valido,
-                "pais": "USA"
-            })
+            for canal in data:
+                if "ESPN" == canal.get('nombre', '').strip().upper():
+                    canal['url'] = link_valido
+                    print("URL de ESPN actualizada en el JSON.")
+                    break
+            else:
+                print("⚠️ No se encontró 'ESPN' en usa.json. Agregando entrada nueva.")
+                data.append({
+                    "nombre": "ESPN",
+                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_logo.svg/640px-ESPN_logo.svg.png",
+                    "url": link_valido,
+                    "pais": "USA"
+                })
 
-        with open('usa.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
+            with open('usa.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+        else:
+            print("No se encontró ningún link .m3u8 válido para ESPN.")
 
     except Exception as e:
         print(f"Error en la captura: {e}")
@@ -438,7 +468,6 @@ if __name__ == "__main__":
     actualizar_zaz()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
-    actualizar_espn()
 
     actualizar_canal_youtube(
         canal_nombre="CHOLUVISION",
@@ -497,5 +526,7 @@ if __name__ == "__main__":
         handle="@unetvhonduras-n2t"
     )
 
-    # --- DISCOVERY FAMILY ahora usa ID fijo ---
     actualizar_discovery_family()
+
+    # --- ESPN con Playwright + Rotación de Proxy ---
+    actualizar_espn()
