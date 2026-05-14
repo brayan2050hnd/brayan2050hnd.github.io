@@ -438,6 +438,7 @@ if __name__ == "__main__":
     actualizar_zaz()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
+    actualizar_espn()
 
     actualizar_canal_youtube(
         canal_nombre="CHOLUVISION",
