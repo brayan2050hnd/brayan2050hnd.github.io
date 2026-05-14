@@ -379,6 +379,57 @@ def actualizar_telemundo_california():
     except Exception as e:
         print(f"Error en la captura: {e}")
 
+# ============================================================
+# CANAL ESPN — extrae m3u8 de tvtvhd.com (cloudscraper)
+# ============================================================
+def actualizar_espn():
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
+    # La página que realmente contiene el stream
+    fuente_web = "https://tvtvhd.com/vivo/canales.php?stream=espn"
+    print(f"Buscando señal de ESPN en: {fuente_web}")
+
+    try:
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        # Buscar la URL del playback en el script
+        match = re.search(r'var playbackURL = "(https?://[^\s"]+)"', response)
+        if not match:
+            print("No se encontró la URL del stream en la página.")
+            return
+        
+        link_valido = match.group(1)
+        print(f"¡LOGRADO! Link de ESPN encontrado: {link_valido}")
+
+        # Guardar en usa.json (o el archivo que uses para canales de EE.UU.)
+        with open('usa.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        encontrado = False
+        for canal in data:
+            if "ESPN" == canal.get('nombre', '').strip().upper():
+                canal['url'] = link_valido
+                encontrado = True
+                print("URL de ESPN actualizada en el JSON.")
+                break
+
+        if not encontrado:
+            print("⚠️ No se encontró 'ESPN' en usa.json. Agregando entrada nueva.")
+            data.append({
+                "nombre": "ESPN",
+                "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_logo.svg/640px-ESPN_logo.svg.png",
+                "url": link_valido,
+                "pais": "USA"
+            })
+
+        with open('usa.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+    except Exception as e:
+        print(f"Error en la captura: {e}")
+
 
 # ============================================================
 # EJECUCIÓN
