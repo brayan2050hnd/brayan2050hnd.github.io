@@ -88,12 +88,8 @@ def actualizar_canal_youtube(
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # Leer o crear plantilla HTML
-    try:
-        with open(html_file, "r", encoding="utf-8") as f:
-            html = f.read()
-    except FileNotFoundError:
-        html = f"""<!DOCTYPE html>
+    # --- NUEVA LÓGICA: Sobrescribir siempre el HTML con la plantilla completa ---
+    html = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -106,20 +102,15 @@ def actualizar_canal_youtube(
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    <iframe src="https://www.youtube.com/embed/{video_id}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
             allowfullscreen>
     </iframe>
 </body>
 </html>"""
 
-    if "VIDEO_ID" in html:
-        nuevo_html = html.replace("VIDEO_ID", video_id)
-    else:
-        nuevo_html = re.sub(r'embed/[^"?]+', f'embed/{video_id}', html)
-
     with open(html_file, "w", encoding="utf-8") as f:
-        f.write(nuevo_html)
+        f.write(html)
     print(f"✅ Archivo {html_file} actualizado.")
 
     # Actualizar JSON
