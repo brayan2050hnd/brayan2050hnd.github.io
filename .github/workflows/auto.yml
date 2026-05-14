@@ -28,7 +28,6 @@ jobs:
           pip install cloudscraper playwright
           playwright install chromium --with-deps
           pip install requests
-          pip install yt-dlp
 
       - name: Crear archivos HTML con video de referencia (si no existen)
         run: |
