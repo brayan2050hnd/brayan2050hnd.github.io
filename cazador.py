@@ -4,8 +4,6 @@ import json
 import requests
 import os
 import random
-import asyncio
-from playwright.async_api import async_playwright
 
 # ============================================================
 # FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
@@ -381,62 +379,6 @@ def actualizar_telemundo_california():
 
 
 # ============================================================
-# CANAL ESPN 2 — extrae m3u8 de CanchaTV con Playwright
-# ============================================================
-def actualizar_espn2():
-    url_canchatv = "https://canchatv.online/embedslatam/?canal=espn2&target=3"
-    print(f"Extrayendo m3u8 de ESPN 2 desde: {url_canchatv}")
-
-    async def extraer():
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page()
-            m3u8_encontrado = None
-
-            async def interceptar(request):
-                nonlocal m3u8_encontrado
-                if ".m3u8" in request.url:
-                    m3u8_encontrado = request.url
-
-            page.on("request", interceptar)
-            await page.goto(url_canchatv, wait_until="domcontentloaded", timeout=60000)
-            await asyncio.sleep(8)  # esperar a que el reproductor haga la petición
-            await browser.close()
-            return m3u8_encontrado
-
-    try:
-        link_valido = asyncio.run(extraer())
-
-        if link_valido:
-            print(f"¡LOGRADO! Link de ESPN 2 encontrado: {link_valido}")
-
-            with open('usa.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-
-            for canal in data:
-                if "ESPN 2" == canal.get('nombre', '').strip().upper():
-                    canal['url'] = link_valido
-                    print("URL de ESPN 2 actualizada en el JSON.")
-                    break
-            else:
-                print("⚠️ No se encontró 'ESPN 2' en usa.json. Agregando entrada nueva.")
-                data.append({
-                    "nombre": "ESPN 2",
-                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/ESPN2_logo.svg/640px-ESPN2_logo.svg.png",
-                    "url": link_valido,
-                    "pais": "USA"
-                })
-
-            with open('usa.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-        else:
-            print("No se encontró ningún link .m3u8 válido para ESPN 2.")
-
-    except Exception as e:
-        print(f"Error en la captura: {e}")
-
-
-# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
@@ -502,6 +444,3 @@ if __name__ == "__main__":
     )
 
     actualizar_discovery_family()
-
-    # --- ESPN 2 con Playwright ---
-    actualizar_espn2()
