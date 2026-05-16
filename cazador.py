@@ -440,6 +440,67 @@ def actualizar_tntnovelas():
 
 
 # ============================================================
+# CANAL UNIVISION — iframe fijo (no usa m3u8)
+# ============================================================
+def actualizar_univision():
+    canal_nombre = "UNIVISION"
+    html_file = "univision.html"
+    json_file = "usa.json"
+    pais = "USA"
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Univision_logo.svg/640px-Univision_logo.svg.png"
+    iframe_url = "https://telefullhd.net/canales/univision/"
+
+    print(f"Actualizando {canal_nombre} con iframe fijo…")
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="{iframe_url}" allowfullscreen allow="encrypted-media"></iframe>
+</body>
+</html>"""
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ Archivo {html_file} actualizado.")
+
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
+
+    if not encontrado:
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
@@ -505,5 +566,5 @@ if __name__ == "__main__":
     )
 
     actualizar_discovery_family()
-
     actualizar_tntnovelas()
+    actualizar_univision()
