@@ -4,6 +4,8 @@ import json
 import requests
 import os
 import random
+import asyncio
+from playwright.async_api import async_playwright
 
 # ============================================================
 # FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
@@ -379,6 +381,83 @@ def actualizar_telemundo_california():
 
 
 # ============================================================
+# CANAL TNT NOVELAS — Playwright + clic en Opción 1 (TG)
+# ============================================================
+def actualizar_tntnovelas():
+    url_base = "https://telegratuita.net"
+    url_opcion1 = "/repro/?r=L2xhdGFtLnBocD9jYW5hbD10bnRub3ZlbGFz"
+
+    print(f"Extrayendo m3u8 de TNT Novelas (Opción 1 TG)...")
+
+    async def extraer():
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            )
+            page = await context.new_page()
+            m3u8_encontrado = None
+
+            async def interceptar(request):
+                nonlocal m3u8_encontrado
+                if ".m3u8" in request.url:
+                    m3u8_encontrado = request.url
+
+            page.on("request", interceptar)
+
+            # 1) Ir a la página principal
+            await page.goto(url_base + "/en-vivo/tnt-novelas.php", wait_until="domcontentloaded")
+            await asyncio.sleep(2)
+
+            # 2) Hacer clic en el enlace "Opción 1 (TG)"
+            try:
+                await page.click(f'a[href="{url_opcion1}"]')
+                print("   Clic en Opción 1 (TG) realizado.")
+            except:
+                print("   No se encontró el enlace de la Opción 1, intentando navegar directamente...")
+                # Si el clic falla, intentamos cargar la URL directamente (puede que funcione)
+                await page.goto(url_base + url_opcion1, wait_until="domcontentloaded")
+
+            # 3) Esperar a que el reproductor cargue
+            await asyncio.sleep(8)
+
+            await browser.close()
+            return m3u8_encontrado
+
+    try:
+        link_valido = asyncio.run(extraer())
+
+        if link_valido:
+            print(f"¡LOGRADO! Link de TNT Novelas encontrado: {link_valido}")
+
+            # Guardar en el JSON que uses para canales latinos (puede ser usa.json u otro)
+            with open('usa.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            for canal in data:
+                if "TNT NOVELAS" in canal.get('nombre', '').upper():
+                    canal['url'] = link_valido
+                    print("URL de TNT Novelas actualizada en el JSON.")
+                    break
+            else:
+                print("⚠️ No se encontró 'TNT NOVELAS' en usa.json. Agregando entrada nueva.")
+                data.append({
+                    "nombre": "TNT NOVELAS",
+                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png",
+                    "url": link_valido,
+                    "pais": "USA"
+                })
+
+            with open('usa.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+        else:
+            print("No se encontró ningún link .m3u8 válido para TNT Novelas.")
+
+    except Exception as e:
+        print(f"Error en la captura: {e}")
+
+
+# ============================================================
 # EJECUCIÓN
 # ============================================================
 if __name__ == "__main__":
@@ -444,3 +523,6 @@ if __name__ == "__main__":
     )
 
     actualizar_discovery_family()
+
+    # --- TNT Novelas con Playwright ---
+    actualizar_tntnovelas()
