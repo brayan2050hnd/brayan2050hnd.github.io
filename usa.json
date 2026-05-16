@@ -322,5 +322,11 @@
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png",
         "url": "https://brayan2050hnd.github.io/tnt_novelas.html",
         "pais": "USA"
+    },
+    {
+        "nombre": "UNIVISION",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Univision_logo.svg/640px-Univision_logo.svg.png",
+        "url": "https://brayan2050hnd.github.io/univision.html",
+        "pais": "USA"
     }
 ]
