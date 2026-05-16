@@ -4,8 +4,6 @@ import json
 import requests
 import os
 import random
-import asyncio
-from playwright.async_api import async_playwright
 
 # ============================================================
 # FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
@@ -381,7 +379,7 @@ def actualizar_telemundo_california():
 
 
 # ============================================================
-# CANAL TNT NOVELAS — Playwright + clic en Opción 1 (TG)
+# CANAL TNT NOVELAS — iframe fijo (no usa m3u8)
 # ============================================================
 def actualizar_tntnovelas():
     canal_nombre = "TNT NOVELAS"
@@ -389,13 +387,10 @@ def actualizar_tntnovelas():
     json_file = "usa.json"
     pais = "USA"
     imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png"
-    
-    # URL completa del iframe de la página
     iframe_url = "https://telegratuita.net/repro/?r=L3R2L3Bydi5waHA/aWQ9dG50bm92ZWxhcw=="
 
     print(f"Actualizando {canal_nombre} con iframe fijo…")
 
-    # Crear/sobrescribir HTML con el iframe
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -417,7 +412,6 @@ def actualizar_tntnovelas():
         f.write(html)
     print(f"✅ Archivo {html_file} actualizado.")
 
-    # Actualizar JSON
     url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
         with open(json_file, "r", encoding="utf-8") as f:
@@ -443,6 +437,7 @@ def actualizar_tntnovelas():
 
     with open(json_file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
+
 
 # ============================================================
 # EJECUCIÓN
@@ -511,5 +506,4 @@ if __name__ == "__main__":
 
     actualizar_discovery_family()
 
-    # --- TNT Novelas con Playwright ---
     actualizar_tntnovelas()
