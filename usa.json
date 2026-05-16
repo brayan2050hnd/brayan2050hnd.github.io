@@ -316,5 +316,11 @@
         "imagen": "https://expresatv.com.mx/wp-content/uploads/2023/04/expresa-600x200-1.png",
         "url": "https://conceptoweb-studio.com/radio/video/teleradio",
         "pais": "USA"
+    },
+    {
+        "nombre": "TNT NOVELAS",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png",
+        "url": "https://brayan2050hnd.github.io/tnt_novelas.html",
+        "pais": "USA"
     }
 ]
