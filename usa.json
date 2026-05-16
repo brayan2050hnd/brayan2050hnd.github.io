@@ -264,9 +264,9 @@
         "pais": "USA"
     },
     {
-        "nombre": "TVP OBREGON",
-        "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
-        "url": "https://5ca3e84a76d30.streamlock.net:443/gpacifico3/smil:obregon.smil/playlist.m3u8?DVR",
+        "nombre": "SEC",
+        "imagen": "https://www.msstate.edu/sites/www.msstate.edu/files/inline-images/SECNetwork_Maroon2.jpg",
+        "url": "http://23.237.104.106:8080/USA_SEC_NETWORK/index.m3u8",
         "pais": "USA"
     },
     {
