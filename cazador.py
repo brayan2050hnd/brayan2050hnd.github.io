@@ -384,78 +384,65 @@ def actualizar_telemundo_california():
 # CANAL TNT NOVELAS — Playwright + clic en Opción 1 (TG)
 # ============================================================
 def actualizar_tntnovelas():
-    url_base = "https://telegratuita.net"
-    url_opcion1 = "/repro/?r=L2xhdGFtLnBocD9jYW5hbD10bnRub3ZlbGFz"
+    canal_nombre = "TNT NOVELAS"
+    html_file = "tnt_novelas.html"
+    json_file = "usa.json"
+    pais = "USA"
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png"
+    
+    # URL completa del iframe de la página
+    iframe_url = "https://telegratuita.net/repro/?r=L3R2L3Bydi5waHA/aWQ9dG50bm92ZWxhcw=="
 
-    print(f"Extrayendo m3u8 de TNT Novelas (Opción 1 TG)...")
+    print(f"Actualizando {canal_nombre} con iframe fijo…")
 
-    async def extraer():
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            )
-            page = await context.new_page()
-            m3u8_encontrado = None
+    # Crear/sobrescribir HTML con el iframe
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="{iframe_url}" allowfullscreen allow="encrypted-media"></iframe>
+</body>
+</html>"""
 
-            async def interceptar(request):
-                nonlocal m3u8_encontrado
-                if ".m3u8" in request.url:
-                    m3u8_encontrado = request.url
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ Archivo {html_file} actualizado.")
 
-            page.on("request", interceptar)
-
-            # 1) Ir a la página principal
-            await page.goto(url_base + "/en-vivo/tnt-novelas.php", wait_until="domcontentloaded")
-            await asyncio.sleep(2)
-
-            # 2) Hacer clic en el enlace "Opción 1 (TG)"
-            try:
-                await page.click(f'a[href="{url_opcion1}"]')
-                print("   Clic en Opción 1 (TG) realizado.")
-            except:
-                print("   No se encontró el enlace de la Opción 1, intentando navegar directamente...")
-                # Si el clic falla, intentamos cargar la URL directamente (puede que funcione)
-                await page.goto(url_base + url_opcion1, wait_until="domcontentloaded")
-
-            # 3) Esperar a que el reproductor cargue
-            await asyncio.sleep(8)
-
-            await browser.close()
-            return m3u8_encontrado
-
+    # Actualizar JSON
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
-        link_valido = asyncio.run(extraer())
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
 
-        if link_valido:
-            print(f"¡LOGRADO! Link de TNT Novelas encontrado: {link_valido}")
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
 
-            # Guardar en el JSON que uses para canales latinos (puede ser usa.json u otro)
-            with open('usa.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
+    if not encontrado:
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
 
-            for canal in data:
-                if "TNT NOVELAS" in canal.get('nombre', '').upper():
-                    canal['url'] = link_valido
-                    print("URL de TNT Novelas actualizada en el JSON.")
-                    break
-            else:
-                print("⚠️ No se encontró 'TNT NOVELAS' en usa.json. Agregando entrada nueva.")
-                data.append({
-                    "nombre": "TNT NOVELAS",
-                    "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png",
-                    "url": link_valido,
-                    "pais": "USA"
-                })
-
-            with open('usa.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-        else:
-            print("No se encontró ningún link .m3u8 válido para TNT Novelas.")
-
-    except Exception as e:
-        print(f"Error en la captura: {e}")
-
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
 # ============================================================
 # EJECUCIÓN
