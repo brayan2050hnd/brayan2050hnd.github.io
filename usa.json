@@ -323,60 +323,46 @@
         "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
         "pais": "USA"
     },
-
-
-{
+    {
         "nombre": "COOKING CHANNEL",
         "imagen": "https://www.shutterstock.com/shutterstock/photos/2638377503/display_1500/stock-vector-cooking-channel-logo-design-template-2638377503.jpg",
         "url": "http://23.237.104.106:8080/USA_COOKING/index.m3u8",
         "pais": "USA"
     },
-
-{
+    {
         "nombre": " BBC NEWS WORLD",
         "imagen": "https://ichef.bbci.co.uk/images/ic/1200x675/p07kfh1t.jpg",
         "url": "http://23.237.104.106:8080/USA_BBC_NEWS/index.m3u8",
         "pais": "USA"
     },
-
-
-
-{
+    {
         "nombre": "DESTINATION AMERICA",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
         "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
         "pais": "USA"
     },
-
-
-
-{
+    {
         "nombre": "DESTINATION AMERICA",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
         "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
         "pais": "USA"
     },
-
-
-
-
-
-{
+    {
         "nombre": "DESTINATION AMERICA",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
         "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
         "pais": "USA"
     },
-
-
-
-
-
-    
     {
         "nombre": "UNIVISION",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Univision_logo.svg/640px-Univision_logo.svg.png",
         "url": "https://brayan2050hnd.github.io/univision.html",
+        "pais": "USA"
+    },
+    {
+        "nombre": "TNT NOVELAS",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/TNT_Novelas_logo.svg/640px-TNT_Novelas_logo.svg.png",
+        "url": "https://brayan2050hnd.github.io/tnt_novelas.html",
         "pais": "USA"
     }
 ]
