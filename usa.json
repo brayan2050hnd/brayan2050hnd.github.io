@@ -323,6 +323,56 @@
         "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
         "pais": "USA"
     },
+
+
+{
+        "nombre": "COOKING CHANNEL",
+        "imagen": "https://www.shutterstock.com/shutterstock/photos/2638377503/display_1500/stock-vector-cooking-channel-logo-design-template-2638377503.jpg",
+        "url": "http://23.237.104.106:8080/USA_COOKING/index.m3u8",
+        "pais": "USA"
+    },
+
+{
+        "nombre": "DESTINATION AMERICA",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
+        "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
+        "pais": "USA"
+    },
+
+
+
+{
+        "nombre": "DESTINATION AMERICA",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
+        "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
+        "pais": "USA"
+    },
+
+
+
+{
+        "nombre": "DESTINATION AMERICA",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
+        "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
+        "pais": "USA"
+    },
+
+
+
+
+
+{
+        "nombre": "DESTINATION AMERICA",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Destinat_america_logo15.png",
+        "url": "http://23.237.104.106:8080/USA_DESTINATION_AMERICA/index.m3u8",
+        "pais": "USA"
+    },
+
+
+
+
+
+    
     {
         "nombre": "UNIVISION",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Univision_logo.svg/640px-Univision_logo.svg.png",
