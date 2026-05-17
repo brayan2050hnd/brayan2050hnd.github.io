@@ -7,32 +7,81 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            border: none; z-index: 1; 
+        }
+
+        /* Capa superpuesta que intercepta el primer clic */
+        #pantalla-inicio {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10; /* Se pone por encima del video */
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .boton-iniciar {
+            background-color: #e50914;
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+
+    <div id="pantalla-inicio">
+        <h2>UNIVISION</h2>
+        <div class="boton-iniciar">Tocar para ver en Pantalla Completa</div>
+    </div>
+
     <iframe 
-        src="https://telefullhd.net/canales/univision/" 
+        src="https://telefullhd.net/canales/univision/?autoplay=1" 
         allow="autoplay; fullscreen; encrypted-media" 
         allowfullscreen 
         sandbox="allow-same-origin allow-scripts allow-presentation">
     </iframe>
 
     <script>
-        // Forzar pantalla completa al primer toque en la pantalla
-        document.addEventListener('click', function() {
-            var iframe = document.querySelector('iframe');
-            if (iframe) {
-                try {
-                    if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                    } else if (iframe.webkitRequestFullscreen) {
-                        iframe.webkitRequestFullscreen();
-                    }
-                } catch (e) {}
+        const pantallaInicio = document.getElementById('pantalla-inicio');
+        const iframe = document.querySelector('iframe');
+
+        // Escuchar el clic en la pantalla de inicio
+        pantallaInicio.addEventListener('click', function() {
+            
+            // 1. Forzar la pantalla completa en el documento principal
+            let elem = document.documentElement;
+            try {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari / iOS */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            } catch (error) {
+                console.log("No se pudo iniciar pantalla completa automática");
             }
-        }, { once: true });
+
+            // 2. Ocultar la pantalla de inicio para revelar el video
+            pantallaInicio.style.display = 'none';
+
+            // 3. Darle foco al iframe para que el usuario pueda darle play al reproductor si este no auto-inició
+            iframe.focus();
+        });
     </script>
+
 </body>
 </html>
-
