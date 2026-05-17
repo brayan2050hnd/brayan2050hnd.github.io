@@ -3,81 +3,74 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNIVISION - Nexus</title>
+    <title>UNIVISION Puro</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background-color: #000; overflow: hidden; 
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
         
-        /* El reproductor de fondo (aislado y bloqueado) */
-        iframe { 
-            position: absolute; top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            border: none; z-index: 1;
-        }
-
-        /* Tu Portada Limpia */
-        #portada-nexus {
-            position: absolute; top: 0; left: 0; 
-            width: 100%; height: 100%;
-            background-color: #000; /* Fondo negro sólido */
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            z-index: 9999; /* Por encima de todo */
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-
-        .titulo {
-            font-size: 28px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px;
-        }
-
-        .subtitulo {
-            font-size: 14px; color: #888; margin-bottom: 30px;
-        }
-
-        .btn-iniciar {
-            background-color: #e50914; /* Rojo tipo Netflix/YouTube */
-            color: white; padding: 15px 40px; border-radius: 30px;
-            font-size: 18px; font-weight: bold; text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
-            cursor: pointer;
+        /* Nuestro reproductor limpio, sin publicidad */
+        video { width: 100%; height: 100%; outline: none; background: #000; }
+        
+        #mensaje { 
+            color: white; position: absolute; top: 40%; width: 100%; 
+            text-align: center; font-family: sans-serif; font-size: 18px; 
+            z-index: 10;
         }
     </style>
 </head>
 <body>
 
-    <div id="portada-nexus">
-        <div class="titulo">UNIVISION</div>
-        <div class="subtitulo">Transmisión Segura</div>
-        <div class="btn-iniciar" id="btn-entrar">Tocar para Iniciar</div>
-    </div>
-
-    <iframe 
-        src="https://telefullhd.net/canales/univision/" 
-        allow="autoplay; fullscreen" 
-        sandbox="allow-scripts allow-same-origin allow-presentation">
-    </iframe>
+    <div id="mensaje">Extrayendo señal pura (Estilo Web Video Caster)...</div>
+    
+    <video id="video-limpio" controls></video>
 
     <script>
-        var btn = document.getElementById('btn-entrar');
-        var portada = document.getElementById('portada-nexus');
+        var video = document.getElementById('video-limpio');
+        var mensaje = document.getElementById('mensaje');
+        var urlObjetivo = 'https://telefullhd.net/canales/univision/';
 
-        btn.addEventListener('click', function() {
-            // 1. Disparar Pantalla Completa automáticamente
-            // Tu app detectará esto gracias a tu WebChromeClient
-            try {
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.documentElement.webkitRequestFullscreen) {
-                    document.documentElement.webkitRequestFullscreen();
+        // Usamos un proxy para saltarnos el bloqueo del navegador y poder leer el código de la página
+        var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(urlObjetivo);
+
+        // 1. Descargar el código de la página
+        fetch(proxyUrl)
+            .then(response => response.json())
+            .then(data => {
+                var html = data.contents;
+                
+                // 2. Buscar el enlace .m3u8 oculto en el código usando Regex
+                var match = html.match(/(https?:\/\/[^\s"'<>]+?\.m3u8[^\s"'<>]*)/i);
+                
+                if (match && match[1]) {
+                    var m3u8Url = match[1].replace(/\\/g, ''); // Limpiar el enlace
+                    mensaje.style.display = 'none';
+                    iniciarReproductorLimpio(m3u8Url);
+                } else {
+                    mensaje.innerText = "No se pudo encontrar el enlace directo del video.";
                 }
-            } catch(e) {}
+            })
+            .catch(error => {
+                mensaje.innerText = "Error de red al intentar extraer la señal.";
+            });
 
-            // 2. Destruir la portada limpia para revelar el reproductor
-            portada.style.display = 'none';
-        });
+        // 3. Reproducir el enlace puro en nuestro video limpio
+        function iniciarReproductorLimpio(url) {
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play().catch(e => console.log("Toca la pantalla para escuchar/iniciar"));
+                });
+            }
+            // Para iOS o navegadores que lo soportan nativamente
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            }
+        }
     </script>
 </body>
 </html>
