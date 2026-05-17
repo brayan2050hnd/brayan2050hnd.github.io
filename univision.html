@@ -1,80 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNIVISION</title>
+    <title>UNIVISION - Nexus</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: #000; overflow: hidden; 
+        }
         
-        .video-container {
-            position: relative; 
-            width: 100%; 
-            height: 100%;
-        }
-
+        /* El reproductor de fondo (aislado y bloqueado) */
         iframe { 
-            position: absolute;
-            top: 0; left: 0;
+            position: absolute; top: 0; left: 0; 
             width: 100%; height: 100%; 
-            border: none; 
+            border: none; z-index: 1;
         }
 
-        /* EL PARCHE VISUAL: Oculta la basura visual */
-        .parche-visual {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            /* Cubre todo el alto, excepto los últimos 55px donde están los controles */
-            height: calc(100% - 55px); 
-            background-color: #000; /* Negro sólido */
-            z-index: 10; /* Se pone por encima del iframe */
-            
-            /* Diseño del mensaje */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-family: sans-serif;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            padding: 20px;
-            
-            /* Atrapa los clics para que el usuario no pueda tocar el anuncio por accidente */
-            pointer-events: auto; 
+        /* Tu Portada Limpia */
+        #portada-nexus {
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background-color: #000; /* Fondo negro sólido */
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
+            z-index: 9999; /* Por encima de todo */
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .titulo {
+            font-size: 28px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px;
+        }
+
+        .subtitulo {
+            font-size: 14px; color: #888; margin-bottom: 30px;
+        }
+
+        .btn-iniciar {
+            background-color: #e50914; /* Rojo tipo Netflix/YouTube */
+            color: white; padding: 15px 40px; border-radius: 30px;
+            font-size: 18px; font-weight: bold; text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="video-container">
-        <iframe 
-            src="https://telefullhd.net/canales/univision/" 
-            allow="autoplay; fullscreen; encrypted-media" 
-            allowfullscreen 
-            sandbox="allow-scripts allow-same-origin">
-        </iframe>
-        
-        <div class="parche-visual" id="parche">
-            Toca el cuadro de pantalla completa abajo ↘️
-        </div>
+    <div id="portada-nexus">
+        <div class="titulo">UNIVISION</div>
+        <div class="subtitulo">Transmisión Segura</div>
+        <div class="btn-iniciar" id="btn-entrar">Tocar para Iniciar</div>
     </div>
 
+    <iframe 
+        src="https://telefullhd.net/canales/univision/" 
+        allow="autoplay; fullscreen" 
+        sandbox="allow-scripts allow-same-origin allow-presentation">
+    </iframe>
+
     <script>
-        // Opcional: Ocultar el parche automáticamente DESPUÉS de que el usuario entre a pantalla completa
-        // para que si decide salir de la pantalla completa, ya no esté el bloque negro estorbando.
-        document.addEventListener('fullscreenchange', function() {
-            if (document.fullscreenElement) {
-                document.getElementById('parche').style.display = 'none';
-            }
-        });
-        document.addEventListener('webkitfullscreenchange', function() {
-            if (document.webkitFullscreenElement) {
-                document.getElementById('parche').style.display = 'none';
-            }
+        var btn = document.getElementById('btn-entrar');
+        var portada = document.getElementById('portada-nexus');
+
+        btn.addEventListener('click', function() {
+            // 1. Disparar Pantalla Completa automáticamente
+            // Tu app detectará esto gracias a tu WebChromeClient
+            try {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                }
+            } catch(e) {}
+
+            // 2. Destruir la portada limpia para revelar el reproductor
+            portada.style.display = 'none';
         });
     </script>
 </body>
