@@ -1,143 +1,38 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>UNIVISION</title>
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000}
-#stream{position:fixed;inset:0;width:100%;height:100%;border:none}
-</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNIVISION</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    </style>
 </head>
 <body>
+    <iframe 
+        src="https://telefullhd.net/canales/univision/" 
+        allow="autoplay; fullscreen; encrypted-media" 
+        allowfullscreen 
+        sandbox="allow-same-origin allow-scripts allow-presentation">
+    </iframe>
 
-<iframe id="stream" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
-
-<script>
-const URL_CANAL = 'https://telefullhd.net/canales/univision/';
-
-// Script bloqueador que se inyecta DENTRO de la página del canal
-const BLOQUEADOR = `
-<script>
-(function(){
-  // Bloquear window.open (popups nuevas ventanas)
-  window.open = function(){ return null; };
-
-  // Bloquear notificaciones push
-  try{ Notification.requestPermission = ()=> Promise.resolve('denied'); }catch(e){}
-
-  // Dominios de publicidad a bloquear en fetch/XHR
-  const AD_HOSTS = [
-    'popads','popcash','adsterra','exoclick','juicyads','propellerads',
-    'trafficjunky','onesignal','pushwoosh','smartadserver','adnxs',
-    'doubleclick','googlesyndication','amazon-adsystem','ero-advertising',
-    'traficmedia','adcash','hilltopads','clickadu','datify','plugrush'
-  ];
-
-  // Bloquear fetch a redes de anuncios
-  const _fetch = window.fetch;
-  window.fetch = function(url, o){
-    if(typeof url==='string' && AD_HOSTS.some(h=>url.includes(h)))
-      return Promise.reject(new Error('blocked'));
-    return _fetch.apply(this, arguments);
-  };
-
-  // Bloquear XHR a redes de anuncios
-  const _open = XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open = function(m, url){
-    if(typeof url==='string' && AD_HOSTS.some(h=>url.includes(h))){
-      this._blocked=true; return;
-    }
-    return _open.apply(this, arguments);
-  };
-  const _send = XMLHttpRequest.prototype.send;
-  XMLHttpRequest.prototype.send = function(){
-    if(this._blocked) return;
-    return _send.apply(this, arguments);
-  };
-
-  // Detectar si un elemento es un anuncio/popup
-  function esAnuncio(el){
-    if(!el || el.nodeType!==1) return false;
-    const txt = (el.className||'')+' '+(el.id||'')+' '+(el.getAttribute('data-type')||'');
-    // Por nombre de clase/id
-    if(/popup|modal|overlay|banner|advert|promo|push|notification|mensajes|adult|dating|sexy|chat.?box|message.?box|anna/i.test(txt))
-      return true;
-    // Por estilo: posición fija con z-index alto y sin video ni iframe dentro
-    try{
-      const s = window.getComputedStyle(el);
-      const z = parseInt(s.zIndex)||0;
-      if((s.position==='fixed'||s.position==='absolute') && z>500){
-        if(!el.querySelector('video') && !el.querySelector('iframe'))
-          return true;
-      }
-    }catch(e){}
-    return false;
-  }
-
-  function limpiar(){
-    document.querySelectorAll('body *').forEach(function(el){
-      if(esAnuncio(el)) el.remove();
-    });
-  }
-
-  // Limpiar al cargar
-  document.addEventListener('DOMContentLoaded', limpiar);
-  window.addEventListener('load', function(){ limpiar(); setTimeout(limpiar,1000); setTimeout(limpiar,3000); });
-
-  // Observer continuo — elimina anuncios en cuanto aparecen
-  new MutationObserver(function(ms){
-    ms.forEach(function(m){
-      m.addedNodes.forEach(function(n){
-        if(esAnuncio(n)){ n.remove(); return; }
-        if(n.querySelectorAll) n.querySelectorAll('*').forEach(function(c){ if(esAnuncio(c)) c.remove(); });
-      });
-    });
-  }).observe(document.documentElement,{childList:true,subtree:true});
-
-})();
-<\/script>`;
-
-async function cargar(){
-  try{
-    // 1. Descargar la página del canal
-    const res  = await fetch(URL_CANAL);
-    let   html = await res.text();
-
-    // 2. Quitar scripts de redes de anuncios conocidas
-    const AD_SCRIPT_RE = /<script[^>]*src=["'][^"']*(?:popads|popcash|adsterra|exoclick|juicyads|propeller|onesignal|pushwoosh|adnxs|doubleclick|googlesyndication|amazon-adsystem|ero-adv|traficmedia|adcash|hilltop|clickadu|datify|plugrush)[^"']*["'][^>]*>(<\/script>)?/gi;
-    html = html.replace(AD_SCRIPT_RE, '');
-
-    // 3. Arreglar URLs relativas
-    html = html.replace(/<head>/i, '<head><base href="https://telefullhd.net/canales/univision/">');
-
-    // 4. Inyectar nuestro bloqueador al inicio del <head>
-    html = html.replace(/<head>/i, '<head>' + BLOQUEADOR);
-
-    // 5. Cargar en el iframe como blob (mismo contexto = podemos modificar su DOM)
-    const blob = new Blob([html], {type:'text/html; charset=utf-8'});
-    document.getElementById('stream').src = URL.createObjectURL(blob);
-
-  }catch(e){
-    // Si fetch falla por CORS, carga directo (sin limpieza)
-    console.warn('Fetch falló, cargando directo:', e);
-    document.getElementById('stream').src = URL_CANAL;
-  }
-}
-
-// Pantalla completa automática (funciona en WebView sin restricciones)
-function goFS(){
-  var el = document.documentElement;
-  try{ (el.requestFullscreen||el.webkitRequestFullscreen).call(el); }catch(e){}
-}
-
-cargar();
-goFS();
-document.getElementById('stream').addEventListener('load', goFS);
-
-// Bloquear popups en el padre también
-window.open = function(){ return null; };
-</script>
+    <script>
+        // Forzar pantalla completa al primer toque en la pantalla
+        document.addEventListener('click', function() {
+            var iframe = document.querySelector('iframe');
+            if (iframe) {
+                try {
+                    if (iframe.requestFullscreen) {
+                        iframe.requestFullscreen();
+                    } else if (iframe.webkitRequestFullscreen) {
+                        iframe.webkitRequestFullscreen();
+                    }
+                } catch (e) {}
+            }
+        }, { once: true });
+    </script>
 </body>
 </html>
+
