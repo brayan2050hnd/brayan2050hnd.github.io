@@ -312,9 +312,9 @@
         "pais": "USA"
     },
     {
-        "nombre": "EXPRESA TV ",
-        "imagen": "https://expresatv.com.mx/wp-content/uploads/2023/04/expresa-600x200-1.png",
-        "url": "https://conceptoweb-studio.com/radio/video/teleradio",
+        "nombre": "VICELAND",
+        "imagen": "https://static-www.adweek.com/wp-content/uploads/2020/02/viceland-vicetv-CONTENT-2020.jpg?w=890",
+        "url": "http://23.237.104.106:8080/USA_VICETV/index.m3u8",
         "pais": "USA"
     },
     {
