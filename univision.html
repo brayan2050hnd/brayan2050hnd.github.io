@@ -3,53 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNIVISION</title>
+    <title>Univisión</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        /* Ocultar banners típicos de publicidad (sin garantía) */
-        div[class*="ad"], div[id*="ad"], div[class*="banner"], div[id*="banner"],
-        div[class*="popup"], div[id*="popup"], div[class*="modal"] {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            width: 0 !important;
-        }
     </style>
 </head>
 <body>
-    <iframe src="https://www.tvporinternet2.com/live/univision.php" allow="autoplay; fullscreen; encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"></iframe>
-    <script>
-        // Intentar autoplay y pantalla completa al cargar
-        window.addEventListener('load', function() {
-            var iframe = document.querySelector('iframe');
-            if (iframe) {
-                // Forzar autoplay mediante postMessage
-                iframe.contentWindow.postMessage('play', '*');
-                // Intentar pantalla completa
-                try {
-                    if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                    } else if (iframe.webkitRequestFullscreen) {
-                        iframe.webkitRequestFullscreen();
-                    } else if (iframe.msRequestFullscreen) {
-                        iframe.msRequestFullscreen();
-                    }
-                } catch (e) {}
-            }
-        });
-        // Reintentar pantalla completa al primer toque en la pantalla
-        document.addEventListener('click', function() {
-            var iframe = document.querySelector('iframe');
-            if (iframe) {
-                try {
-                    if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                    }
-                } catch (e) {}
-            }
-        }, { once: true });
-    </script>
+    <iframe src="https://www.tvporinternet2.com/live/univision.php" allowfullscreen allow="autoplay; encrypted-media"></iframe>
 </body>
 </html>
