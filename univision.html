@@ -11,311 +11,364 @@
       width: 100%; height: 100%;
       overflow: hidden;
       background: #000;
-      font-family: 'Segoe UI', system-ui, sans-serif;
     }
 
-    /* ── Contenedor principal ── */
-    #player-wrap {
-      position: relative;
-      width: 100%; height: 100%;
-    }
-
-    iframe#stream {
-      position: absolute;
+    /* ── Iframe oculto hasta que el usuario toca ── */
+    #stream {
+      position: fixed;
       inset: 0;
       width: 100%; height: 100%;
       border: none;
-    }
-
-    /* ══════════════════════════════════════════
-       BLOQUEADORES DE ANUNCIOS SUPERPUESTOS
-       Cubren las zonas donde aparecen los popups
-       sin tapar el video en sí.
-    ══════════════════════════════════════════ */
-
-    /* Bloquea notificación tipo banner (arriba) */
-    .ad-block-top {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 18%;          /* cubre la franja superior */
-      z-index: 10;
-      cursor: default;
-      /* Transparente — solo bloquea clicks */
-      background: transparent;
-      pointer-events: all;
-    }
-
-    /* Bloquea popup tipo regalo / regalo-flotante (abajo-centro) */
-    .ad-block-bottom {
-      position: absolute;
-      bottom: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 30%;
-      height: 25%;
-      z-index: 10;
-      background: transparent;
-      pointer-events: all;
-    }
-
-    /* Bloquea esquinas (íconos de apps, badges, etc.) */
-    .ad-block-corner-tr {
-      position: absolute;
-      top: 0; right: 0;
-      width: 12%; height: 12%;
-      z-index: 10;
-      background: transparent;
-      pointer-events: all;
-    }
-    .ad-block-corner-tl {
-      position: absolute;
-      top: 0; left: 0;
-      width: 12%; height: 12%;
-      z-index: 10;
-      background: transparent;
-      pointer-events: all;
-    }
-
-    /* ── Barra de controles (aparece al hacer hover) ── */
-    #controls {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 56px;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      z-index: 20;
       opacity: 0;
-      transition: opacity 0.3s ease;
       pointer-events: none;
+      transition: opacity 0.4s ease;
     }
-    #player-wrap:hover #controls,
-    #player-wrap.show-controls #controls {
+    #stream.active {
       opacity: 1;
       pointer-events: all;
     }
 
-    .ctrl-left { display: flex; align-items: center; gap: 10px; }
-    .ctrl-right { display: flex; align-items: center; gap: 10px; }
-
-    .live-badge {
-      background: #e4142b;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      padding: 3px 8px;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-
-    .channel-name {
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      opacity: 0.9;
-    }
-
-    .ctrl-btn {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #fff;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: background 0.2s;
-      display: flex; align-items: center; gap: 5px;
-      backdrop-filter: blur(4px);
-    }
-    .ctrl-btn:hover { background: rgba(255,255,255,0.28); }
-
-    /* Spinner de carga */
-    #loading {
-      position: absolute;
+    /* ══════════════════════════════
+       PANTALLA DE INICIO (tap-to-play)
+    ══════════════════════════════ */
+    #tap-screen {
+      position: fixed;
       inset: 0;
+      z-index: 100;
       background: #000;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 30;
-      gap: 16px;
-      transition: opacity 0.6s ease;
+      gap: 0;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
     }
-    #loading.hidden { opacity: 0; pointer-events: none; }
-
-    .spinner {
-      width: 48px; height: 48px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: #e4142b;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .loading-text {
-      color: rgba(255,255,255,0.6);
-      font-size: 13px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    #tap-screen.gone {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    /* Mensaje de aviso (solo si hay error) */
-    #error-msg {
-      display: none;
+    /* Fondo animado */
+    #tap-screen::before {
+      content: '';
       position: absolute;
       inset: 0;
-      background: #0a0a0a;
+      background: radial-gradient(ellipse at 50% 60%, #1a0a00 0%, #000 70%);
+    }
+
+    .logo-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Ícono U de Univision */
+    .u-icon {
+      width: 90px; height: 90px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #e4142b 0%, #b00e22 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 40px rgba(228,20,43,0.45), 0 8px 32px rgba(0,0,0,0.6);
+      margin-bottom: 8px;
+      animation: pulse-glow 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 30px rgba(228,20,43,0.35), 0 8px 32px rgba(0,0,0,0.6); }
+      50%       { box-shadow: 0 0 60px rgba(228,20,43,0.65), 0 8px 32px rgba(0,0,0,0.6); }
+    }
+    .u-icon svg { width: 48px; height: 48px; }
+
+    .channel-title {
       color: #fff;
+      font-family: 'Georgia', serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+    }
+    .live-tag {
+      display: flex; align-items: center; gap: 6px;
+      color: #e4142b;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      background: #e4142b;
+      border-radius: 50%;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* Botón grande de play */
+    .tap-btn {
+      margin-top: 48px;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.18);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, background 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    #tap-screen:active .tap-btn {
+      transform: scale(0.92);
+      background: rgba(255,255,255,0.16);
+    }
+    .tap-btn svg { width: 32px; height: 32px; margin-left: 5px; }
+
+    .tap-hint {
+      margin-top: 20px;
+      color: rgba(255,255,255,0.35);
+      font-size: 13px;
+      letter-spacing: 1px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    /* ══════════════════════════════
+       BLOQUEADORES DE ADS
+       Cubren las zonas de anuncios
+       (solo activos fuera de FS nativo)
+    ══════════════════════════════ */
+    .ad-shield {
+      position: fixed;
+      z-index: 10;
+      background: transparent;
+      pointer-events: all;
+    }
+    /* Banner VPN superior */
+    #shield-top    { top:0; left:0; right:0; height:22%; }
+    /* Popup regalo inferior centro */
+    #shield-bottom { bottom:0; left:30%; right:30%; height:30%; }
+    /* Badge rojo arriba-derecha */
+    #shield-tr     { top:0; right:0; width:15%; height:15%; }
+
+    /* ── Botón flotante de FS (por si se sale) ── */
+    #fs-fab {
+      position: fixed;
+      bottom: 22px; right: 18px;
+      z-index: 50;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 20px;
+      display: none;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 25;
-      text-align: center;
-      padding: 24px;
-    }
-    #error-msg h2 { font-size: 18px; color: #e4142b; }
-    #error-msg p  { font-size: 13px; color: rgba(255,255,255,0.55); max-width: 320px; line-height: 1.6; }
-    #error-msg button {
-      margin-top: 8px;
-      padding: 10px 22px;
-      background: #e4142b;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s;
     }
+    #fs-fab:hover { background: rgba(0,0,0,0.8); }
+    #fs-fab.visible { display: flex; }
+
+    /* Indicador de sonido ON */
+    #sound-badge {
+      position: fixed;
+      top: 14px; left: 14px;
+      z-index: 50;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(6px);
+      letter-spacing: 0.5px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      animation: fadeIn 0.4s ease;
+    }
+    #sound-badge.visible { display: flex; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
   </style>
 </head>
 <body>
 
-<div id="player-wrap">
+<!-- ══ IFRAME (cargado desde el inicio para no esperar) ══ -->
+<iframe
+  id="stream"
+  src="https://telefullhd.net/canales/univision/"
+  allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+  allowfullscreen
+  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+  referrerpolicy="no-referrer"
+></iframe>
 
-  <!-- ══ IFRAME DEL CANAL ══ -->
-  <iframe
-    id="stream"
-    src="https://telefullhd.net/canales/univision/"
-    allow="autoplay; fullscreen; encrypted-media"
-    allowfullscreen
-    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-    referrerpolicy="no-referrer"
-  ></iframe>
+<!-- ══ BLOQUEADORES DE ADS ══ -->
+<div class="ad-shield" id="shield-top"></div>
+<div class="ad-shield" id="shield-bottom"></div>
+<div class="ad-shield" id="shield-tr"></div>
 
-  <!-- ══ BLOQUEADORES DE ADS ══ -->
-  <!-- Banner/notificación superior (VPN, apps) -->
-  <div class="ad-block-top"    title=""></div>
-  <!-- Badge rojo esquina superior derecha -->
-  <div class="ad-block-corner-tr" title=""></div>
-  <!-- Badge rojo esquina superior izquierda -->
-  <div class="ad-block-corner-tl" title=""></div>
-  <!-- Popup regalo / flotante inferior centro -->
-  <div class="ad-block-bottom" title=""></div>
+<!-- ══ FAB pantalla completa (visible fuera de FS) ══ -->
+<div id="fs-fab" onclick="activarFullscreen()" title="Pantalla completa">⛶</div>
 
-  <!-- ══ PANTALLA DE CARGA ══ -->
-  <div id="loading">
-    <div class="spinner"></div>
-    <span class="loading-text">Cargando transmisión…</span>
-  </div>
+<!-- ══ Badge sonido ON ══ -->
+<div id="sound-badge">🔊 Sonido activado</div>
 
-  <!-- ══ PANTALLA DE ERROR ══ -->
-  <div id="error-msg">
-    <h2>⚠ Error de conexión</h2>
-    <p>No se pudo cargar la transmisión. Verifica tu conexión o intenta recargar.</p>
-    <button onclick="reloadStream()">🔄 Reintentar</button>
-  </div>
-
-  <!-- ══ CONTROLES ══ -->
-  <div id="controls">
-    <div class="ctrl-left">
-      <span class="live-badge">● En vivo</span>
-      <span class="channel-name">UNIVISION</span>
+<!-- ══ PANTALLA DE INICIO ══ -->
+<div id="tap-screen" onclick="iniciarReproduccion()">
+  <div class="logo-wrap">
+    <div class="u-icon">
+      <!-- Logo simplificado Univision -->
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 12 L10 30 Q10 42 24 42 Q38 42 38 30 L38 12 L30 12 L30 30 Q30 34 24 34 Q18 34 18 30 L18 12 Z" fill="white"/>
+      </svg>
     </div>
-    <div class="ctrl-right">
-      <button class="ctrl-btn" onclick="reloadStream()" title="Reiniciar">
-        🔄 Reiniciar
-      </button>
-      <button class="ctrl-btn" onclick="goFullscreen()" title="Pantalla completa">
-        ⛶ Pantalla completa
-      </button>
-    </div>
+    <span class="channel-title">Univision</span>
+    <span class="live-tag"><span class="live-dot"></span>En vivo</span>
   </div>
 
+  <div class="tap-btn">
+    <svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+  </div>
+  <span class="tap-hint">Toca para ver en pantalla completa</span>
 </div>
 
 <script>
 (function () {
-  const wrap    = document.getElementById('player-wrap');
-  const iframe  = document.getElementById('stream');
-  const loading = document.getElementById('loading');
-  const errMsg  = document.getElementById('error-msg');
+  const stream    = document.getElementById('stream');
+  const tapScreen = document.getElementById('tap-screen');
+  const fsFab     = document.getElementById('fs-fab');
+  const sndBadge  = document.getElementById('sound-badge');
 
-  /* ── Ocultar spinner cuando el iframe carga ── */
-  let loadTimer = setTimeout(() => {
-    loading.classList.add('hidden');
-  }, 6000); // máximo 6 s de espera
+  let fullscreenActivado = false;
 
-  iframe.addEventListener('load', () => {
-    clearTimeout(loadTimer);
-    setTimeout(() => loading.classList.add('hidden'), 800);
-  });
+  /* ══════════════════════════════════════════════
+     INICIO: el usuario toca → FS + audio
+  ══════════════════════════════════════════════ */
+  window.iniciarReproduccion = function () {
+    // 1. Mostrar iframe
+    stream.classList.add('active');
 
-  /* ── Pantalla completa ── */
-  function goFullscreen() {
-    const el = document.documentElement;
-    try {
-      (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
-    } catch (e) {}
-  }
-  window.goFullscreen = goFullscreen;
+    // 2. Ocultar pantalla de inicio
+    tapScreen.classList.add('gone');
 
-  /* ── Activar FS al primer toque (móvil) ── */
-  document.addEventListener('click', goFullscreen, { once: true });
+    // 3. Mostrar badge de sonido brevemente
+    sndBadge.classList.add('visible');
+    setTimeout(() => sndBadge.classList.remove('visible'), 3000);
 
-  /* ── Reiniciar stream ── */
-  window.reloadStream = function () {
-    errMsg.style.display = 'none';
-    loading.classList.remove('hidden');
-    iframe.src = iframe.src; // fuerza recarga
-    loadTimer = setTimeout(() => loading.classList.add('hidden'), 6000);
+    // 4. Entrar en pantalla completa
+    //    Intentamos en orden: iframe → elemento raíz
+    activarFullscreen();
+
+    // 5. Después de entrar en FS, intentar hacer clic
+    //    en el botón de FS interno del player (abajo-derecha del iframe)
+    //    El timeout permite que el player arranque antes del clic
+    setTimeout(clickPlayerFullscreen, 2200);
+    setTimeout(clickPlayerFullscreen, 4000); // segundo intento
   };
 
-  /* ── Mostrar controles al tocar (móvil) ── */
-  let hideTimer;
-  wrap.addEventListener('touchstart', () => {
-    wrap.classList.add('show-controls');
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => wrap.classList.remove('show-controls'), 3500);
-  }, { passive: true });
+  /* ══════════════════════════════════════════════
+     PANTALLA COMPLETA
+  ══════════════════════════════════════════════ */
+  window.activarFullscreen = function () {
+    const el = stream; // fullscreen sobre el iframe
+    try {
+      if (el.requestFullscreen)             el.requestFullscreen();
+      else if (el.webkitRequestFullscreen)  el.webkitRequestFullscreen();
+      else if (el.msRequestFullscreen)      el.msRequestFullscreen();
+      else {
+        // Fallback: fullscreen sobre el documento completo
+        const de = document.documentElement;
+        (de.requestFullscreen || de.webkitRequestFullscreen).call(de);
+      }
+      fullscreenActivado = true;
+    } catch (e) {
+      console.warn('FS error:', e);
+    }
+  };
 
-  /* ── Interceptar nuevas ventanas abiertas por el iframe (popups) ── */
-  const _open = window.open;
+  /* ══════════════════════════════════════════════
+     SIMULAR CLIC EN EL BOTÓN DE FS DEL PLAYER
+     El botón de FS del player está en la esquina
+     inferior-derecha del iframe. Lo calculamos
+     y lo disparamos como MouseEvent.
+     (Solo funciona si el iframe está en misma sesión
+      y el player lo acepta via event delegation)
+  ══════════════════════════════════════════════ */
+  function clickPlayerFullscreen() {
+    try {
+      const rect = stream.getBoundingClientRect();
+      // Coordenadas aprox del botón FS interno (abajo-derecha)
+      const x = rect.right  - 24;
+      const y = rect.bottom - 24;
+
+      // Temporalmente ocultamos los shields para que el clic pase al iframe
+      document.querySelectorAll('.ad-shield').forEach(s => s.style.pointerEvents = 'none');
+
+      const ev = new MouseEvent('click', {
+        bubbles: true, cancelable: true,
+        clientX: x, clientY: y,
+        view: window
+      });
+      // Intentamos sobre el iframe directamente
+      stream.dispatchEvent(ev);
+
+      // También intentamos vía postMessage (algunos players JW/HLS escuchan)
+      stream.contentWindow.postMessage({ action: 'fullscreen' }, '*');
+      stream.contentWindow.postMessage({ action: 'play'       }, '*');
+      stream.contentWindow.postMessage('play', '*');
+
+      setTimeout(() => {
+        document.querySelectorAll('.ad-shield').forEach(s => s.style.pointerEvents = 'all');
+      }, 300);
+    } catch (e) {}
+  }
+
+  /* ══════════════════════════════════════════════
+     DETECTAR CAMBIOS EN FULLSCREEN
+     Si el usuario sale del FS → mostrar FAB
+  ══════════════════════════════════════════════ */
+  function onFsChange() {
+    const enFS = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    );
+    fsFab.classList.toggle('visible', !enFS && fullscreenActivado);
+
+    // Si salió de FS, ocultar shields (el player los cubre en FS)
+    document.querySelectorAll('.ad-shield').forEach(s => {
+      s.style.display = enFS ? 'none' : '';
+    });
+  }
+  document.addEventListener('fullscreenchange',       onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+
+  /* ══════════════════════════════════════════════
+     BLOQUEAR POPUPS DEL IFRAME (window.open)
+  ══════════════════════════════════════════════ */
   window.open = function (...args) {
-    // Solo bloqua aperturas NO iniciadas por el usuario directo
-    console.warn('[AdBlock] Popup bloqueado:', args[0]);
+    console.warn('[Shield] Popup bloqueado:', args[0]);
     return null;
   };
 
-  /* ── Observar popups inyectados en el DOM padre ── */
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(m => {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType !== 1) return;
-        const tag = (node.className || '') + (node.id || '');
-        if (/ad|banner|popup|modal|overlay|promo|notify/i.test(tag)) {
-          node.remove();
-        }
-      });
-    });
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
+  /* ══════════════════════════════════════════════
+     OBSERVER: elimina nodos de ads inyectados
+     en el DOM del padre
+  ══════════════════════════════════════════════ */
+  new MutationObserver(mutations => {
+    mutations.forEach(m => m.addedNodes.forEach(node => {
+      if (node.nodeType !== 1) return;
+      const tag = (node.className || '') + (node.id || '');
+      if (/ad|banner|popup|modal|promo|notify|overlay/i.test(tag)) node.remove();
+    }));
+  }).observe(document.body, { childList: true, subtree: true });
 
 })();
 </script>
 
 </body>
 </html>
+
