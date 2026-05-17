@@ -1,76 +1,55 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNIVISION Puro</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>UNIVISION</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
-        
-        /* Nuestro reproductor limpio, sin publicidad */
-        video { width: 100%; height: 100%; outline: none; background: #000; }
-        
-        #mensaje { 
-            color: white; position: absolute; top: 40%; width: 100%; 
-            text-align: center; font-family: sans-serif; font-size: 18px; 
-            z-index: 10;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* Ocultar banners típicos de publicidad (sin garantía) */
+        div[class*="ad"], div[id*="ad"], div[class*="banner"], div[id*="banner"],
+        div[class*="popup"], div[id*="popup"], div[class*="modal"] {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
         }
     </style>
 </head>
 <body>
-
-    <div id="mensaje">Extrayendo señal pura (Estilo Web Video Caster)...</div>
-    
-    <video id="video-limpio" controls></video>
-
+    <iframe src="https://telefullhd.net/canales/univision/" allow="autoplay; fullscreen; encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"></iframe>
     <script>
-        var video = document.getElementById('video-limpio');
-        var mensaje = document.getElementById('mensaje');
-        var urlObjetivo = 'https://telefullhd.net/canales/univision/';
-
-        // Usamos un proxy para saltarnos el bloqueo del navegador y poder leer el código de la página
-        var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(urlObjetivo);
-
-        // 1. Descargar el código de la página
-        fetch(proxyUrl)
-            .then(response => response.json())
-            .then(data => {
-                var html = data.contents;
-                
-                // 2. Buscar el enlace .m3u8 oculto en el código usando Regex
-                var match = html.match(/(https?:\/\/[^\s"'<>]+?\.m3u8[^\s"'<>]*)/i);
-                
-                if (match && match[1]) {
-                    var m3u8Url = match[1].replace(/\\/g, ''); // Limpiar el enlace
-                    mensaje.style.display = 'none';
-                    iniciarReproductorLimpio(m3u8Url);
-                } else {
-                    mensaje.innerText = "No se pudo encontrar el enlace directo del video.";
-                }
-            })
-            .catch(error => {
-                mensaje.innerText = "Error de red al intentar extraer la señal.";
-            });
-
-        // 3. Reproducir el enlace puro en nuestro video limpio
-        function iniciarReproductorLimpio(url) {
-            if (Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log("Toca la pantalla para escuchar/iniciar"));
-                });
+        // Intentar autoplay y pantalla completa al cargar
+        window.addEventListener('load', function() {
+            var iframe = document.querySelector('iframe');
+            if (iframe) {
+                // Forzar autoplay mediante postMessage (puede no funcionar en todos los navegadores)
+                iframe.contentWindow.postMessage('play', '*');
+                // Intentar pantalla completa (solo funciona si se activa por gesto del usuario, pero se intenta)
+                try {
+                    if (iframe.requestFullscreen) {
+                        iframe.requestFullscreen();
+                    } else if (iframe.webkitRequestFullscreen) {
+                        iframe.webkitRequestFullscreen();
+                    } else if (iframe.msRequestFullscreen) {
+                        iframe.msRequestFullscreen();
+                    }
+                } catch (e) {}
             }
-            // Para iOS o navegadores que lo soportan nativamente
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                });
+        });
+        // Reintentar pantalla completa al primer toque en la pantalla
+        document.addEventListener('click', function() {
+            var iframe = document.querySelector('iframe');
+            if (iframe) {
+                try {
+                    if (iframe.requestFullscreen) {
+                        iframe.requestFullscreen();
+                    }
+                } catch (e) {}
             }
-        }
+        }, { once: true });
     </script>
 </body>
 </html>
