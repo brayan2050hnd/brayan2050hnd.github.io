@@ -25,9 +25,9 @@
         window.addEventListener('load', function() {
             var iframe = document.querySelector('iframe');
             if (iframe) {
-                // Forzar autoplay mediante postMessage (puede no funcionar en todos los navegadores)
+                // Forzar autoplay mediante postMessage
                 iframe.contentWindow.postMessage('play', '*');
-                // Intentar pantalla completa (solo funciona si se activa por gesto del usuario, pero se intenta)
+                // Intentar pantalla completa
                 try {
                     if (iframe.requestFullscreen) {
                         iframe.requestFullscreen();
