@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AZTECA HONDURAS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* Capa invisible para capturar el primer toque y desmutear */
+        #touch-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="dmplayer" 
+            src="https://www.dailymotion.com/embed/video/x9saemc?autoplay=1&mute=1&controls=1" 
+            allow="autoplay; fullscreen; encrypted-media" 
+            allowfullscreen>
+    </iframe>
+
+    <div id="touch-layer" onclick="unmuteAndHideLayer()"></div>
+
+    <script>
+        function unmuteAndHideLayer() {
+            var iframe = document.getElementById('dmplayer');
+            if (iframe && iframe.contentWindow) {
+                // Enviar comando para desmutear el reproductor
+                iframe.contentWindow.postMessage('{"command":"unmute"}', '*');
+            }
+            // Ocultar la capa transparente
+            document.getElementById('touch-layer').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
