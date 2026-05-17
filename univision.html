@@ -1,55 +1,321 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNIVISION</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        /* Ocultar banners típicos de publicidad (sin garantía) */
-        div[class*="ad"], div[id*="ad"], div[class*="banner"], div[id*="banner"],
-        div[class*="popup"], div[id*="popup"], div[class*="modal"] {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            width: 0 !important;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>UNIVISION — Live</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    /* ── Contenedor principal ── */
+    #player-wrap {
+      position: relative;
+      width: 100%; height: 100%;
+    }
+
+    iframe#stream {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    /* ══════════════════════════════════════════
+       BLOQUEADORES DE ANUNCIOS SUPERPUESTOS
+       Cubren las zonas donde aparecen los popups
+       sin tapar el video en sí.
+    ══════════════════════════════════════════ */
+
+    /* Bloquea notificación tipo banner (arriba) */
+    .ad-block-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 18%;          /* cubre la franja superior */
+      z-index: 10;
+      cursor: default;
+      /* Transparente — solo bloquea clicks */
+      background: transparent;
+      pointer-events: all;
+    }
+
+    /* Bloquea popup tipo regalo / regalo-flotante (abajo-centro) */
+    .ad-block-bottom {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      height: 25%;
+      z-index: 10;
+      background: transparent;
+      pointer-events: all;
+    }
+
+    /* Bloquea esquinas (íconos de apps, badges, etc.) */
+    .ad-block-corner-tr {
+      position: absolute;
+      top: 0; right: 0;
+      width: 12%; height: 12%;
+      z-index: 10;
+      background: transparent;
+      pointer-events: all;
+    }
+    .ad-block-corner-tl {
+      position: absolute;
+      top: 0; left: 0;
+      width: 12%; height: 12%;
+      z-index: 10;
+      background: transparent;
+      pointer-events: all;
+    }
+
+    /* ── Barra de controles (aparece al hacer hover) ── */
+    #controls {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 56px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    #player-wrap:hover #controls,
+    #player-wrap.show-controls #controls {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .ctrl-left { display: flex; align-items: center; gap: 10px; }
+    .ctrl-right { display: flex; align-items: center; gap: 10px; }
+
+    .live-badge {
+      background: #e4142b;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    .channel-name {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    .ctrl-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex; align-items: center; gap: 5px;
+      backdrop-filter: blur(4px);
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.28); }
+
+    /* Spinner de carga */
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      gap: 16px;
+      transition: opacity 0.6s ease;
+    }
+    #loading.hidden { opacity: 0; pointer-events: none; }
+
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: #e4142b;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Mensaje de aviso (solo si hay error) */
+    #error-msg {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 25;
+      text-align: center;
+      padding: 24px;
+    }
+    #error-msg h2 { font-size: 18px; color: #e4142b; }
+    #error-msg p  { font-size: 13px; color: rgba(255,255,255,0.55); max-width: 320px; line-height: 1.6; }
+    #error-msg button {
+      margin-top: 8px;
+      padding: 10px 22px;
+      background: #e4142b;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
-    <iframe src="https://telefullhd.net/canales/univision/" allow="autoplay; fullscreen; encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"></iframe>
-    <script>
-        // Intentar autoplay y pantalla completa al cargar
-        window.addEventListener('load', function() {
-            var iframe = document.querySelector('iframe');
-            if (iframe) {
-                // Forzar autoplay mediante postMessage (puede no funcionar en todos los navegadores)
-                iframe.contentWindow.postMessage('play', '*');
-                // Intentar pantalla completa (solo funciona si se activa por gesto del usuario, pero se intenta)
-                try {
-                    if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                    } else if (iframe.webkitRequestFullscreen) {
-                        iframe.webkitRequestFullscreen();
-                    } else if (iframe.msRequestFullscreen) {
-                        iframe.msRequestFullscreen();
-                    }
-                } catch (e) {}
-            }
-        });
-        // Reintentar pantalla completa al primer toque en la pantalla
-        document.addEventListener('click', function() {
-            var iframe = document.querySelector('iframe');
-            if (iframe) {
-                try {
-                    if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                    }
-                } catch (e) {}
-            }
-        }, { once: true });
-    </script>
+
+<div id="player-wrap">
+
+  <!-- ══ IFRAME DEL CANAL ══ -->
+  <iframe
+    id="stream"
+    src="https://telefullhd.net/canales/univision/"
+    allow="autoplay; fullscreen; encrypted-media"
+    allowfullscreen
+    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+    referrerpolicy="no-referrer"
+  ></iframe>
+
+  <!-- ══ BLOQUEADORES DE ADS ══ -->
+  <!-- Banner/notificación superior (VPN, apps) -->
+  <div class="ad-block-top"    title=""></div>
+  <!-- Badge rojo esquina superior derecha -->
+  <div class="ad-block-corner-tr" title=""></div>
+  <!-- Badge rojo esquina superior izquierda -->
+  <div class="ad-block-corner-tl" title=""></div>
+  <!-- Popup regalo / flotante inferior centro -->
+  <div class="ad-block-bottom" title=""></div>
+
+  <!-- ══ PANTALLA DE CARGA ══ -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <span class="loading-text">Cargando transmisión…</span>
+  </div>
+
+  <!-- ══ PANTALLA DE ERROR ══ -->
+  <div id="error-msg">
+    <h2>⚠ Error de conexión</h2>
+    <p>No se pudo cargar la transmisión. Verifica tu conexión o intenta recargar.</p>
+    <button onclick="reloadStream()">🔄 Reintentar</button>
+  </div>
+
+  <!-- ══ CONTROLES ══ -->
+  <div id="controls">
+    <div class="ctrl-left">
+      <span class="live-badge">● En vivo</span>
+      <span class="channel-name">UNIVISION</span>
+    </div>
+    <div class="ctrl-right">
+      <button class="ctrl-btn" onclick="reloadStream()" title="Reiniciar">
+        🔄 Reiniciar
+      </button>
+      <button class="ctrl-btn" onclick="goFullscreen()" title="Pantalla completa">
+        ⛶ Pantalla completa
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const wrap    = document.getElementById('player-wrap');
+  const iframe  = document.getElementById('stream');
+  const loading = document.getElementById('loading');
+  const errMsg  = document.getElementById('error-msg');
+
+  /* ── Ocultar spinner cuando el iframe carga ── */
+  let loadTimer = setTimeout(() => {
+    loading.classList.add('hidden');
+  }, 6000); // máximo 6 s de espera
+
+  iframe.addEventListener('load', () => {
+    clearTimeout(loadTimer);
+    setTimeout(() => loading.classList.add('hidden'), 800);
+  });
+
+  /* ── Pantalla completa ── */
+  function goFullscreen() {
+    const el = document.documentElement;
+    try {
+      (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+    } catch (e) {}
+  }
+  window.goFullscreen = goFullscreen;
+
+  /* ── Activar FS al primer toque (móvil) ── */
+  document.addEventListener('click', goFullscreen, { once: true });
+
+  /* ── Reiniciar stream ── */
+  window.reloadStream = function () {
+    errMsg.style.display = 'none';
+    loading.classList.remove('hidden');
+    iframe.src = iframe.src; // fuerza recarga
+    loadTimer = setTimeout(() => loading.classList.add('hidden'), 6000);
+  };
+
+  /* ── Mostrar controles al tocar (móvil) ── */
+  let hideTimer;
+  wrap.addEventListener('touchstart', () => {
+    wrap.classList.add('show-controls');
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => wrap.classList.remove('show-controls'), 3500);
+  }, { passive: true });
+
+  /* ── Interceptar nuevas ventanas abiertas por el iframe (popups) ── */
+  const _open = window.open;
+  window.open = function (...args) {
+    // Solo bloqua aperturas NO iniciadas por el usuario directo
+    console.warn('[AdBlock] Popup bloqueado:', args[0]);
+    return null;
+  };
+
+  /* ── Observar popups inyectados en el DOM padre ── */
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType !== 1) return;
+        const tag = (node.className || '') + (node.id || '');
+        if (/ad|banner|popup|modal|overlay|promo|notify/i.test(tag)) {
+          node.remove();
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+
+})();
+</script>
+
 </body>
 </html>
