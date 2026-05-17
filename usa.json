@@ -300,9 +300,9 @@
         "pais": "USA"
     },
     {
-        "nombre": "TELEPLAY ",
-        "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
-        "url": "https://player.tvstream.mx/livestream/teleplay/livesd/playlist.m3u8",
+        "nombre": "FXX",
+        "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/FXX_Logo.svg/1280px-FXX_Logo.svg.png",
+        "url": "http://23.237.104.106:8080/USA_FXX/index.m3u8",
         "pais": "USA"
     },
     {
