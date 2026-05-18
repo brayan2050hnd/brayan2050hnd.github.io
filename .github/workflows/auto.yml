@@ -2,7 +2,7 @@ name: Actualizador de Canales
 
 on:
   schedule:
-    - cron: '0 */3 * * *'
+  - cron: '0 * * * *'   # al minuto 0 de cada hora
   workflow_dispatch:
 
 permissions:
