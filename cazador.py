@@ -6,7 +6,7 @@ import os
 import random
 
 # ============================================================
-# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE
+# FUNCIÓN UNIFICADA PARA TODOS LOS CANALES DE YOUTUBE (GENÉRICA)
 # ============================================================
 def actualizar_canal_youtube(
     canal_nombre,
@@ -135,7 +135,143 @@ def actualizar_canal_youtube(
 
 
 # ============================================================
-# FUNCIÓN ESPECIAL PARA UNIVISION (anti-anuncios como USA)
+# FUNCIÓN ROBUSTA PARA CANALES CON FALLOS DE API (CHOLUVISION, UNETV)
+# ============================================================
+def actualizar_canal_youtube_robusto(
+    canal_nombre,
+    html_file,
+    json_file,
+    pais,
+    imagen_url,
+    channel_id=None,
+    handle=None,
+    filter_live=False,
+    random_select=False
+):
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    # 1. Obtener channelId desde handle si no se proporcionó
+    if not channel_id and handle:
+        print(f"   Obteniendo ID del canal desde el handle '{handle}'...")
+        channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
+        try:
+            ch_resp = requests.get(channels_url).json()
+            items = ch_resp.get("items", [])
+            if not items:
+                print(f"❌ No se encontró el canal con el handle {handle}.")
+                return
+            channel_id = items[0]["id"]
+            print(f"   ID obtenido: {channel_id}")
+        except Exception as e:
+            print(f"❌ Error al obtener ID del canal: {e}")
+            return
+
+    if not channel_id:
+        print("❌ Error: No se proporcionó channel_id ni handle.")
+        return
+
+    # 2. Buscar los últimos 10 vídeos del canal (sin eventType=live)
+    print(f"Verificando si {canal_nombre} está en vivo (método robusto)...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&type=video&maxResults=10&order=date&key={API_KEY}"
+    try:
+        resp = requests.get(search_url)
+        if resp.status_code != 200:
+            error_info = resp.json().get('error', {})
+            print(f"❌ La API respondió con error {resp.status_code}: {error_info.get('message', 'sin detalles')}")
+            return
+        data = resp.json()
+        items = data.get("items", [])
+        if not items:
+            print(f"ℹ️ {canal_nombre} no tiene videos recientes.")
+            return
+
+        # Obtener los IDs de esos videos
+        video_ids = [item["id"]["videoId"] for item in items]
+
+        # 3. Consultar los detalles de esos videos para ver cuáles están realmente en vivo
+        detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={','.join(video_ids)}&key={API_KEY}"
+        detalles_resp = requests.get(detalles_url).json()
+        detalles_items = detalles_resp.get("items", [])
+
+        # 4. Filtrar los que tengan liveBroadcastContent == "live"
+        candidatos = []
+        for detalle in detalles_items:
+            if detalle["snippet"]["liveBroadcastContent"] == "live":
+                candidatos.append(detalle)
+
+        if not candidatos:
+            print(f"ℹ️ {canal_nombre} no está transmitiendo en vivo.")
+            return
+
+        # 5. Seleccionar el directo (aleatorio si hay varios)
+        if random_select and len(candidatos) > 1:
+            elegido = random.choice(candidatos)
+            print(f"⚠️ {len(candidatos)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
+        else:
+            elegido = candidatos[0]
+
+        video_id = elegido["id"]
+    except Exception as e:
+        print(f"❌ Error al buscar directos: {e}")
+        return
+
+    # 6. Sobrescribir HTML (igual que la función genérica)
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe src="https://www.youtube.com/embed/{video_id}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ Archivo {html_file} actualizado.")
+
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
+
+    if not encontrado:
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+# ============================================================
+# FUNCIÓN ESPECIAL PARA UNIVISION (anti-anuncios como USA) - SE MANTIENE
 # ============================================================
 def actualizar_univision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -584,7 +720,8 @@ if __name__ == "__main__":
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
 
-    actualizar_canal_youtube(
+    # CHOLUVISION ahora usa la versión robusta
+    actualizar_canal_youtube_robusto(
         canal_nombre="CHOLUVISION",
         html_file="choluvision.html",
         json_file="honduras.json",
@@ -632,7 +769,8 @@ if __name__ == "__main__":
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
     )
 
-    actualizar_canal_youtube(
+    # UNETV ahora usa la versión robusta
+    actualizar_canal_youtube_robusto(
         canal_nombre="UNETV",
         html_file="unetv.html",
         json_file="honduras.json",
@@ -641,7 +779,6 @@ if __name__ == "__main__":
         handle="@unetvhonduras-n2t"
     )
 
-    actualizar_univision()   # <-- Univision con protección anti-anuncios
-
+    actualizar_univision()
     actualizar_discovery_family()
     actualizar_tntnovelas()
