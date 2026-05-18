@@ -11,9 +11,28 @@
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com/embed/hIVXLDmVkvc?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    <iframe id="player" src="https://www.youtube-nocookie.com/embed/hIVXLDmVkvc?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
             allowfullscreen>
     </iframe>
+    <script>
+        setTimeout(() => {
+            const iframe = document.getElementById('player');
+            if (iframe) {
+                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+            }
+        }, 3000);
+
+        setInterval(() => {
+            try {
+                const iframe = document.getElementById('player');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage('{"event":"command","func":"skipVideoAd","args":""}', '*');
+                    const adElements = iframe.contentDocument.querySelectorAll('.ytp-ad-module, .ytp-ad-image-overlay, .ytp-ad-player-overlay');
+                    adElements.forEach(el => el.remove());
+                }
+            } catch (e) {}
+        }, 1000);
+    </script>
 </body>
 </html>
