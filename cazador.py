@@ -82,7 +82,7 @@ def actualizar_canal_youtube(
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # Sobrescribir HTML
+    # Sobrescribir HTML genérico (sin anti-anuncios)
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -106,6 +106,143 @@ def actualizar_canal_youtube(
     with open(html_file, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"✅ Archivo {html_file} actualizado.")
+
+    url_html = f"https://brayan2050hnd.github.io/{html_file}"
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = []
+
+    encontrado = False
+    for canal in data:
+        if canal.get("nombre", "").upper() == canal_nombre.upper():
+            canal["url"] = url_html
+            encontrado = True
+            print(f"URL de {canal_nombre} actualizada en {json_file}.")
+            break
+
+    if not encontrado:
+        data.append({
+            "nombre": canal_nombre,
+            "imagen": imagen_url,
+            "url": url_html,
+            "pais": pais
+        })
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+# ============================================================
+# FUNCIÓN ESPECIAL PARA UNIVISION (anti-anuncios como USA)
+# ============================================================
+def actualizar_univision():
+    API_KEY = os.environ.get('YOUTUBE_API_KEY')
+    HANDLE = "@univision"
+    canal_nombre = "UNIVISION"
+    html_file = "univision.html"
+    json_file = "usa.json"
+    pais = "USA"
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Univision_logo.svg/640px-Univision_logo.svg.png"
+
+    if not API_KEY:
+        print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
+        return
+
+    print(f"\nObteniendo ID del canal de {canal_nombre}...")
+    channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={HANDLE}&key={API_KEY}"
+    try:
+        ch_resp = requests.get(channels_url).json()
+        items = ch_resp.get("items", [])
+        if not items:
+            print(f"❌ No se encontró el canal con el handle {HANDLE}.")
+            return
+        channel_id = items[0]["id"]
+        print(f"ℹ️ ID del canal: {channel_id}")
+    except Exception as e:
+        print(f"❌ Error al obtener ID del canal: {e}")
+        return
+
+    print(f"Verificando si {canal_nombre} está en vivo...")
+    search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={API_KEY}"
+    try:
+        resp = requests.get(search_url)
+        if resp.status_code != 200:
+            error_info = resp.json().get('error', {})
+            print(f"❌ La API respondió con error {resp.status_code}: {error_info.get('message', 'sin detalles')}")
+            return
+        data = resp.json()
+        items = data.get("items", [])
+        if not items:
+            print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
+            return
+
+        # Filtrar solo transmisiones en vivo reales
+        candidatos = []
+        for item in items:
+            vid = item["id"]["videoId"]
+            det_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={vid}&key={API_KEY}"
+            det_resp = requests.get(det_url).json()
+            det_items = det_resp.get("items", [])
+            if det_items and det_items[0]["snippet"]["liveBroadcastContent"] == "live":
+                candidatos.append(item)
+        if not candidatos:
+            print(f"ℹ️ Ningún directo real encontrado para {canal_nombre}.")
+            return
+        items = candidatos
+
+        # Tomar el primer directo
+        elegido = items[0]
+        video_id = elegido["id"]["videoId"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
+    except Exception as e:
+        print(f"❌ Error al buscar directos: {e}")
+        return
+
+    # HTML especial anti-anuncios
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{canal_nombre}</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ width: 100%; height: 100%; overflow: hidden; background: #000; }}
+        iframe {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }}
+    </style>
+</head>
+<body>
+    <iframe id="player" src="https://www.youtube-nocookie.com/embed/{video_id}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+    </iframe>
+    <script>
+        setTimeout(() => {{
+            const iframe = document.getElementById('player');
+            if (iframe) {{
+                iframe.contentWindow.postMessage('{{"event":"command","func":"unMute","args":""}}', '*');
+            }}
+        }}, 3000);
+
+        setInterval(() => {{
+            try {{
+                const iframe = document.getElementById('player');
+                if (iframe && iframe.contentWindow) {{
+                    iframe.contentWindow.postMessage('{{"event":"command","func":"skipVideoAd","args":""}}', '*');
+                    const adElements = iframe.contentDocument.querySelectorAll('.ytp-ad-module, .ytp-ad-image-overlay, .ytp-ad-player-overlay');
+                    adElements.forEach(el => el.remove());
+                }}
+            }} catch (e) {{}}
+        }}, 1000);
+    </script>
+</body>
+</html>"""
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ Archivo {html_file} actualizado con protección anti-anuncios.")
 
     url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
@@ -504,15 +641,7 @@ if __name__ == "__main__":
         handle="@unetvhonduras-n2t"
     )
 
-    actualizar_canal_youtube(
-        canal_nombre="UNIVISION",
-        html_file="univision.html",
-        json_file="usa.json",
-        pais="USA",
-        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Univision_logo.svg/640px-Univision_logo.svg.png",
-        handle="@univision",
-        filter_live=True
-    )
+    actualizar_univision()   # <-- Univision con protección anti-anuncios
 
     actualizar_discovery_family()
     actualizar_tntnovelas()
