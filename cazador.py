@@ -82,7 +82,7 @@ def actualizar_canal_youtube(
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # Sobrescribir HTML genérico (sin anti-anuncios)
+    # Sobrescribir HTML genérico
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -153,7 +153,7 @@ def actualizar_canal_youtube_robusto(
         print("❌ Error: No se encontró la clave de API de YouTube en los secretos.")
         return
 
-    # 1. Obtener channelId desde handle si no se proporcionó
+    # 1. Obtener channelId
     if not channel_id and handle:
         print(f"   Obteniendo ID del canal desde el handle '{handle}'...")
         channels_url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forHandle={handle}&key={API_KEY}"
@@ -173,7 +173,7 @@ def actualizar_canal_youtube_robusto(
         print("❌ Error: No se proporcionó channel_id ni handle.")
         return
 
-    # 2. Buscar los últimos 10 vídeos del canal (sin eventType=live)
+    # 2. Buscar últimos videos (sin eventType=live)
     print(f"Verificando si {canal_nombre} está en vivo (método robusto)...")
     search_url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&type=video&maxResults=10&order=date&key={API_KEY}"
     try:
@@ -188,15 +188,14 @@ def actualizar_canal_youtube_robusto(
             print(f"ℹ️ {canal_nombre} no tiene videos recientes.")
             return
 
-        # Obtener los IDs de esos videos
         video_ids = [item["id"]["videoId"] for item in items]
 
-        # 3. Consultar los detalles de esos videos para ver cuáles están realmente en vivo
+        # 3. Obtener detalles de esos videos
         detalles_url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={','.join(video_ids)}&key={API_KEY}"
         detalles_resp = requests.get(detalles_url).json()
         detalles_items = detalles_resp.get("items", [])
 
-        # 4. Filtrar los que tengan liveBroadcastContent == "live"
+        # 4. Filtrar los que están realmente en vivo
         candidatos = []
         for detalle in detalles_items:
             if detalle["snippet"]["liveBroadcastContent"] == "live":
@@ -206,7 +205,7 @@ def actualizar_canal_youtube_robusto(
             print(f"ℹ️ {canal_nombre} no está transmitiendo en vivo.")
             return
 
-        # 5. Seleccionar el directo (aleatorio si hay varios)
+        # 5. Seleccionar el directo
         if random_select and len(candidatos) > 1:
             elegido = random.choice(candidatos)
             print(f"⚠️ {len(candidatos)} directos. Seleccionado aleatoriamente: {elegido['snippet']['title']}")
@@ -214,11 +213,12 @@ def actualizar_canal_youtube_robusto(
             elegido = candidatos[0]
 
         video_id = elegido["id"]
+        print(f"✅ Nuevo directo detectado: {video_id}")
     except Exception as e:
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # 6. Sobrescribir HTML (igual que la función genérica)
+    # 6. Sobrescribir HTML (con manejo de errores)
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -239,10 +239,15 @@ def actualizar_canal_youtube_robusto(
 </body>
 </html>"""
 
-    with open(html_file, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"✅ Archivo {html_file} actualizado.")
+    try:
+        with open(html_file, "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"✅ Archivo {html_file} guardado correctamente.")
+    except Exception as e:
+        print(f"❌ Error al escribir {html_file}: {e}")
+        return
 
+    # 7. Actualizar JSON (con manejo de errores)
     url_html = f"https://brayan2050hnd.github.io/{html_file}"
     try:
         with open(json_file, "r", encoding="utf-8") as f:
@@ -265,13 +270,18 @@ def actualizar_canal_youtube_robusto(
             "url": url_html,
             "pais": pais
         })
+        print(f"Entrada de {canal_nombre} agregada a {json_file}.")
 
-    with open(json_file, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    try:
+        with open(json_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"✅ Archivo {json_file} guardado correctamente.")
+    except Exception as e:
+        print(f"❌ Error al guardar {json_file}: {e}")
 
 
 # ============================================================
-# FUNCIÓN ESPECIAL PARA UNIVISION (anti-anuncios como USA) - SE MANTIENE
+# FUNCIÓN ESPECIAL PARA UNIVISION (anti-anuncios) - SE MANTIENE
 # ============================================================
 def actualizar_univision():
     API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -314,7 +324,6 @@ def actualizar_univision():
             print(f"ℹ️ {canal_nombre} no está transmitiendo. No se actualiza el HTML.")
             return
 
-        # Filtrar solo transmisiones en vivo reales
         candidatos = []
         for item in items:
             vid = item["id"]["videoId"]
@@ -328,7 +337,6 @@ def actualizar_univision():
             return
         items = candidatos
 
-        # Tomar el primer directo
         elegido = items[0]
         video_id = elegido["id"]["videoId"]
         print(f"✅ Nuevo directo detectado: {video_id}")
@@ -336,7 +344,6 @@ def actualizar_univision():
         print(f"❌ Error al buscar directos: {e}")
         return
 
-    # HTML especial anti-anuncios
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -720,7 +727,7 @@ if __name__ == "__main__":
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
 
-    # CHOLUVISION ahora usa la versión robusta
+    # CHOLUVISION y UNETV ahora usan la versión robusta
     actualizar_canal_youtube_robusto(
         canal_nombre="CHOLUVISION",
         html_file="choluvision.html",
@@ -769,7 +776,6 @@ if __name__ == "__main__":
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
     )
 
-    # UNETV ahora usa la versión robusta
     actualizar_canal_youtube_robusto(
         canal_nombre="UNETV",
         html_file="unetv.html",
