@@ -135,7 +135,7 @@ def actualizar_canal_youtube(
 
 
 # ============================================================
-# FUNCIÓN ROBUSTA PARA CANALES CON FALLOS DE API (CHOLUVISION, UNETV)
+# FUNCIÓN ROBUSTA PARA CANALES CON FALLOS DE API (CHOLUVISION)
 # ============================================================
 def actualizar_canal_youtube_robusto(
     canal_nombre,
@@ -479,6 +479,67 @@ def actualizar_discovery_family():
 
 
 # ============================================================
+# CANAL UNETV — extrae m3u8 de su web oficial (cloudscraper)
+# ============================================================
+def actualizar_unetv():
+    scraper = cloudscraper.create_scraper(
+        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
+    )
+    
+    fuente_web = "https://unetvhn.com/en-vivo/"
+    print(f"Buscando señal de UNETV en: {fuente_web}")
+
+    try:
+        response = scraper.get(fuente_web, timeout=15).text
+        
+        # Buscar enlaces .m3u8 en el HTML
+        links = re.findall(r'https?://[^\s<>"\']+?\.m3u8[^\s<>"\']*', response)
+        
+        # También buscar dentro de data-attributes por si acaso
+        if not links:
+            data_attrs = re.findall(r'data-attributes=\'[^\']*"src":"(https?://[^"]+\.m3u8)"', response)
+            links.extend(data_attrs)
+
+        link_valido = None
+        for l in links:
+            l_limpio = l.replace('\\/', '/').split('"')[0].split("'")[0]
+            if any(x in l_limpio.lower() for x in ['ads', 'click', 'pop']):
+                continue
+            link_valido = l_limpio
+            break
+
+        if link_valido:
+            print(f"¡LOGRADO! Link de UNETV encontrado: {link_valido}")
+        else:
+            # Fallback al enlace conocido
+            link_valido = "https://amixtv.com:8081/unetvhn/index.m3u8"
+            print(f"Usando enlace de respaldo: {link_valido}")
+
+        with open('honduras.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        for canal in data:
+            if canal.get('nombre', '').upper() == "UNETV":
+                canal['url'] = link_valido
+                print("URL de UNETV actualizada en honduras.json.")
+                break
+        else:
+            print("⚠️ No se encontró 'UNETV' en honduras.json. Agregando entrada nueva.")
+            data.append({
+                "nombre": "UNETV",
+                "imagen": "https://unetvhn.com/wp-content/uploads/2022/09/logo-1.png",
+                "url": link_valido,
+                "pais": "HONDURAS"
+            })
+
+        with open('honduras.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+    except Exception as e:
+        print(f"Error en la captura de UNETV: {e}")
+
+
+# ============================================================
 # CANAL ZAZ — NO SE TOCA
 # ============================================================
 def actualizar_zaz():
@@ -726,8 +787,9 @@ if __name__ == "__main__":
     actualizar_zaz()
     actualizar_telemundo_miami()
     actualizar_telemundo_california()
+    actualizar_unetv()
 
-    # CHOLUVISION y UNETV ahora usan la versión robusta
+    # CHOLUVISION usa la versión robusta
     actualizar_canal_youtube_robusto(
         canal_nombre="CHOLUVISION",
         html_file="choluvision.html",
@@ -774,15 +836,6 @@ if __name__ == "__main__":
         pais="USA",
         imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Universal_Kids_logo.svg/640px-Universal_Kids_logo.svg.png",
         channel_id="UCY26xU0-avwTJ6F6TzUZVEw"
-    )
-
-    actualizar_canal_youtube_robusto(
-        canal_nombre="UNETV",
-        html_file="unetv.html",
-        json_file="honduras.json",
-        pais="HONDURAS",
-        imagen_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Logo_UNE_TV.svg/640px-Logo_UNE_TV.svg.png",
-        handle="@unetvhonduras-n2t"
     )
 
     actualizar_univision()
