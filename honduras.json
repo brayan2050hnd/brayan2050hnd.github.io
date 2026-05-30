@@ -80,7 +80,7 @@
     {
         "nombre": "AZTECA HONDURAS",
         "imagen": "https://i.ytimg.com/vi/os-RtVFHffk/maxresdefault.jpg",
-        "url": "https://brayan2050hnd.github.io/aztecahonduras.html",
+        "url": "alcon:https://brayan2050hnd.github.io/aztecahonduras.html",
         "pais": "HONDURAS"
     },
     {
@@ -98,7 +98,7 @@
     {
         "nombre": "VALLEVISION",
         "imagen": "https://d3ld16hid784z2.cloudfront.net/media/2020/03/cacncan.png",
-        "url": "https://webmedialive.com/MULTICABLEMAS/vallevision.php",
+        "url": "alcon:https://webmedialive.com/MULTICABLEMAS/vallevision.php",
         "pais": "HONDURAS"
     },
     {
@@ -110,7 +110,7 @@
     {
         "nombre": "QHUBO TV",
         "imagen": "https://qhubotv.com/content/images/2022/08/Logo-Q-HUBO-1.png",
-        "url": "https://amixtv.com:8081/qhubotv/embed.html",
+        "url": "alcon:https://amixtv.com:8081/qhubotv/embed.html",
         "pais": "HONDURAS"
     },
     {
