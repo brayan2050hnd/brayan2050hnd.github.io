@@ -14,7 +14,7 @@
     {
         "nombre": "CANAL 11",
         "imagen": "https://canal11.hn/wp-content/uploads/2024/01/social.jpg",
-        "url": "alcon:https://rudo.video/live/canal11hn",
+        "url":"alcon:https://rudo.video/live/canal11hn",
         "pais": "HONDURAS"
     },
     {
