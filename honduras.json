@@ -8,25 +8,25 @@
     {
         "nombre": "CANAL 5",
         "imagen": "https://i.ytimg.com/vi/gWyadd7duF0/maxresdefault.jpg",
-        "url":"alcon:https://mdstrm.com/live-stream/6287fdc9303e3008289ab711",
+        "url": "alcon:https://mdstrm.com/live-stream/6287fdc9303e3008289ab711",
         "pais": "HONDURAS"
     },
     {
         "nombre": "CANAL 11",
         "imagen": "https://canal11.hn/wp-content/uploads/2024/01/social.jpg",
-        "url":"alcon:https://rudo.video/live/canal11hn",
+        "url": "alcon:https://rudo.video/live/canal11hn",
         "pais": "HONDURAS"
     },
     {
         "nombre": "CANAL 10",
         "imagen": "https://directostv.teleame.com/wp-content/uploads/2016/05/Ten-Canal-10-Honduras-en-vivo-Online.png",
-        "url":"alcon:https://tencanal10.tv/",
+        "url": "alcon:https://tencanal10.tv/",
         "pais": "HONDURAS"
     },
     {
         "nombre": "CANAL 6",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Canal6.jpg/250px-Canal6.jpg",
-        "url":"alcon:https://envivo.canal6.com.hn/5a536b3e-954a-4124-a17a-d94bbd0968a2.html",
+        "url": "alcon:https://envivo.canal6.com.hn/5a536b3e-954a-4124-a17a-d94bbd0968a2.html",
         "pais": "HONDURAS"
     },
     {
