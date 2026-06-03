@@ -314,13 +314,13 @@
     {
         "nombre": "CEIBA VISION",
         "imagen": "https://www.ceibavision.com/images/logo-white.png",
-        "url": "https://webmedialive.com/AMAZON/ceibavision/",
+        "url": "alcon:https://webmedialive.com/AMAZON/ceibavision/",
         "pais": "HONDURAS"
     },
     {
         "nombre": "NARANJA TV",
         "imagen": "https://naranjatv.net/wp-content/uploads/2023/05/275x275-transparente.png",
-        "url": "https://cdn.streamingcpanel.com/live-stream-video-widget/teleraices",
+        "url": "alcon:https://cdn.streamingcpanel.com/live-stream-video-widget/teleraices",
         "pais": "HONDURAS"
     },
     {
@@ -338,7 +338,7 @@
     {
         "nombre": "CHTV",
         "imagen": "https://i.ytimg.com/vi/64dyGY1WghE/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AH-CYAC0AWKAgwIABABGCogQSh_MA8=&rs=AOn4CLAHv6j6QbSjdSI70LsubUwfjYmcqw",
-        "url": "https://gavamultimedios.com/CHTV/index.php",
+        "url": "alcon:https://gavamultimedios.com/CHTV/index.php",
         "pais": "HONDURAS"
     },
     {
