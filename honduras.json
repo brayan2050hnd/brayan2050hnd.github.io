@@ -80,7 +80,7 @@
     {
         "nombre": "AZTECA HONDURAS",
         "imagen": "https://i.ytimg.com/vi/os-RtVFHffk/maxresdefault.jpg",
-        "url": "alcon:https://brayan2050hnd.github.io/aztecahonduras.html",
+        "url": "https://brayan2050hnd.github.io/aztecahonduras.html",
         "pais": "HONDURAS"
     },
     {
@@ -380,7 +380,7 @@
     {
         "nombre": "JUSTICIA TV",
         "imagen": "https://justiciatv.hn/images/pjteve.PNG",
-        "url": "https://cloud2.streaminglivehd.com:2000/VideoPlayer/justiciatv?autoplay=1",
+        "url": "alcon:https://cloud2.streaminglivehd.com:2000/VideoPlayer/justiciatv?autoplay=1",
         "pais": "HONDURAS"
     },
     {
