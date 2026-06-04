@@ -86,7 +86,7 @@
     {
         "nombre": "W TV",
         "imagen": "https://static.vecteezy.com/system/resources/previews/009/019/719/non_2x/wtv-logo-wtv-letter-wtv-letter-logo-design-initials-wtv-logo-linked-with-circle-and-uppercase-monogram-logo-wtv-typography-for-technology-business-and-real-estate-brand-vector.jpg",
-        "url": "https://webmedialive.com/WTV/",
+        "url": "alcon:https://webmedialive.com/WTV/",
         "pais": "HONDURAS"
     },
     {
@@ -146,7 +146,7 @@
     {
         "nombre": "SULA TV",
         "imagen": "https://m.media-amazon.com/images/I/71FOdsCN2qL.png",
-        "url": "https://webmedialive.com/SULATV/",
+        "url": "alcon:https://webmedialive.com/SULATV/",
         "pais": "HONDURAS"
     },
     {
@@ -164,7 +164,7 @@
     {
         "nombre": "RHC",
         "imagen": "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/46/a8/d3/46a8d34f-d0c3-dd5f-e95f-470ed2fca7cd/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/1200x630wa.png",
-        "url": "https://my.viewhn.com:2443/client/embed.php?user=rhctv",
+        "url": "alcon:https://my.viewhn.com:2443/client/embed.php?user=rhctv",
         "pais": "HONDURAS"
     },
     {
@@ -200,19 +200,19 @@
     {
         "nombre": "CANAL 30 OLANCHO",
         "imagen": "https://televisionolanchana.com/wp-content/uploads/2024/02/logo_tvo2_462.png",
-        "url": "https://my.viewhn.com:2443/client/embed.php?user=canal30catacamas",
+        "url": "alcon:https://my.viewhn.com:2443/client/embed.php?user=canal30catacamas",
         "pais": "HONDURAS"
     },
     {
         "nombre": "LITORAL ATLANTICO",
         "imagen": "https://pbs.twimg.com/profile_images/867747338261069824/ZDd9A-rG_400x400.jpg",
-        "url": "https://cdn4.streamgato.us/live-stream-video-widget/litoralhd",
+        "url": "alcon:https://cdn4.streamgato.us/live-stream-video-widget/litoralhd",
         "pais": "HONDURAS"
     },
     {
         "nombre": "AZA TV",
         "imagen": "https://cigars.roku.com/v1/contain/800x454/https%3A%2F%2Fimage.roku.com%2Fdeveloper_channels%2Fprod%2F11f872d6b0ede2aa4383b04284f8720669c7c95604ec6624dd217793ee515ae8.jpg",
-        "url": "https://azatvhdhn.com/tv/?autoplay=1",
+        "url": "alcon:https://azatvhdhn.com/tv/?autoplay=1",
         "pais": "HONDURAS"
     },
     {
