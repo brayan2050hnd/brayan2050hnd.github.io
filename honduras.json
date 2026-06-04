@@ -236,7 +236,7 @@
     {
         "nombre": "TSI",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/f/ff/TSi_logo.png",
-        "url": "https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed",
+        "url": "alcon:https://mdstrm.com/live-stream/6287fda8ea3b8b397d1ca2ed",
         "pais": "HONDURAS"
     },
     {
@@ -278,7 +278,7 @@
     {
         "nombre": "VENUS TV",
         "imagen": "https://pbs.twimg.com/profile_images/2320377887/LOGO_VENUS_TV_400x400.png",
-        "url": "https://player.twitch.tv/?channel=venushd2025&parent=brayan2050hnd.github.io",
+        "url": "alcon:https://player.twitch.tv/?channel=venushd2025&parent=brayan2050hnd.github.io",
         "pais": "HONDURAS"
     },
     {
@@ -332,7 +332,7 @@
     {
         "nombre": "NEXTECA TV",
         "imagen": "https://i.ytimg.com/vi/mxQYcxATMIQ/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGH8gVigTMA8=&rs=AOn4CLAapeYTJ59LIh1BjPy46sZFMqg-eg",
-        "url": "https://player.twitch.tv/?channel=nextecatv&parent=brayan2050hnd.github.io",
+        "url": "alcon:https://player.twitch.tv/?channel=nextecatv&parent=brayan2050hnd.github.io",
         "pais": "HONDURAS"
     },
     {
