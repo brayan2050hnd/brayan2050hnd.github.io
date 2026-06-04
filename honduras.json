@@ -260,13 +260,13 @@
     {
         "nombre": "STVE TELEBASICA",
         "imagen": "https://www.stvetelebasica.com/web/image/10925-9152fb50/logos_Mesa%20de%20trabajo%201.png",
-        "url": "https://conceptoweb-studio.com/radio/video/suyapa/",
+        "url": "alcon:https://conceptoweb-studio.com/radio/video/suyapa/",
         "pais": "HONDURAS"
     },
     {
         "nombre": "MAYA TV",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/7/77/Maya_TV_logo.png",
-        "url": "https://media.streambrothers.com:2000/VideoPlayer/8036?autoplay=1",
+        "url": "alcon:https://media.streambrothers.com:2000/VideoPlayer/8036?autoplay=1",
         "pais": "HONDURAS"
     },
     {
@@ -308,7 +308,7 @@
     {
         "nombre": "SUYAPA TV",
         "imagen": "https://www.elheraldo.hn/binrepository/1200x902/0c136/1200d630/none/45933/SINV/Vida_169085_0_EH600131_MG127274136.jpg",
-        "url": "https://conceptoweb-studio.com/radio/video/suyapa2/",
+        "url": "alcon:https://conceptoweb-studio.com/radio/video/suyapa2/",
         "pais": "HONDURAS"
     },
     {
