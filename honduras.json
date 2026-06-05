@@ -20,7 +20,7 @@
     {
         "nombre": "CANAL 10",
         "imagen": "https://directostv.teleame.com/wp-content/uploads/2016/05/Ten-Canal-10-Honduras-en-vivo-Online.png",
-        "url": "https://geo.dailymotion.com/player/xoc5u.html?video=x8uk5ou",
+        "url": "alcon:https://geo.dailymotion.com/player/xoc5u.html?video=x8uk5ou",
         "pais": "HONDURAS"
     },
     {
