@@ -116,7 +116,7 @@
     {
         "nombre": "CANAL 10 CANCUN",
         "imagen": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/70/2c/37/702c3718-4c8a-d60d-f28e-3df3b83fc7c7/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1200x630wa.png",
-        "url": "https://mediaflix.canal10mx.com/embed#/player?v=aWQ9MSZ0eXBlPWxpdmVTdHJlYW0%3D",
+        "url": "alcon:https://mediaflix.canal10mx.com/embed#/player?v=aWQ9MSZ0eXBlPWxpdmVTdHJlYW0%3D",
         "pais": "MÉXICO"
     },
     {
@@ -128,7 +128,7 @@
     {
         "nombre": "CANAL 44",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/4/45/XHIJ_TV_Canal_44_2012_Logo.png",
-        "url": "https://conceptoweb-studio.com/radio/video/canal44/",
+        "url": "alcon:https://conceptoweb-studio.com/radio/video/canal44/",
         "pais": "MÉXICO"
     },
     {
