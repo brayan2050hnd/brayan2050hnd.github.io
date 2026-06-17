@@ -122,7 +122,7 @@
     {
         "nombre": "CANAL 33 TIJUANA",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Canal_33_El_Salvador_2010.png",
-        "url": "https://conceptoweb-studio.com/radio/video/canal33tijuana/",
+        "url": "alcon:https://conceptoweb-studio.com/radio/video/canal33tijuana/",
         "pais": "MÉXICO"
     },
     {
@@ -200,7 +200,7 @@
     {
         "nombre": "SUPER CHANNEL 12",
         "imagen": "https://yt3.googleusercontent.com/zG7qEPbOfKZXK5fM4U4kgKYQaJ-7Wjul-pMWt9ZUI6zJmsr7NJsNdURx2AHm3lWC5YLOlMqU=s900-c-k-c0x00ffffff-no-rj",
-        "url": "alcon:https://servilive.com/live-stream-video-widget/channel12",
+        "url": "https://servilive.com/live-stream-video-widget/channel12",
         "pais": "MÉXICO"
     },
     {
