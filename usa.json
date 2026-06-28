@@ -254,13 +254,13 @@
     {
         "nombre": "TNT NOVELAS ",
         "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Logo_TNT_Novelas.png/960px-Logo_TNT_Novelas.png",
-        "url": "https://brayan2050hnd.github.io/tnt_novelas.html",
+        "url": "alcon:https://brayan2050hnd.github.io/tnt_novelas.html",
         "pais": "USA"
     },
     {
         "nombre": "NBCSN",
         "imagen": "https://i0.wp.com/russianmachineneverbreaks.com/wp-content/uploads/2021/01/nbcsn-logo-hockey.jpg?fit=1200%2C650&ssl=1",
-        "url": "alcon:http://84.17.50.102/nbcsports/index.m3u8",
+        "url": "http://84.17.50.102/nbcsports/index.m3u8",
         "pais": "USA"
     },
     {
